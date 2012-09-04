@@ -13,18 +13,29 @@ var users;
 var userRows = [];
 var userRowSample;
 var usersTable;
+var usersLoadingElement;
 
 function onload()
 {
+	usersLoadingElement = document.getElementById("usersLoading");
 	userRowSample = document.getElementById("userRow");
 	usersTable = userRowSample.parentNode;
 	usersTable.removeChild(userRowSample);
+	updateUserRows();
+}
+
+function updateUserRows()
+{
+	clearUserRows();
+	usersLoadingElement.style.display = null;
 	callAPI({request:"users"}, onUsersLoaded);
 }
 
 function onUsersLoaded(data)
 {
 	users = data;
+	
+	usersLoadingElement.style.display = 'none';
 	
 	clearUserRows();
 	var X;
@@ -84,19 +95,21 @@ function addUser()
 
 function onUsersAdded(data)
 {
-	clearUserRows();
-	callAPI({request:"users"}, onUsersLoaded);
+	updateUserRows();
 }
 
 </script>
 </head>
 <body onload="onload();">
 <p>HOME | <a href="javascript:addUser()">ADD USER</a></p>
-<table border="0">
+<table width="400" border="0" align="center">
   <tr>
     <td bgcolor="#999999">Name</td>
     <td bgcolor="#999999">Solo wins</td>
     <td bgcolor="#999999">Duo wins</td>
+  </tr>
+  <tr id="usersLoading">
+    <td colspan="3" align="center" bgcolor="#FFCC00">Getting users...</td>
   </tr>
   <tr id="userRow">
     <td>NAME</td>
