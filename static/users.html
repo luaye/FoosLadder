@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title></title>
+
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.4.2.js"></script>
+<script type="text/javascript" src="shared.js"></script>
+
+<script type="text/javascript">
+
+var users;
+var userRows = [];
+var userRowSample;
+var usersTable;
+var usersLoadingElement;
+
+function onload()
+{
+	usersLoadingElement = document.getElementById("usersLoading");
+	userRowSample = document.getElementById("userRow");
+	usersTable = userRowSample.parentNode;
+	usersTable.removeChild(userRowSample);
+	updateUserRows();
+}
+
+function updateUserRows()
+{
+	clearUserRows();
+	usersLoadingElement.style.display = null;
+	callAPI({request:"users"}, onUsersLoaded);
+}
+
+function onUsersLoaded(data)
+{
+	users = data;
+	
+	usersLoadingElement.style.display = 'none';
+	
+	clearUserRows();
+	var X;
+	var userRow;
+	for(X in data)
+	{
+		userRow = userRowSample.cloneNode(true);
+		fillRowWithUser(userRow, data[X]);
+		userRows.push(userRow);
+		usersTable.appendChild(userRow);
+	}
+}
+
+function clearUserRows()
+{
+	for(var X in userRows)
+	{
+		var userRow = userRows[X];
+		usersTable.removeChild(userRow);
+	}
+	userRows = [];
+}
+
+function fillRowWithUser(tableRow, user)
+{
+	var cells = tableRow.getElementsByTagName("td");
+	cells[0].innerHTML = user.name
+	cells[1].innerHTML = user.soloWins ? user.soloWins : "";
+	cells[2].innerHTML = user.duoWins ? user.duoWins : "";;
+}
+
+function addUser()
+{
+	if(users == null)
+	{
+		alert("User loading in progress.");
+		return;
+	}
+	var username = prompt("Enter your name to add : ", "your name here");
+	if(username == null)
+	{
+		return;
+	}
+	if(findUserByName(users, username))
+	{
+		alert("User already exists : " +  username );
+	}
+	else
+	{
+		var yes = confirm("Do you really want to add new user '" + username+ "'?");
+	   if( yes )
+	   {
+			callAPI({request:"addUser", name:username}, onUsersAdded);
+	   }
+	}
+}
+
+function onUsersAdded(data)
+{
+	updateUserRows();
+}
+
+</script>
+</head>
+<body onload="onload();">
+<p><a href="index.html">HOME</a> | <a href="javascript:addUser()">ADD USER</a></p>
+<table width="400" border="0" align="center">
+  <tr>
+    <td bgcolor="#999999">Name</td>
+    <td bgcolor="#999999">Solo wins</td>
+    <td bgcolor="#999999">Duo wins</td>
+  </tr>
+  <tr id="usersLoading">
+    <td colspan="3" align="center" bgcolor="#FFCC00">Getting users...</td>
+  </tr>
+  <tr id="userRow">
+    <td>NAME</td>
+    <td align="center">SOLO WINS</td>
+    <td align="center">DUO WINS</td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+</body>
+</html>
