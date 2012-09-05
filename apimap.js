@@ -1,12 +1,15 @@
 var qs = require('querystring');
 var users = require("./api/users.js");
+var matches = require("./api/matches.js");
 var init = require("./api/init.js");
 
 init.init();
 
 var map = {
-	users:users.getUsers,
-	addUser:users.addUser
+	getUsers:users.getUsers,
+	addUser:users.addUser,
+	getMatches:matches.getMatches,
+	addMatch:matches.addMatch
 	};
 
 exports.runAPI = function(request, response)
@@ -54,7 +57,7 @@ function respondError(response, message)
 {
 	console.log("Erorr with request. "+message);
 	response.writeHeader(500, {"Content-Type": "text/plain"});  
-	response.write('{"status":"ERROR", "message":"+message+"}\n'); 
+	response.write('{"status":"error", "message":"+message+"}\n'); 
 	response.end();
 }
 

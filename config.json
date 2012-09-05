@@ -1,8 +1,9 @@
 {
-	"port":8080,
+	"port":8000,
 	"couch": {
 		"host": "localhost",
 		"port": 5984,
-		"usersDB": "foosusers"
+		"usersDB": "foosusers",
+		"matchesDB": "foosmatches"
 		}
 }

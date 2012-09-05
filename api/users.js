@@ -6,7 +6,7 @@ exports.getUsers = function(body, callback)
 	{
 		if(error || !body)
 		{
-			console.log("database.get error: "+error);
+			console.log("users.getUsers error: "+error);
 			callback([]);
 		}
 		else
@@ -15,11 +15,12 @@ exports.getUsers = function(body, callback)
 			for (var X in body.rows)
 			{
 				var user = body.rows[X].value;
+				user.id = user._id;
 				delete user._id;
 				delete user._rev;
 				result.push(user);
 			}
-			console.log("database.get OK: " + JSON.stringify(result));
+			console.log("users.getUsers OK: " + JSON.stringify(result));
 			callback(result);
 		}
 	});
@@ -33,12 +34,12 @@ exports.addUser = function(body, callback)
 	{
 		if(error || !body)
 		{
-			console.log("database.addUser error: "+error);
-			callback({status:"ERROR"});
+			console.log("users.addUser error: "+error);
+			callback({status:"error"});
 		}
 		else
 		{
-			console.log("database.addUser OK: " + JSON.stringify(body));
+			console.log("users.addUser OK: " + JSON.stringify(body));
 			callback({status:"OK"});
 		}
 	});

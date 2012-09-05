@@ -8,6 +8,10 @@ exports.init = function()
 		GLOBAL.usersDB = nano.use(config.couch.usersDB);
 		registerUserDesignDoc();
 	});
+	initDatabaseIfRequired(config.couch.matchesDB, function()
+	{
+		GLOBAL.matchesDB = nano.use(config.couch.matchesDB);
+	});
 }
 
 function initDatabaseIfRequired(databaseName, callback)

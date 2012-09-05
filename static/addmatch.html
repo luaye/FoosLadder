@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title></title>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.4.2.js"></script>
+<script type="text/javascript" src="shared.js"></script>
+<script type="text/javascript">
+
+var leftPlayer1Field;
+var leftPlayer2Field;
+var rightPlayer1Field;
+var rightPlayer2Field;
+var submitButton;
+
+function onload()
+{
+	leftPlayer1Field = document.getElementById("leftPlayer1");
+	leftPlayer2Field = document.getElementById("leftPlayer2");
+	rightPlayer1Field = document.getElementById("rightPlayer1");
+	rightPlayer2Field = document.getElementById("rightPlayer2");
+	submitButton = document.getElementById("submit");
+	
+	callAPI({request:"getUsers"}, onPlayersLoaded);
+}
+
+function onPlayersLoaded(data)
+{
+	fillSelectListWithPlayers(leftPlayer1Field, data);
+	
+	fillSelectListWithPlayers(leftPlayer2Field, data);
+	
+	fillSelectListWithPlayers(rightPlayer1Field, data);
+	
+	fillSelectListWithPlayers(rightPlayer2Field, data);
+}
+
+function fillSelectListWithPlayers(selectElement, players)
+{
+	selectElement.options.length = 0;
+		selectElement.options.add(new Option("---", ""));
+	for (var X in players)
+	{
+		var player = players[X];
+		selectElement.options.add(new Option(player.name, player.id));
+	}
+}
+
+function onSubmit()
+{
+	var request = {};
+	request.request = "addMatch";
+	request.leftPlayer1 = String(leftPlayer1Field.value);
+	request.leftPlayer2 = String(leftPlayer2Field.value);
+	request.leftScore = Number(document.getElementById("leftScore").value);
+	
+	request.rightPlayer1 = String(rightPlayer1Field.value);
+	request.rightPlayer2 = String(rightPlayer2Field.value);
+	request.rightScore = Number(document.getElementById("rightScore").value);;	
+		
+	if(
+		isScoreValid(request.leftScore) 
+		&& 
+		isScoreValid(request.rightScore) 
+		&&
+		(request.leftPlayer1 || request.leftPlayer2)
+		&&
+		(request.rightPlayer1 || request.rightPlayer2)
+	)
+	{
+		submitButton.disabled = true;
+		callAPI(request, onMatchSubmitted);
+	}
+	else
+	{
+		alert("invalid input.");
+	}
+}
+
+function isScoreValid(score)
+{
+	return score >= 0 && score <= 10;
+}
+
+function onMatchSubmitted(body)
+{
+	if(body.status == "error")
+	{
+		submitButton.disabled = false;
+		alert(body.message);
+	}
+	else
+	{
+		window.location = "matches.html";
+	}
+}
+</script>
+</head>
+<body onload="onload();">
+<p><a href="index.html">HOME</a></p>
+<table width="400" border="0" align="center" id="dataTable">
+  <tr>
+    <td><select name="leftPlayer1" id="leftPlayer1">
+      </select>
+      <br />
+<select name="leftPlayer2" id="leftPlayer2">
+</select>
+      </td>
+    <td align="right">
+      <input name="leftScore" type="text" id="leftScore" size="4" maxlength="2" />
+      </td>
+    <td align="center">
+      VS
+      </td>
+    <td>
+      <input name="rightScore" type="text" id="rightScore" size="4" maxlength="2" />
+      </td>
+    <td align="right"><select name="rightPlayer1" id="rightPlayer1">
+      </select><br /><select name="rightPlayer2" id="rightPlayer2">
+</select>      </td>
+  </tr>
+  <tr>
+    <td colspan="5" align="center"><input type="submit" name="submit" id="submit" value="Submit" onClick="onSubmit()"/></td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+</body>
+</html>
