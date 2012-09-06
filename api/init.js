@@ -47,7 +47,9 @@ function registerUserDesignDoc()
 	GLOBAL.usersDB.insert(
 	{"views":
 		{
-			"by_name":{ "map": function(doc) { emit(doc.name, doc); } } 
+			"by_name":{ "map": function(doc) { emit(doc.name, doc); } }
+			,
+			"by_id":{ "map": function(doc) { emit(doc._id, doc); } } 
 		}
 	}
 	,
