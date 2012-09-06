@@ -3,7 +3,7 @@
 	"couch": {
 		"host": "localhost",
 		"port": 5984,
-		"usersDB": "foosusers",
+		"usersDB": "foosplayers",
 		"matchesDB": "foosmatches"
 		}
 }

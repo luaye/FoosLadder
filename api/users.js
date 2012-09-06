@@ -52,7 +52,7 @@ getUsersById = function(body, callback)
 
 exports.addUser = function(body, callback)
 {
-	console.log("users.addUser: "+body.name);
+	//console.log("users.addUser: "+body.name);
 	GLOBAL.usersDB.insert({name: body.name}, null, function (error, body, headers)
 	{
 		if(error || !body)
@@ -70,7 +70,7 @@ exports.addUser = function(body, callback)
 
 exports.updatePlayerStatsForMatch = function(matchData, callback)
 {
-	console.log("users.updatePlayerStatsForMatch: "+JSON.stringify(matchData));
+	//console.log("users.updatePlayerStatsForMatch: "+JSON.stringify(matchData));
 	var playerIds = matchData.leftPlayers.concat(matchData.rightPlayers);
 	getPlayersByIdUsingIds(playerIds, function(playersById)
 	{

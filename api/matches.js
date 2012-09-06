@@ -12,8 +12,7 @@ exports.getMatches = function(body, callback)
 		}
 		else
 		{
-			
-			console.log("matches.getMatches OK: " + JSON.stringify(body.rows));
+			//console.log("matches.getMatches OK: " + JSON.stringify(body.rows));
 			var result = [];
 			for (var X in body.rows)
 			{
@@ -22,7 +21,7 @@ exports.getMatches = function(body, callback)
 				delete match.rev;
 				result.push(match);
 			}
-			console.log("matches.getMatches OK: " + JSON.stringify(result));
+			//console.log("matches.getMatches OK: " + JSON.stringify(result));
 			callback(result);
 		}
 	});
@@ -110,7 +109,7 @@ function validateScore(score)
 
 function preValidatePlayers(players)
 {
-	console.log("preValidatePlayers: " + players.length + " - "+ players);
+	//console.log("preValidatePlayers: " + players.length + " - "+ players);
 	return players != null && players.length > 0 && players.length <= 2;
 }
 
@@ -157,7 +156,7 @@ function validatePlayers(users, players1, players2)
 
 function addMatchToDatabase(matchData, callback)
 {
-	console.log("matches.addMatchToDatabase: "+JSON.stringify(matchData));
+	//console.log("matches.addMatchToDatabase: "+JSON.stringify(matchData));
 	GLOBAL.matchesDB.insert(matchData, null, function (error, body, headers)
 	{
 		if(error || !body)
@@ -167,7 +166,7 @@ function addMatchToDatabase(matchData, callback)
 		}
 		else
 		{
-			console.log("matches.addMatch OK: " + JSON.stringify(body));
+			//console.log("matches.addMatch OK: " + JSON.stringify(body));
 			users.updatePlayerStatsForMatch(matchData, function(ok)
 			{
 				if(ok)
