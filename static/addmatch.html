@@ -4,16 +4,31 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title></title>
 
-<link href="style.css" rel="stylesheet" type="text/css" />
+<link href="css/style.css" rel="stylesheet" type="text/css" />
 
-<script type="text/javascript" src="http://code.jquery.com/jquery-1.4.2.js"></script>
-<script type="text/javascript" src="shared.js"></script>
+<style>
+.ui-timepicker-div .ui-widget-header { margin-bottom: 8px; }
+.ui-timepicker-div dl { text-align: left; }
+.ui-timepicker-div dl dt { height: 25px; margin-bottom: -25px; }
+.ui-timepicker-div dl dd { margin: 0 10px 10px 65px; }
+.ui-timepicker-div td { font-size: 90%; }
+.ui-tpicker-grid-label { background: none; border: none; margin: 0; padding: 0; }
+</style>
+<link rel="stylesheet" media="all" type="text/css"
+	href="http://code.jquery.com/ui/1.8.21/themes/ui-lightness/jquery-ui.css" />
+
+<script type="text/javascript" src="js/jquery-1.8.1.min.js"></script>
+<script type="text/javascript" src="js/jquery-ui-1.8.23.custom.min.js"></script>
+<script type="text/javascript" src="js/jquery-ui-timepicker-addon.js"></script>
+<script type="text/javascript" src="js/shared.js"></script>
 <script type="text/javascript">
 
 var leftPlayer1Field;
 var leftPlayer2Field;
 var rightPlayer1Field;
 var rightPlayer2Field;
+var dateNowCheckbox;
+var datePicker;
 var submitButton;
 
 function onload()
@@ -22,7 +37,12 @@ function onload()
 	leftPlayer2Field = document.getElementById("leftPlayer2");
 	rightPlayer1Field = document.getElementById("rightPlayer1");
 	rightPlayer2Field = document.getElementById("rightPlayer2");
+	dateNowCheckbox = document.getElementById("dateNow");
+	datePicker = document.getElementById("datePicker");
 	submitButton = document.getElementById("submit");
+	
+	$('#datePicker').datetimepicker();
+	updateDateSelectorVisibility();
 	
 	callAPI({request:"getPlayers"}, onPlayersLoaded);
 }
@@ -49,6 +69,16 @@ function fillSelectListWithPlayers(selectElement, players)
 	}
 }
 
+function dateNowChanged()
+{
+	updateDateSelectorVisibility();
+}
+
+function updateDateSelectorVisibility()
+{
+	datePicker.style.display = dateNowCheckbox.checked ? 'none' : 'inherit';
+}
+
 function onSubmit()
 {
 	var request = {};
@@ -60,7 +90,12 @@ function onSubmit()
 	request.rightPlayer1 = String(rightPlayer1Field.value);
 	request.rightPlayer2 = String(rightPlayer2Field.value);
 	request.rightScore = Number(document.getElementById("rightScore").value);;	
-		
+	
+	if(!dateNowCheckbox.checked && datePicker.value)
+	{
+		var date = new Date(datePicker.value);
+		request.date = date.getTime();
+	}
 	if(
 		isScoreValid(request.leftScore) 
 		&& 
@@ -144,9 +179,17 @@ function onMatchSubmitted(body)
 </select>      </td>
   </tr>
   <tr>
+    <td colspan="5">
+    Date: 
+      now?
+      <input name="dateNow" type="checkbox" id="dateNow" checked="checked" onchange="dateNowChanged();"/>
+      <input type="text" id="datePicker" name="datePicker" style="width: 140px" />
+    </td>
+  </tr>
+  <tr>
     <td colspan="5" align="center"><input type="submit" name="submit" id="submit" value="Submit" onClick="onSubmit()"/></td>
   </tr>
 </table>
-<p>&nbsp;</p>
+
 </body>
 </html>

@@ -34,7 +34,28 @@ exports.addMatch = function(body, callback)
 	console.log("matches.addMatch: "+JSON.stringify(body));
 	
 	var matchData = {};
-	matchData.date = new Date().getTime();
+	
+	if(!isNaN(body.date))
+	{
+		var dateMs = Number(body.date);
+		var nowMs = new Date().getTime();
+		var hour = 1000 * 60 * 60;
+		var allowedPast = hour * 24 * 365;
+		var allowedFuture = hour * 2;
+		if(dateMs > nowMs - allowedPast && dateMs < nowMs + allowedFuture)
+		{
+			matchData.date = new Date(dateMs).getTime();
+		}
+		else
+		{
+			callback({status:"error", message:"Invalid date."});
+			return;
+		}
+	}
+	else
+	{
+		matchData.date = new Date().getTime();
+	}
 	
 	matchData.leftPlayers = [];
 	addToListIfExists(matchData.leftPlayers, body.leftPlayer1);
