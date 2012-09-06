@@ -152,3 +152,15 @@ function addMatchToDatabase(matchData, callback)
 		}
 	});
 }
+
+
+exports.rebuiltMatchStats = function(body, callback)
+{
+	exports.getMatches({}, function(matchDatas)
+	{
+		users.rebuiltPlayerStatsFromMatches(matchDatas, function(ok)
+		{
+			callback(ok);
+		});
+	});
+}

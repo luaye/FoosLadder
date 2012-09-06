@@ -26,6 +26,32 @@ exports.getUsers = function(body, callback)
 	});
 }
 
+exports.getUsersById = function(body, callback)
+{
+    matches = GLOBAL.usersDB.view('users', 'by_name',
+	function (error, body, headers)
+	{
+		if(error || !body)
+		{
+			console.log("users.getUsersById error: "+error);
+			callback({});
+		}
+		else
+		{
+			var result = {};
+			for (var X in body.rows)
+			{
+				var user = body.rows[X].value;
+				user.id = user._id;
+				delete user._id;
+				delete user._rev;
+				result[user.id] = user;
+			}
+			console.log("users.getUsersById OK: " + JSON.stringify(result));
+			callback(result);
+		}
+	});
+}
 
 exports.addUser = function(body, callback)
 {
@@ -110,7 +136,7 @@ function getPlayersByIdUsingIds(playerIds, callback)
 
 function updateStatsOfPlayersByIdForMatch(playersById, matchData)
 {
-	var isDuoGame = matchData.leftPlayers >1 || matchData.rightScore > 1;
+	var isDuoGame = matchData.leftPlayers.length > 1 || matchData.rightPlayers.length > 1;
 	var winners = [];
 	var losers;
 	if(matchData.leftScore > matchData.rightScore)
@@ -149,6 +175,23 @@ function updateStatsOfPlayersByIdForMatch(playersById, matchData)
 	return true;
 }
 
+exports.rebuiltPlayerStatsFromMatches = function(matchDatas, callback)
+{
+	exports.getUsersById({}, function(playersById)
+	{
+		var X;
+		for(X in playersById)
+		{
+			clearPlayerStats(playersById[X]);
+		}
+		for(X in matchDatas)
+		{
+			updateStatsOfPlayersByIdForMatch(playersById, matchDatas[X]);
+		}
+		callback(true);
+	});
+}
+
 function addToProperty(obj, property, value)
 {
 	if(!obj[property])
@@ -174,4 +217,10 @@ function getSoloStats(player)
 		return player.soloStats = {};
 	}
 	return player.soloStats;
+}
+
+function clearPlayerStats(player)
+{
+	player.soloStats = null;
+	player.duoStats = null;
 }
