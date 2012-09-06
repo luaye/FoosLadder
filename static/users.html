@@ -47,13 +47,24 @@ function onUsersLoaded(data)
 
 function fillRowWithUser(tableRow, user)
 {
+	var soloStats = user.soloStats ? user.soloStats : {};
+	var duoStats = user.duoStats ? user.duoStats : {};
 	var cells = tableRow.getElementsByTagName("td");
 	cells[0].innerHTML = user.name
-	cells[1].innerHTML = user.soloWins ? user.soloWins : "";
-	cells[2].innerHTML = user.duoWins ? user.duoWins : "";;
+	cells[1].innerHTML = safeStr(duoStats.wins);
+	cells[2].innerHTML = safeStr(duoStats.games);
 }
 
-function addUser()
+function safeStr(obj)
+{
+	if(obj)
+	{
+		return obj;
+	}
+	return "";
+}
+
+function addPlayer()
 {
 	if(users == null)
 	{
@@ -91,12 +102,13 @@ function onUsersAdded(data)
 <br />
 <table width="400" border="0" align="center" id="dataTable">
   <tr>
-    <td colspan="3" align="center">Players</td>
+    <td colspan="3" align="center">Players<br />
+      <a href="javascript:addPlayer()" class="tiny">Add player</a></td>
   </tr>
   <tr>
     <td bgcolor="#999999">Name</td>
-    <td align="center" bgcolor="#999999">Solo wins</td>
-    <td align="center" bgcolor="#999999">Duo wins</td>
+    <td align="center" bgcolor="#999999">Double wins</td>
+    <td align="center" bgcolor="#999999">Double games</td>
   </tr>
   <tr id="loadingRow">
     <td colspan="3" align="center" bgcolor="#FFCC00">Getting players...</td>

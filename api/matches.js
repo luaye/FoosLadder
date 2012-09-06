@@ -152,34 +152,3 @@ function addMatchToDatabase(matchData, callback)
 		}
 	});
 }
-
-function updatePlayerScores(matchData)
-{
-	/*var winners;
-	var losers;
-	if(matchData.leftScore > matchData.rightScore)
-	{
-		winners = matchData.leftPlayers;
-		losers = matchData.rightPlayers;
-	}
-	else if(matchData.leftScore < matchData.rightScore)
-	{
-		winners = matchData.rightPlayers;
-		losers = matchData.leftPlayers;
-	}
-	var X;
-	var player;
-	for(X in matchData.leftPlayers)
-	{
-		player = matchData.leftPlayers[X];
-		var won = winners && winners.indexOf(player) >= 0;
-		users.updatePlayerStatsForMatch(matchData);
-	}
-	for(X in matchData.rightPlayers)
-	{
-		player = matchData.rightPlayers[X];
-		var won = winners && winners.indexOf(player) >= 0;
-		updatePlayerScore(player, won, matchData.rightScore);
-		users.updatePlayerStatsForMatch(playerId, matchData);
-	}*/
-}

@@ -51,12 +51,11 @@ function onMatchesLoaded(data)
 	table.setLoading(false);
 	table.clear();
 	
-	var X;
 	var playerRow;
-	for(X in data)
+	for(var i = data.length - 1; i >= 0; i--)
 	{
 		playerRow = table.createRow();
-		fillRowWithMatch(playerRow, data[X]);
+		fillRowWithMatch(playerRow, data[i]);
 	}
 }
 
