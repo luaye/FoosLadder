@@ -1,0 +1,23 @@
+body
+{
+	font-family:Verdana, Geneva, sans-serif;
+}
+.header
+{
+	font-size:18px;
+	padding:5px;
+	text-align:center;
+}
+
+.tiny
+{
+	font-size:10px;
+	color:#555;
+}
+
+.tableRow
+{
+	border-bottom-style:solid;
+	border-bottom-width:1px;
+	border-bottom-color:#999;
+}

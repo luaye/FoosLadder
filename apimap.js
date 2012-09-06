@@ -6,8 +6,8 @@ var init = require("./api/init.js");
 init.init();
 
 var map = {
-	getUsers:users.getUsers,
-	addUser:users.addUser,
+	getPlayers:users.getUsers,
+	addPlayer:users.addUser,
 	getMatches:matches.getMatches,
 	addMatch:matches.addMatch
 	};

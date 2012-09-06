@@ -11,6 +11,7 @@ exports.init = function()
 	initDatabaseIfRequired(config.couch.matchesDB, function()
 	{
 		GLOBAL.matchesDB = nano.use(config.couch.matchesDB);
+		registerMatchesDesignDoc();
 	});
 }
 
@@ -61,6 +62,30 @@ function registerUserDesignDoc()
 		else
 		{
     		console.log("Register user design doc.");
+		}
+	});
+}
+
+function registerMatchesDesignDoc()
+{
+	GLOBAL.matchesDB.insert(
+	{"views":
+		{
+			"by_date":{ "map": function(doc) { emit(doc.date, doc); } } 
+		}
+	}
+	,
+	"_design/matches"
+	,
+	function(error, body, header)
+	{
+		if(error)
+		{
+    		console.log("Register match design doc FAILED:"+ error);
+		}
+		else
+		{
+    		console.log("Register match design doc.");
 		}
 	});
 }

@@ -2,7 +2,7 @@ var users = require("./users.js");
 
 exports.getMatches = function(body, callback)
 {
-    matches = GLOBAL.matchesDB.list(
+    matches = GLOBAL.matchesDB.view('matches', 'by_date',
 	function (error, body, headers)
 	{
 		if(error || !body)
@@ -12,13 +12,15 @@ exports.getMatches = function(body, callback)
 		}
 		else
 		{
+			
+			console.log("matches.getMatches OK: " + JSON.stringify(body.rows));
 			var result = [];
 			for (var X in body.rows)
 			{
-				var user = body.rows[X].value;
-				delete user._id;
-				delete user._rev;
-				result.push(user);
+				var match = body.rows[X].value;
+				delete match._id;
+				delete match.rev;
+				result.push(match);
 			}
 			console.log("matches.getMatches OK: " + JSON.stringify(result));
 			callback(result);
@@ -93,7 +95,6 @@ function preValidatePlayers(players)
 
 function validatePlayers(users, players1, players2)
 {
-	console.log("validatePlayers: " + players1 + " --- " + players2 + " --- " +users);
 	var X;
 	for(X in users)
 	{
@@ -103,6 +104,11 @@ function validatePlayers(users, players1, players2)
 	for(X in players1)
 	{
 		player = players1[X];
+		if(players1.indexOf(player) != X)
+		{
+			// duplicate
+			return false;
+		}
 		if(users.indexOf(player) < 0)
 		{
 			return false;
@@ -115,6 +121,11 @@ function validatePlayers(users, players1, players2)
 	for(X in players2)
 	{
 		player = players2[X];
+		if(players2.indexOf(player) != X)
+		{
+			// duplicate
+			return false;
+		}
 		if(users.indexOf(player) < 0)
 		{
 			return false;
