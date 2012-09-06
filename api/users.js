@@ -20,13 +20,13 @@ exports.getUsers = function(body, callback)
 				delete user._rev;
 				result.push(user);
 			}
-			console.log("users.getUsers OK: " + JSON.stringify(result));
+			//console.log("users.getUsers OK: " + JSON.stringify(result));
 			callback(result);
 		}
 	});
 }
 
-exports.getUsersById = function(body, callback)
+getUsersById = function(body, callback)
 {
     matches = GLOBAL.usersDB.view('users', 'by_name',
 	function (error, body, headers)
@@ -42,12 +42,9 @@ exports.getUsersById = function(body, callback)
 			for (var X in body.rows)
 			{
 				var user = body.rows[X].value;
-				user.id = user._id;
-				delete user._id;
-				delete user._rev;
-				result[user.id] = user;
+				result[user._id] = user;
 			}
-			console.log("users.getUsersById OK: " + JSON.stringify(result));
+			//console.log("users.getUsersById OK: " + JSON.stringify(result));
 			callback(result);
 		}
 	});
@@ -71,7 +68,7 @@ exports.addUser = function(body, callback)
 	});
 }
 
-exports.updatePlayerStatsForMatch = function(matchData)
+exports.updatePlayerStatsForMatch = function(matchData, callback)
 {
 	console.log("users.updatePlayerStatsForMatch: "+JSON.stringify(matchData));
 	var playerIds = matchData.leftPlayers.concat(matchData.rightPlayers);
@@ -80,6 +77,7 @@ exports.updatePlayerStatsForMatch = function(matchData)
 		if(playersById == null)
 		{
 			console.log("FAILED TO GET PLAYER STATS TO UPDATE FOR MATCH.");
+			callback(false);
 			return;
 		}
 		
@@ -87,30 +85,14 @@ exports.updatePlayerStatsForMatch = function(matchData)
 		if(!OK)
 		{
 			console.log("FAILED TO CALCULATE PLAYER STATS FOR MATCH.");
+			callback(false);
 			return;
 		}
-		var bulk = {};
-		bulk.docs = [];
-		for (X in playersById)
+		updatePlayersByIdToDatabase(playersById, function(ok)
 		{
-			bulk.docs.push(playersById[X]);
-		}
-		
-		GLOBAL.usersDB.bulk(bulk, function (error, body, headers)
-		{
-			if(error || !body)
-			{
-				console.log("FAILED TO UPDATE PLAYER STATS FOR MATCH.");
-			}
-			else
-			{
-				console.log("Updated player stats for match.");
-			}
+			callback(ok);
 		});
-		
 	});
-	
-	return;
 }
 
 function getPlayersByIdUsingIds(playerIds, callback)
@@ -163,13 +145,15 @@ function updateStatsOfPlayersByIdForMatch(playersById, matchData)
 		player = playersById[winners[X]];
 		stats = getStatsFunction(player);
 		addToProperty(stats, "wins", 1);
+		addToProperty(stats, "score", 1);
+		addToProperty(stats, "games", 1);
 	}
 	
-	var everyone = winners.concat(losers);
-	for (X in everyone)
+	for (X in losers)
 	{
-		player = playersById[everyone[X]];
+		player = playersById[losers[X]];
 		stats = getStatsFunction(player);
+		addToProperty(stats, "score", -1);
 		addToProperty(stats, "games", 1);
 	}
 	return true;
@@ -177,7 +161,7 @@ function updateStatsOfPlayersByIdForMatch(playersById, matchData)
 
 exports.rebuiltPlayerStatsFromMatches = function(matchDatas, callback)
 {
-	exports.getUsersById({}, function(playersById)
+	getUsersById({}, function(playersById)
 	{
 		var X;
 		for(X in playersById)
@@ -186,9 +170,41 @@ exports.rebuiltPlayerStatsFromMatches = function(matchDatas, callback)
 		}
 		for(X in matchDatas)
 		{
-			updateStatsOfPlayersByIdForMatch(playersById, matchDatas[X]);
+			var OK = updateStatsOfPlayersByIdForMatch(playersById, matchDatas[X]);
+			if(!OK)
+			{
+				console.log("FAILED TO CALCULATE PLAYER STATS FOR MATCH.");
+				callback(false);
+			}
 		}
-		callback(true);
+		updatePlayersByIdToDatabase(playersById, function(ok)
+		{
+			callback(ok);
+		});
+	});
+}
+
+function updatePlayersByIdToDatabase(playersById, callback)
+{
+	var bulk = {};
+	bulk.docs = [];
+	for (X in playersById)
+	{
+		bulk.docs.push(playersById[X]);
+	}
+		
+	GLOBAL.usersDB.bulk(bulk, function (error, body, headers)
+	{
+		if(error || !body)
+		{
+			console.log("FAILED TO UPDATE PLAYER STATS FOR MATCH.");
+			callback(false);
+		}
+		else
+		{
+			console.log("Updated player stats for match.");
+			callback(true);
+		}
 	});
 }
 
@@ -196,9 +212,9 @@ function addToProperty(obj, property, value)
 {
 	if(!obj[property])
 	{
-		return obj[property] = 1;
+		return obj[property] = value;
 	}
-	return obj[property]++;
+	return obj[property] += value;
 }
 
 function getDuoStats(player)

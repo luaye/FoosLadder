@@ -9,7 +9,8 @@ var map = {
 	getPlayers:users.getUsers,
 	addPlayer:users.addUser,
 	getMatches:matches.getMatches,
-	addMatch:matches.addMatch
+	addMatch:matches.addMatch,
+	rebuiltMatchStats:matches.rebuiltMatchStats
 	};
 
 exports.runAPI = function(request, response)

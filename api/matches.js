@@ -147,8 +147,17 @@ function addMatchToDatabase(matchData, callback)
 		else
 		{
 			console.log("matches.addMatch OK: " + JSON.stringify(body));
-			users.updatePlayerStatsForMatch(matchData);
-			callback({status:"OK"});
+			users.updatePlayerStatsForMatch(matchData, function(ok)
+			{
+				if(ok)
+				{
+					callback({status:"OK"});	
+				}
+				else
+				{
+					callback({status:"error", message:"unknown"});
+				}
+			});
 		}
 	});
 }
