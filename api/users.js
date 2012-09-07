@@ -116,9 +116,65 @@ function getPlayersByIdUsingIds(playerIds, callback)
 	});
 }
 
+function getAverageRatingOfPlayers(playersById, getStatsFunction, players)
+{
+	var ratings;
+	var player;
+	var index;
+	var stats;
+	for (index in players)
+	{
+		player = playersById[players[index]];
+		stats = getStatsFunction(player);
+		ratings += getProperty(stats, "score", 1600);
+	}
+	return ratings / players.length;
+}
+
+function expectedScoreForRating(rating, opponent)
+{
+	var Qa = 10^(rating / 400);
+	var Qb = 10^(opponent / 400);
+	
+	return Qa / (Qa + Qb);
+}
+
+function addRatingToPlayers(playersById, getStatsFunction, players, deltaRating)
+{
+	var ratings;
+	var player;
+	var index;
+	var stats;
+	for (index in players)
+	{
+		player = playersById[players[index]];
+		stats = getStatsFunction(player);
+		score = getProperty(stats, "score", 1600);
+		stats["score"] = score + deltaRating;
+	}
+	return ratings / players.length;
+}
+
 function updateStatsOfPlayersByIdForMatch(playersById, matchData)
 {
 	var isDuoGame = matchData.leftPlayers.length > 1 || matchData.rightPlayers.length > 1;
+	var getStatsFunction = isDuoGame ? getDuoStats : getSoloStats;
+
+	var Rleft = getAverageRatingOfPlayers(playersById, getStatsFunction, matchData.leftPlayers);
+	var Rright = getAverageRatingOfPlayers(playersById, getStatsFunction, matchData.rightPlayers);
+
+	var Eleft = expectedScoreForRating(Rleft, Rright);
+	
+	var Gleft = matchData.leftScore;
+	var Gtotal = Gleft + matchData.rightScore;
+	var Sleft = Gleft / Gtotal;
+	
+	var K = 32;
+	var KDleft = K * ( Sleft - Eleft );
+	
+	addRatingToPlayers(playersById, getStatsFunction, matchData.leftPlayers, KDleft);
+	addRatingToPlayers(playersById, getStatsFunction, matchData.rightPlayers, -KDleft);
+
 	var winners = [];
 	var losers;
 	if(matchData.leftScore > matchData.rightScore)
@@ -135,17 +191,13 @@ function updateStatsOfPlayersByIdForMatch(playersById, matchData)
 	{
 		losers = matchData.rightPlayers.concat(matchData.leftPlayers);
 	}
-	var getStatsFunction = isDuoGame ? getDuoStats : getSoloStats;
 	
 	var X;
-	var player;
-	var stats;
 	for (X in winners)
 	{
 		player = playersById[winners[X]];
 		stats = getStatsFunction(player);
 		addToProperty(stats, "wins", 1);
-		addToProperty(stats, "score", 1);
 		addToProperty(stats, "games", 1);
 	}
 	
@@ -153,7 +205,6 @@ function updateStatsOfPlayersByIdForMatch(playersById, matchData)
 	{
 		player = playersById[losers[X]];
 		stats = getStatsFunction(player);
-		addToProperty(stats, "score", -1);
 		addToProperty(stats, "games", 1);
 	}
 	return true;
@@ -215,6 +266,14 @@ function addToProperty(obj, property, value)
 		return obj[property] = value;
 	}
 	return obj[property] += value;
+}
+
+function getProperty(obj, property, defaultValue)
+{
+	if(!obj[property])
+		return defaultValue;
+		
+	return obj[property];
 }
 
 function getDuoStats(player)
