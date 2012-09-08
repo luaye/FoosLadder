@@ -106,16 +106,18 @@ function onRebuiltMatchStats(ok)
 
 this.exportData = function()
 {
-	if(exportText)
+	var exportArea = document.getElementById("exportArea");
+	if(exportArea == null)
 	{
-		exportText.parentNode.removeChild(exportText);
+		alert("can't find exportArea in view");
+		return;
 	}
+	exportArea.innerHTML = "";
 	callAPI({request:"getMatchesRaw"}, 
 	function(docs)
 	{
 		var obj = {docs:docs};
-		exportText = document.createTextNode(JSON.stringify(obj));
-		document.body.appendChild(exportText);
+		exportArea.appendChild(document.createTextNode(JSON.stringify(obj)));
 	});
 }
 
