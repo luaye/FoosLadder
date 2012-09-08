@@ -10,131 +10,18 @@
 <script type="text/javascript" src="js/jquery-1.8.1.min.js"></script>
 <script type="text/javascript" src="js/shared.js"></script>
 <script type="text/javascript" src="js/table.js"></script>
+<script type="text/javascript" src="js/matchesView.js"></script>
 
 <script type="text/javascript">
 
-var players;
-var playersById;
-var table;
-var exportText;
+var matchesView;
 
 function onload()
 {
 	table = new LoadableTable(document.getElementById("dataTable").children[0]);
+	matchesView = new MatchesView(table);
 	
-	table.clear();
-	table.setLoading(true);
-	
-	callAPI({request:"getPlayersByIds"}, onGetPlayersByIdsLoaded);
-}
-
-
-function onGetPlayersByIdsLoaded(data)
-{
-	playersById = data;
-	updateRows();
-}
-
-function updateRows()
-{
-	table.clear();
-	table.setLoading(true);
-	callAPI({request:"getMatches"}, onMatchesLoaded);
-}
-
-function onMatchesLoaded(data)
-{
-	table.setLoading(false);
-	table.clear();
-	
-	var playerRow;
-	for(var i = data.length - 1; i >= 0; i--)
-	{
-		playerRow = table.createRow();
-		fillRowWithMatch(playerRow, data[i]);
-	}
-}
-
-function fillRowWithMatch(tableRow, match)
-{
-	var cells = tableRow.getElementsByTagName("td");
-	var date = new Date(match.date);
-	cells[1].innerHTML = makePlayersStringFromIds(match.leftPlayers);
-	cells[2].innerHTML = match.leftScore + " - " + match.rightScore;
-	cells[3].innerHTML = makePlayersStringFromIds(match.rightPlayers);
-	cells[4].innerHTML = date.getDate() + ", "+ (date.getMonth()+1) + ", " + date.getFullYear() + "<br/>" + doubleDigit(date.getHours()) + ":" + doubleDigit(date.getMinutes());
-}
-
-function makePlayersStringFromIds(playerIds)
-{
-	var players = [];
-	for(var X in playerIds)
-	{
-		var player = playersById[playerIds[X]];
-		players.push(player.name);
-	}
-	return players.join("<br/>");
-}
-
-function doubleDigit(number)
-{
-	if(number < 10)
-	{
-		return "0"+number;
-	}
-	return ""+number;
-}
-
-function addplayer()
-{
-	if(players == null)
-	{
-		alert("player loading in progress.");
-		return;
-	}
-	var playername = prompt("Enter your name to add : ", "your name here");
-	if(playername == null)
-	{
-		return;
-	}
-	if(findplayerByName(players, playername))
-	{
-		alert("player already exists : " +  playername );
-	}
-	else
-	{
-		var yes = confirm("Do you really want to add new player '" + playername+ "'?");
-	   if( yes )
-	   {
-			callAPI({request:"addplayer", name:playername}, onplayersAdded);
-	   }
-	}
-}
-
-function onplayersAdded(data)
-{
-	updateplayerRows();
-}
-function onRebuiltMatchStats(ok)
-{
-	updateRows();
-	alert(ok ? "Successful" : "Failed");
-}
-
-
-function exportData()
-{
-	if(exportText)
-	{
-		exportText.parentNode.removeChild(exportText);
-	}
-	callAPI({request:"getMatchesRaw"}, 
-	function(docs)
-	{
-		var obj = {docs:docs};
-		exportText = document.createTextNode(JSON.stringify(obj));
-		document.body.appendChild(exportText);
-	});
+	matchesView.loadPlayers();
 }
 
 </script>
@@ -166,6 +53,6 @@ player name 2 </td>
     <td class="tiny">date</td>
   </tr>
 </table>
-<p><a href="javascript:exportData(this)" class="tiny">Export</a></p>
+<p><a href="javascript:matchesView.exportData(this)" class="tiny">Export</a></p>
 </body>
 </html>

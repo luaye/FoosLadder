@@ -6,24 +6,26 @@ var users;
 var table = loadableTable;
 var self = this;
 
+table.clear();
+table.setLoading(true);
+
 this.updateRows = function()
 {
 	table.clear();
 	table.setLoading(true);
-	self.loadPlayers();
 }
 
 this.loadPlayers = function()
 {
-	callAPI({request:"getPlayers"}, onUsersLoaded);
+	callAPI({request:"getPlayers"}, onPlayersLoaded);
 }
 
 this.setPlayers = function(data)
 {
-	onUsersLoaded(data)
+	onPlayersLoaded(data)
 }
 
-function onUsersLoaded(data)
+function onPlayersLoaded(data)
 {
 	users = data;
 	

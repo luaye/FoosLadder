@@ -21,11 +21,12 @@ function onload()
 	
 	playersView = new PlayersView(loadableTable);
 	
-	playersView.updateRows();
+	playersView.loadPlayers();
 }
 
 
 </script>
+
 </head>
 <body onload="onload();">
 <div class="header"><a href="matches.html">Matches</a> | <a href="addmatch.html">Add Match</a>  | <a href="users.html">Players</a></div>
