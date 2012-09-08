@@ -1,7 +1,7 @@
 
 exports.getUsers = function(body, callback)
 {
-    matches = GLOBAL.usersDB.view('users', 'by_name',
+	GLOBAL.usersDB.view('users', 'by_name',
 	function (error, body, headers)
 	{
 		if(error || !body)
@@ -26,7 +26,7 @@ exports.getUsers = function(body, callback)
 	});
 }
 
-getUsersById = function(body, callback)
+exports.getPlayersByIds = function(body, callback)
 {
     matches = GLOBAL.usersDB.view('users', 'by_name',
 	function (error, body, headers)
@@ -212,7 +212,7 @@ function updateStatsOfPlayersByIdForMatch(playersById, matchData)
 
 exports.rebuiltPlayerStatsFromMatches = function(matchDatas, callback)
 {
-	getUsersById({}, function(playersById)
+	exports.getPlayersByIds({}, function(playersById)
 	{
 		var X;
 		for(X in playersById)

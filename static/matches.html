@@ -1,8 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!doctype html>
+<html lang='en' xml:lang='en' xmlns="http://www.w3.org/1999/xhtml">
 <head>
+<meta charset="UTF-8">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title></title>
+<title>Foos Ladder</title>
 
 <link href="css/style.css" rel="stylesheet" type="text/css" />
 
@@ -15,6 +16,7 @@
 var players;
 var playersById;
 var table;
+var exportText;
 
 function onload()
 {
@@ -23,19 +25,13 @@ function onload()
 	table.clear();
 	table.setLoading(true);
 	
-	callAPI({request:"getPlayers"}, onplayersLoaded);
+	callAPI({request:"getPlayersByIds"}, onGetPlayersByIdsLoaded);
 }
 
 
-function onplayersLoaded(data)
+function onGetPlayersByIdsLoaded(data)
 {
-	players = data;
-	playersById = {};
-	for (var X in players)
-	{
-		var player = players[X];
-		playersById[player.id] = player;
-	}
+	playersById = data;
 	updateRows();
 }
 
@@ -119,6 +115,27 @@ function onplayersAdded(data)
 {
 	updateplayerRows();
 }
+function onRebuiltMatchStats(ok)
+{
+	updateRows();
+	alert(ok ? "Successful" : "Failed");
+}
+
+
+function exportData()
+{
+	if(exportText)
+	{
+		exportText.parentNode.removeChild(exportText);
+	}
+	callAPI({request:"getMatchesRaw"}, 
+	function(docs)
+	{
+		var obj = {docs:docs};
+		exportText = document.createTextNode(JSON.stringify(obj));
+		document.body.appendChild(exportText);
+	});
+}
 
 </script>
 </head>
@@ -149,6 +166,6 @@ player name 2 </td>
     <td class="tiny">date</td>
   </tr>
 </table>
-<p>&nbsp;</p>
+<p><a href="javascript:exportData(this)" class="tiny">Export</a></p>
 </body>
 </html>

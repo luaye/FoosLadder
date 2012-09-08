@@ -8,7 +8,9 @@ init.init();
 var map = {
 	getPlayers:users.getUsers,
 	addPlayer:users.addUser,
+	getPlayersByIds:users.getPlayersByIds,
 	getMatches:matches.getMatches,
+	getMatchesRaw:matches.getMatchesRaw,
 	addMatch:matches.addMatch,
 	rebuiltMatchStats:matches.rebuiltMatchStats
 	};

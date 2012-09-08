@@ -27,6 +27,29 @@ exports.getMatches = function(body, callback)
 	});
 }
 
+exports.getMatchesRaw = function(body, callback)
+{
+    matches = GLOBAL.matchesDB.view('matches', 'by_date',
+	function (error, body, headers)
+	{
+		if(error || !body)
+		{
+			console.log("matches.getMatchesRaw error: "+error);
+			callback([]);
+		}
+		else
+		{
+			var result = [];
+			for (var X in body.rows)
+			{
+				var match = body.rows[X].value;
+				result.push(match);
+			}
+			callback(result);
+		}
+	});
+}
+
 
 exports.addMatch = function(body, callback)
 {
