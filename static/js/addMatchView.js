@@ -4,7 +4,7 @@ function AddMatchView(tableElement)
 
 var table = tableElement;
 var players;
-
+var self = this;
 var leftPlayer1Field = document.getElementById("leftPlayer1");
 var leftPlayer2Field = document.getElementById("leftPlayer2");
 var rightPlayer1Field = document.getElementById("rightPlayer1");
@@ -38,6 +38,11 @@ this.loadPlayers = function()
 this.setPlayers = function(data)
 {
 	onPlayersLoaded(data)
+}
+
+this.onMatchAdded = function()
+{
+	// override
 }
 
 function onPlayersLoaded(data)
@@ -139,7 +144,8 @@ function onMatchSubmitted(body)
 	}
 	else
 	{
-		window.location = "matches.html";
+		submitButton.disabled = false;
+		self.onMatchAdded();
 	}
 }
 

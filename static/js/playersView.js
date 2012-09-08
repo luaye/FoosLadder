@@ -120,13 +120,18 @@ function onPlayerAdded(data)
 
 this.rebuiltStats = function()
 {
+	table.clear();
+	table.setLoading(true);
 	callAPI({request:"rebuiltMatchStats"}, onRebuiltMatchStats);
 }
 
 function onRebuiltMatchStats(ok)
 {
-	self.updateRows();
-	alert(ok ? "Successful" : "Failed");
+	self.loadPlayers();
+	if(!ok)
+	{
+		alert("Failed");
+	}
 }
 
 this.exportData = function()

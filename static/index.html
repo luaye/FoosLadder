@@ -40,7 +40,10 @@ function onLoad()
 	var addMatchTable = document.getElementById("addMatchTable").children[0];
 	addMatchView = new AddMatchView(addMatchTable);
 	addMatchView.loadPlayers = loadPlayers;
+	addMatchView.onMatchAdded = onMatchAdded;
 	addMatchView.hide();
+	
+	showPlayers();
 }
 
 function loadPlayers()
@@ -53,6 +56,13 @@ function onPlayersLoaded(players)
 	matchesView.setPlayers(players);
 	playersView.setPlayers(players);
 	addMatchView.setPlayers(players);
+}
+
+function onMatchAdded()
+{
+	loadPlayers();
+	matchesView.loadMatches();
+	setCurrentView(matchesView);
 }
 
 function showMatches()
@@ -84,7 +94,7 @@ function setCurrentView(view)
 	}
 }
 
-</script>> 
+</script>
 
 </head> 
 <body onLoad="onLoad()"> 
