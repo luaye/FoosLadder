@@ -108,14 +108,14 @@ this.addPlayer = function()
 		var yes = confirm("Do you really want to add new user '" + username+ "'?");
 	   if( yes )
 	   {
-			callAPI({request:"addPlayer", name:username}, onUsersAdded);
+			callAPI({request:"addPlayer", name:username}, onPlayerAdded);
 	   }
 	}
 }
 
-function onUsersAdded(data)
+function onPlayerAdded(data)
 {
-	self.updateRows();
+	self.loadPlayers();
 }
 
 this.rebuiltStats = function()
