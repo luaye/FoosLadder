@@ -137,15 +137,15 @@ player name 2 </td>
       <a href="javascript:playersView.rebuiltStats()" class="tiny">Rebuilt stats</a></td>
   </tr>
   <tr>
-    <td bgcolor="#999999">Name</td>
+    <td align="center" bgcolor="#999999"><a href="javascript:playersView.toggleSortBy('name')">Name</a></td>
+    <td width="100" align="center" bgcolor="#999999"><a href="javascript:playersView.toggleSortBy('duoStats.score')">duo<br />
+    score</a></td>
     <td width="100" align="center" bgcolor="#999999">duo<br />
-    score</td>
-    <td width="100" align="center" bgcolor="#999999">duo<br />
-    wins/games</td>
+    <a href="javascript:playersView.toggleSortBy('duoStats.wins')">wins</a>/<a href="javascript:playersView.toggleSortBy('duoStats.games')">games</a></td>
+    <td width="100" align="center" bgcolor="#999999"><a href="javascript:playersView.toggleSortBy('soloStats.score')">solo<br />
+    score</a></td>
     <td width="100" align="center" bgcolor="#999999">solo<br />
-    score</td>
-    <td width="100" align="center" bgcolor="#999999">solo<br />
-    win/games</td>
+    <a href="javascript:playersView.toggleSortBy('soloStats.wins')">win</a>/<a href="javascript:playersView.toggleSortBy('soloStats.games')">games</a></td>
   </tr>
   <tr id="loadingRow">
     <td colspan="5" align="center" bgcolor="#FFCC00">Getting players...</td>

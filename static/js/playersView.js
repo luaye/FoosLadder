@@ -2,7 +2,7 @@
 function PlayersView(loadableTable)
 {
 
-var users;
+var players;
 var table = loadableTable;
 var self = this;
 
@@ -12,7 +12,7 @@ table.setLoading(true);
 this.show = function()
 {
 	table.table.style.display = 'inherit';
-	if(users == null)
+	if(players == null)
 	{
 		self.loadPlayers();
 	}
@@ -41,17 +41,21 @@ this.updateRows = function()
 
 function onPlayersLoaded(data)
 {
-	users = data;
-	
+	players = data;
+	updateRows();
+}
+
+function updateRows()
+{
 	table.setLoading(false);
 	table.clear();
 	
 	var X;
 	var userRow;
-	for(X in data)
+	for(X in players)
 	{
 		userRow = table.createRow();
-		fillRowWithUser(userRow, data[X]);
+		fillRowWithUser(userRow, players[X]);
 	}
 }
 
@@ -89,7 +93,7 @@ function safeSlashNum(num1, num2)
 
 this.addPlayer = function()
 {
-	if(users == null)
+	if(players == null)
 	{
 		alert("User loading in progress.");
 		return;
@@ -99,7 +103,7 @@ this.addPlayer = function()
 	{
 		return;
 	}
-	if(findUserByName(users, username))
+	if(findUserByName(players, username))
 	{
 		alert("User already exists : " +  username );
 	}
@@ -116,6 +120,65 @@ this.addPlayer = function()
 function onPlayerAdded(data)
 {
 	self.loadPlayers();
+}
+
+
+var forwardSortKey;
+this.toggleSortBy = function(key)
+{
+	var reversed;
+	if(forwardSortKey == key)
+	{
+		reversed = true;
+		forwardSortKey = null;
+	}
+	else
+	{
+		forwardSortKey = key;
+	}
+	var properties = key.split(".");
+	players.sort(function(a, b)
+	{
+		var avalue = readPropertyChain(a, properties);
+		var bvalue = readPropertyChain(b, properties);
+		if(typeof avalue == "string") 
+		{
+			avalue = avalue.toLowerCase();
+		}
+		if(typeof bvalue == "string") 
+		{
+			bvalue = bvalue.toLowerCase();
+		}
+		var value = 0;
+		
+		if(avalue < bvalue)
+		{
+			value = 1;
+		}
+		else if(avalue > bvalue)
+		{
+			value = -1;
+		}
+		if(reversed)
+		{
+			return -value;
+		}
+		return value;
+	});
+	updateRows();
+}
+
+function readPropertyChain(obj, properties)
+{
+	for( var X in properties)
+	{
+		obj = obj[properties[X]];
+		if(obj == null)
+		{
+			return "";
+		}
+	}
+	return obj;
 }
 
 this.rebuiltStats = function()
