@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!doctype html>
+<html lang='en' xml:lang='en' xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title></title>
@@ -9,137 +9,21 @@
 <script type="text/javascript" src="js/jquery-1.8.1.min.js"></script>
 <script type="text/javascript" src="js/shared.js"></script>
 <script type="text/javascript" src="js/table.js"></script>
+<script type="text/javascript" src="js/playersView.js"></script>
 
 <script type="text/javascript">
 
-var users;
-var table;
-var exportText;
+var playersView;
 
 function onload()
 {
-	table = new LoadableTable(document.getElementById("dataTable").children[0]);
+	var loadableTable = new LoadableTable(document.getElementById("dataTable").children[0]);
 	
-	updateRows();
-}
-
-function updateRows()
-{
-	table.clear();
-	table.setLoading(true);
-	callAPI({request:"getPlayers"}, onUsersLoaded);
-}
-
-function onUsersLoaded(data)
-{
-	users = data;
+	playersView = new PlayersView(loadableTable);
 	
-	table.setLoading(false);
-	table.clear();
-	
-	var X;
-	var userRow;
-	for(X in data)
-	{
-		userRow = table.createRow();
-		fillRowWithUser(userRow, data[X]);
-	}
+	playersView.updateRows();
 }
 
-function fillRowWithUser(tableRow, user)
-{
-	var soloStats = user.soloStats ? user.soloStats : {};
-	var duoStats = user.duoStats ? user.duoStats : {};
-	var cells = tableRow.getElementsByTagName("td");
-	cells[0].innerHTML = user.name
-	cells[1].innerHTML = safeStr(duoStats.score);
-	cells[2].innerHTML = safeSlashNum(duoStats.wins, duoStats.games);
-	cells[3].innerHTML = safeStr(soloStats.score);
-	cells[4].innerHTML = safeSlashNum(soloStats.wins, soloStats.games);
-}
-
-function safeStr(obj)
-{
-	if(obj)
-	{
-		return Math.round(Number(obj));
-	}
-	return "";
-}
-
-function safeSlashNum(num1, num2)
-{
-	if(!num1) num1 = 0;
-	if(!num2) num2 = 0;
-	if(num1 == 0 && num2 == 0)
-	{
-		return "";
-	}
-	return num1 + " / " + num2;
-}
-
-function addPlayer()
-{
-	if(users == null)
-	{
-		alert("User loading in progress.");
-		return;
-	}
-	var username = prompt("Enter your name to add : ", "your name here");
-	if(username == null)
-	{
-		return;
-	}
-	if(findUserByName(users, username))
-	{
-		alert("User already exists : " +  username );
-	}
-	else
-	{
-		var yes = confirm("Do you really want to add new user '" + username+ "'?");
-	   if( yes )
-	   {
-			callAPI({request:"addPlayer", name:username}, onUsersAdded);
-	   }
-	}
-}
-
-function onUsersAdded(data)
-{
-	updateRows();
-}
-
-function rebuiltStats()
-{
-	callAPI({request:"rebuiltMatchStats"}, onRebuiltMatchStats);
-}
-
-function onRebuiltMatchStats(ok)
-{
-	updateRows();
-	alert(ok ? "Successful" : "Failed");
-}
-
-
-function exportData()
-{
-	if(exportText)
-	{
-		exportText.parentNode.removeChild(exportText);
-	}
-	callAPI({request:"getPlayersByIds"}, 
-	function(data)
-	{
-		var docs = [];
-		for (var X in data)
-		{
-			docs.push(data[X]);
-		}
-		var obj = {docs:docs};
-		exportText = document.createTextNode(JSON.stringify(obj));
-		document.body.appendChild(exportText);
-	});
-}
 
 </script>
 </head>
@@ -149,8 +33,8 @@ function exportData()
 <table width="580" border="0" align="center" id="dataTable">
   <tr>
     <td colspan="5" align="center">Players<br />
-      <a href="javascript:addPlayer()" class="tiny">Add player</a>  |
-      <a href="javascript:rebuiltStats()" class="tiny">Rebuilt stats</a></td>
+      <a href="javascript:playersView.addPlayer()" class="tiny">Add player</a>  |
+      <a href="javascript:playersView.rebuiltStats()" class="tiny">Rebuilt stats</a></td>
   </tr>
   <tr>
     <td bgcolor="#999999">Name</td>
@@ -159,7 +43,7 @@ function exportData()
     <td width="100" align="center" bgcolor="#999999">duo<br />
     wins/games</td>
     <td width="100" align="center" bgcolor="#999999">solo<br />
-    games</td>
+    score</td>
     <td width="100" align="center" bgcolor="#999999">solo<br />
     win/games</td>
   </tr>
@@ -167,13 +51,15 @@ function exportData()
     <td colspan="5" align="center" bgcolor="#FFCC00">Getting players...</td>
   </tr>
   <tr id="sampleRow">
-    <td class="tableRow">NAME</td>
-    <td align="center" class="tableRow">2</td>
-    <td align="center" class="tableRow">1/2</td>
-    <td align="center" class="tableRow">2</td>
-    <td align="center" class="tableRow">1/2</td>
+    <td class="tableRow"><playerName>NAME</<playerName></td>
+    <td align="center" class="tableRow"><duoScore>1</<duoScore></td>
+    <td align="center" class="tableRow"><duoWins>2/3</duoWins></td>
+    <td align="center" class="tableRow"><soloScore>2</soloScore></td>
+    <td align="center" class="tableRow"><soloWins>2/2</soloWins></td>
   </tr>
 </table>
-<p><a href="javascript:exportData(this)" class="tiny">Export</a></p>
+<p><a href="javascript:playersView.exportData()" class="tiny">Export</a></p>
+<p id="exportArea">&nbsp;</p>
+<p>&nbsp;</p>
 </body>
 </html>

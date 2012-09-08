@@ -1,19 +1,11 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!doctype html>
+<html lang='en' xml:lang='en' xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title></title>
 
 <link href="css/style.css" rel="stylesheet" type="text/css" />
 
-<style>
-.ui-timepicker-div .ui-widget-header { margin-bottom: 8px; }
-.ui-timepicker-div dl { text-align: left; }
-.ui-timepicker-div dl dt { height: 25px; margin-bottom: -25px; }
-.ui-timepicker-div dl dd { margin: 0 10px 10px 65px; }
-.ui-timepicker-div td { font-size: 90%; }
-.ui-tpicker-grid-label { background: none; border: none; margin: 0; padding: 0; }
-</style>
 <link rel="stylesheet" media="all" type="text/css"
 	href="http://code.jquery.com/ui/1.8.21/themes/ui-lightness/jquery-ui.css" />
 
@@ -21,133 +13,18 @@
 <script type="text/javascript" src="js/jquery-ui-1.8.23.custom.min.js"></script>
 <script type="text/javascript" src="js/jquery-ui-timepicker-addon.js"></script>
 <script type="text/javascript" src="js/shared.js"></script>
+<script type="text/javascript" src="js/addMatchView.js"></script>
 <script type="text/javascript">
 
-var leftPlayer1Field;
-var leftPlayer2Field;
-var rightPlayer1Field;
-var rightPlayer2Field;
-var dateNowCheckbox;
-var datePicker;
-var submitButton;
+var addMatchView;
 
 function onload()
 {
-	leftPlayer1Field = document.getElementById("leftPlayer1");
-	leftPlayer2Field = document.getElementById("leftPlayer2");
-	rightPlayer1Field = document.getElementById("rightPlayer1");
-	rightPlayer2Field = document.getElementById("rightPlayer2");
-	dateNowCheckbox = document.getElementById("dateNow");
-	datePicker = document.getElementById("datePicker");
-	submitButton = document.getElementById("submit");
+	addMatchView = new AddMatchView();
 	
-	$('#datePicker').datetimepicker();
-	updateDateSelectorVisibility();
-	
-	callAPI({request:"getPlayers"}, onPlayersLoaded);
+	addMatchView.loadPlayers();
 }
 
-function onPlayersLoaded(data)
-{
-	fillSelectListWithPlayers(leftPlayer1Field, data, "-- attacker --");
-	
-	fillSelectListWithPlayers(leftPlayer2Field, data, "-- defender --");
-	
-	fillSelectListWithPlayers(rightPlayer1Field, data, "-- attacker --");
-	
-	fillSelectListWithPlayers(rightPlayer2Field, data, "-- defender --");
-}
-
-function fillSelectListWithPlayers(selectElement, players, blankname)
-{
-	selectElement.options.length = 0;
-		selectElement.options.add(new Option(blankname, ""));
-	for (var X in players)
-	{
-		var player = players[X];
-		selectElement.options.add(new Option(player.name, player.id));
-	}
-}
-
-function dateNowChanged()
-{
-	updateDateSelectorVisibility();
-}
-
-function updateDateSelectorVisibility()
-{
-	datePicker.style.display = dateNowCheckbox.checked ? 'none' : 'inherit';
-}
-
-function onSubmit()
-{
-	var request = {};
-	request.request = "addMatch";
-	request.leftPlayer1 = String(leftPlayer1Field.value);
-	request.leftPlayer2 = String(leftPlayer2Field.value);
-	request.leftScore = Number(document.getElementById("leftScore").value);
-	
-	request.rightPlayer1 = String(rightPlayer1Field.value);
-	request.rightPlayer2 = String(rightPlayer2Field.value);
-	request.rightScore = Number(document.getElementById("rightScore").value);;	
-	
-	if(!dateNowCheckbox.checked && datePicker.value)
-	{
-		var date = new Date(datePicker.value);
-		request.date = date.getTime();
-	}
-	if(
-		isScoreValid(request.leftScore) 
-		&& 
-		isScoreValid(request.rightScore) 
-		&&
-		(request.leftPlayer1 || request.leftPlayer2)
-		&&
-		(request.rightPlayer1 || request.rightPlayer2)
-	)
-	{
-		if(request.leftScore < 10 && request.rightScore < 10)
-		{
-			var yes = confirm("Really want to submit an incomplete match?");	
-			if(!yes)
-			{
-				return;
-			}
-		}
-		else if(request.leftScore == request.rightScore)
-		{
-			var yes = confirm("Really want to submit tied match?");	
-			if(!yes)
-			{
-				return;
-			}
-		}
-		submitButton.disabled = true;
-		callAPI(request, onMatchSubmitted);
-	}
-	else
-	{
-		alert("invalid input.");
-	}
-}
-
-function isScoreValid(score)
-{
-	return score >= 0 && score <= 10;
-}
-
-function onMatchSubmitted(body)
-{
-	if(body.status == "error")
-	{
-		submitButton.disabled = false;
-		alert(body.message);
-	}
-	else
-	{
-		window.location = "matches.html";
-	}
-}
 </script>
 </head>
 <body onload="onload();">
@@ -183,12 +60,12 @@ function onMatchSubmitted(body)
     <td colspan="5">
     Date: 
       now?
-      <input name="dateNow" type="checkbox" id="dateNow" checked="checked" onchange="dateNowChanged();"/>
+      <input name="dateNow" type="checkbox" id="dateNow" checked="checked" onchange="addMatchView.dateNowChanged();"/>
       <input type="text" id="datePicker" name="datePicker" style="width: 140px" />
     </td>
   </tr>
   <tr>
-    <td colspan="5" align="center"><input type="submit" name="submit" id="submit" value="Submit" onClick="onSubmit()"/></td>
+    <td colspan="5" align="center"><input type="submit" name="submit" id="submit" value="Submit" onClick="addMatchView.onSubmit()"/></td>
   </tr>
 </table>
 

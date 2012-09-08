@@ -43,3 +43,24 @@ function findUserByName(users, name)
 	}
 	return null;
 }
+
+function getChildByTag(container, name)
+{
+	return container.getElementsByTagName(name)[0];
+}
+
+function setContentsOfTag(container, name, content)
+{
+	var tag = getChildByTag(container, name);
+	if(tag)
+	{
+		if(content instanceof Element)
+		{
+			tag.appendChild(content);
+		}
+		else
+		{
+			tag.innerHTML = content;
+		}
+	}
+}
