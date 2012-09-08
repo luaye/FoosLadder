@@ -5,9 +5,24 @@ var table = loadableTable;
 var self = this;
 var playersById;
 var exportText;
+var matches;
 
 table.clear();
 table.setLoading(true);
+
+this.show = function()
+{
+	table.table.style.display = 'inherit';
+	if(matches == null)
+	{
+		self.loadMatches();
+	}
+}
+
+this.hide = function()
+{
+	table.table.style.display  = 'none';
+}
 
 this.loadPlayers = function()
 {
@@ -22,11 +37,16 @@ this.setPlayers = function(players)
 		var player = players[X];
 		playersById[player.id] = player;
 	}
- 	updateRows();
+ 	self.loadMatches();
 }
 
-function updateRows()
+this.loadMatches = function()
 {
+	if(playersById == null)
+	{
+		self.loadPlayers();
+		return;
+	}
 	table.clear();
 	table.setLoading(true);
 	callAPI({request:"getMatches"}, onMatchesLoaded);
@@ -34,6 +54,7 @@ function updateRows()
 
 function onMatchesLoaded(data)
 {
+	matches = data;
 	table.setLoading(false);
 	table.clear();
 	
@@ -78,7 +99,7 @@ function doubleDigit(number)
 
 function onRebuiltMatchStats(ok)
 {
-	updateRows();
+	self.loadMatches();
 	alert(ok ? "Successful" : "Failed");
 }
 

@@ -1,23 +1,199 @@
-<html> 
-<head> 
+<!doctype html>
+<html lang='en' xml:lang='en' xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title></title>
 
-<title></title> 
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"> 
-<meta http-equiv="refresh" content="1;URL=matches.html">   
-<script language="JavaScript" type="text/JavaScript">   
-	function redirect()
-	{   
-		window.location = 'matches.html';   
-	}   
-</script> 
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+
+<link rel="stylesheet" media="all" type="text/css"
+	href="http://code.jquery.com/ui/1.8.21/themes/ui-lightness/jquery-ui.css" />
+
+<script type="text/javascript" src="js/jquery-1.8.1.min.js"></script>
+<script type="text/javascript" src="js/jquery-ui-1.8.23.custom.min.js"></script>
+<script type="text/javascript" src="js/jquery-ui-timepicker-addon.js"></script>
+<script type="text/javascript" src="js/shared.js"></script>
+<script type="text/javascript" src="js/table.js"></script>
+<script type="text/javascript" src="js/matchesView.js"></script>
+<script type="text/javascript" src="js/addMatchView.js"></script>
+<script type="text/javascript" src="js/playersView.js"></script>
+<script type="text/javascript">
+
+var matchesView;
+var playersView;
+var addMatchView;
+
+var currentView;
+var self = this;
+
+function onLoad()
+{
+	
+	var matchesTable = new LoadableTable(document.getElementById("matchesTable").children[0]);
+	matchesView = new MatchesView(matchesTable);
+	matchesView.loadPlayers = loadPlayers;
+	matchesView.hide();
+	
+	var playersTable = new LoadableTable(document.getElementById("playersTable").children[0]);
+	playersView = new PlayersView(playersTable);
+	playersView.loadPlayers = loadPlayers;
+	playersView.hide();
+	
+	var addMatchTable = document.getElementById("addMatchTable").children[0];
+	addMatchView = new AddMatchView(addMatchTable);
+	addMatchView.loadPlayers = loadPlayers;
+	addMatchView.hide();
+}
+
+function loadPlayers()
+{
+	callAPI({request:"getPlayers"}, self.onPlayersLoaded);
+}
+
+function onPlayersLoaded(players)
+{
+	matchesView.setPlayers(players);
+	playersView.setPlayers(players);
+	addMatchView.setPlayers(players);
+}
+
+function showMatches()
+{
+	setCurrentView(matchesView);
+}
+
+function showAddMatch()
+{
+	setCurrentView(addMatchView);
+}
+
+function showPlayers()
+{
+	setCurrentView(playersView);
+}
+
+
+function setCurrentView(view)
+{
+	if(currentView)
+	{
+		currentView.hide();
+	}
+	currentView = view;
+	if(currentView)
+	{
+		currentView.show();
+	}
+}
+
+</script>> 
 
 </head> 
-<body onLoad="redirect()"> 
+<body onLoad="onLoad()"> 
 
-<div align="center"><br>  
-<strong>Redirecting ...</strong><br> 
-<a href="javascript:redirect()">Please click here if you are seeing this page for a long time.</a> 
-</div>
+<div class="header"><a href="javascript:showMatches()">Matches</a> | <a href="javascript:showAddMatch()">Add Match</a>  | <a href="javascript:showPlayers()">Players</a></div>
+<br />
+<table width="580" border="0" align="center" id="matchesTable">
+  <tr>
+    <td colspan="5" align="center">Matches</td>
+  </tr>
+  <tr>
+    <td width="60" align="center">&nbsp;</td>
+    <td width="180" align="center" bgcolor="#999999">Red/yellow</td>
+    <td align="center" bgcolor="#999999">Score</td>
+    <td width="180" align="center" bgcolor="#999999">Blue/white</td>
+    <td width="60">&nbsp;</td>
+  </tr>
+  <tr id="loadingRow">
+    <td colspan="5" align="center" bgcolor="#FFCC00">Getting matches...</td>
+  </tr>
+  <tr id="sampleRow">
+    <td align="center" >&nbsp;</td>
+    <td align="center" class="tableRow">player name 1<br />
+    player name 2</td>
+    <td align="center" class="tableRow">2 - 1</td>
+    <td align="center" class="tableRow">player name 1<br />
+player name 2 </td>
+    <td class="tiny">date</td>
+  </tr>
+  <tr>
+    <td colspan="5"><a href="javascript:matchesView.exportData(this)" class="tiny">Export</a></td>
+  </tr>
+</table>
 
+
+<table width="580" border="0" align="center" id="playersTable">
+  <tr>
+    <td colspan="5" align="center">Players<br />
+      <a href="javascript:playersView.addPlayer()" class="tiny">Add player</a>  |
+      <a href="javascript:playersView.rebuiltStats()" class="tiny">Rebuilt stats</a></td>
+  </tr>
+  <tr>
+    <td bgcolor="#999999">Name</td>
+    <td width="100" align="center" bgcolor="#999999">duo<br />
+    score</td>
+    <td width="100" align="center" bgcolor="#999999">duo<br />
+    wins/games</td>
+    <td width="100" align="center" bgcolor="#999999">solo<br />
+    score</td>
+    <td width="100" align="center" bgcolor="#999999">solo<br />
+    win/games</td>
+  </tr>
+  <tr id="loadingRow">
+    <td colspan="5" align="center" bgcolor="#FFCC00">Getting players...</td>
+  </tr>
+  <tr id="sampleRow">
+    <td class="tableRow"><playerName>NAME</<playerName></td>
+    <td align="center" class="tableRow"><duoScore>1</<duoScore></td>
+    <td align="center" class="tableRow"><duoWins>2/3</duoWins></td>
+    <td align="center" class="tableRow"><soloScore>2</soloScore></td>
+    <td align="center" class="tableRow"><soloWins>2/2</soloWins></td>
+  </tr>
+  <tr>
+    <td colspan="5"><a href="javascript:playersView.exportData(this)" class="tiny">Export</a></td>
+  </tr>
+</table>
+
+
+<table width="480" border="0" align="center" cellpadding="4" cellspacing="0" id="addMatchTable">
+  <tr>
+    <td colspan="5" align="center">Add Match</td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center" bgcolor="#FF5555"><strong>RED/yellow</strong></td>
+    <td width="50" rowspan="2" align="center">
+      VS    </td>
+    <td colspan="2" align="center" bgcolor="#6666FF"><strong>BLUE/white</strong></td>
+  </tr>
+  <tr>
+    <td align="right" bgcolor="#FF5555"><select name="leftPlayer1" id="leftPlayer1">
+      </select><br />
+      <select name="leftPlayer2" id="leftPlayer2">
+      </select>
+    </td>
+    <td width="40" align="right" bgcolor="#FF5555">
+      <input name="leftScore" type="text" id="leftScore" size="4" maxlength="2" />
+    </td>
+    <td width="40" bgcolor="#6666FF">
+      <input name="rightScore" type="text" id="rightScore" size="4" maxlength="2" />
+    </td>
+    <td align="left" bgcolor="#6666FF"><select name="rightPlayer1" id="rightPlayer1">
+      </select><br /><select name="rightPlayer2" id="rightPlayer2">
+</select>      </td>
+  </tr>
+  <tr>
+    <td colspan="5">
+    Date: 
+      now?
+      <input name="dateNow" type="checkbox" id="dateNow" checked="checked" onchange="addMatchView.dateNowChanged();"/>
+      <input type="text" id="datePicker" name="datePicker" style="width: 140px" />
+    </td>
+  </tr>
+  <tr>
+    <td colspan="5" align="center"><input type="submit" name="submit" id="submit" value="Submit" onClick="addMatchView.onSubmit()"/></td>
+  </tr>
+</table>
+
+<div id="exportArea"></div>
 </body> 
 </html>

@@ -4,8 +4,13 @@ function LoadableTable (tableElement)
 	var loadingElement = $(tableElement).find("#loadingRow")[0];
 	var rowSample = $(tableElement).find("#sampleRow")[0];
 	
+	var container = rowSample.parentNode;
+	var elementAfterSampleRow = rowSample.nextSibling;
+	
 	tableElement.removeChild(rowSample);
 
+	this.table = tableElement;
+	
 	this.clear = function()
 	{
 		for(var X in rows)
@@ -36,7 +41,14 @@ function LoadableTable (tableElement)
 	{
 		var row = rowSample.cloneNode(true);
 		rows.push(row);
-		tableElement.appendChild(row);
+		if(elementAfterSampleRow)
+		{
+			container.insertBefore(row, elementAfterSampleRow);
+		}
+		else
+		{
+			container.appendChild(row);
+		}
 		return row;
 	}
 }

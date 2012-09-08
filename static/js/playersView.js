@@ -9,10 +9,18 @@ var self = this;
 table.clear();
 table.setLoading(true);
 
-this.updateRows = function()
+this.show = function()
 {
-	table.clear();
-	table.setLoading(true);
+	table.table.style.display = 'inherit';
+	if(users == null)
+	{
+		self.loadPlayers();
+	}
+}
+
+this.hide = function()
+{
+	table.table.style.display  = 'none';
 }
 
 this.loadPlayers = function()
@@ -23,6 +31,12 @@ this.loadPlayers = function()
 this.setPlayers = function(data)
 {
 	onPlayersLoaded(data)
+}
+
+this.updateRows = function()
+{
+	table.clear();
+	table.setLoading(true);
 }
 
 function onPlayersLoaded(data)

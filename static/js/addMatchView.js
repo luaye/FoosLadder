@@ -3,6 +3,7 @@ function AddMatchView(tableElement)
 {
 
 var table = tableElement;
+var players;
 
 var leftPlayer1Field = document.getElementById("leftPlayer1");
 var leftPlayer2Field = document.getElementById("leftPlayer2");
@@ -14,6 +15,20 @@ var submitButton = document.getElementById("submit");
 
 $('#datePicker').datetimepicker();
 updateDateSelectorVisibility();
+
+this.show = function()
+{
+	table.style.display = 'inherit';
+	if(players == null)
+	{
+		self.loadPlayers();
+	}
+}
+
+this.hide = function()
+{
+	table.style.display  = 'none';
+}
 
 this.loadPlayers = function()
 {
@@ -27,6 +42,7 @@ this.setPlayers = function(data)
 
 function onPlayersLoaded(data)
 {
+	players = data;
 	fillSelectListWithPlayers(leftPlayer1Field, data, "-- attacker --");
 	
 	fillSelectListWithPlayers(leftPlayer2Field, data, "-- defender --");
