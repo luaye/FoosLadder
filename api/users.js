@@ -149,10 +149,27 @@ function addRatingToPlayers(playersById, getStatsFunction, players, deltaRating)
 	{
 		player = playersById[players[index]];
 		stats = getStatsFunction(player);
-		score = getProperty(stats, "score", 1600);
+		score = getProperty(stats, "score", defaultScoreForPlayer(player));
 		stats["score"] = score + deltaRating;
 	}
 	return ratings / players.length;
+}
+
+function defaultScoreForPlayer(player)
+{
+	var defaults = {
+		"Lu Aye Oo": 1800, 
+		"John E": 1700, 
+		"Pedro R": 1600, 
+		"Simon H": 1500,
+		"Stephen C": 1600,
+		"Naree S": 1400,
+		"Joe R": 1400,
+		"Andy S": 1400,
+	};
+	if (defaults[player.name]) return defaults[player.name];
+	 
+	return 1600;
 }
 
 function updateStatsOfPlayersByIdForMatch(playersById, matchData)
