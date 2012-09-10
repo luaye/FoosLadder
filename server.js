@@ -10,6 +10,9 @@ var filesys = require("fs");
 var http = require("http");
 var server = http.createServer(onServerConnection);
 server.listen(SERVER_PORT);
+
+console.log("Listening on port "+SERVER_PORT);
+
 function onServerConnection(request, response)
 {
 	var relativepath = url.parse(request.url).pathname;  
