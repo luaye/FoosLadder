@@ -138,6 +138,8 @@ player name 2 </td>
   </tr>
   <tr>
     <td align="center" bgcolor="#999999"><a href="javascript:playersView.toggleSortBy('name')">Name</a></td>
+    <td width="100" align="center" bgcolor="#999999"><a href="javascript:playersView.toggleSortBy('mixedStats.score')">mixed<br />
+    score</a></td>
     <td width="100" align="center" bgcolor="#999999"><a href="javascript:playersView.toggleSortBy('duoStats.score')">duo<br />
     score</a></td>
     <td width="100" align="center" bgcolor="#999999">duo<br />
@@ -152,13 +154,14 @@ player name 2 </td>
   </tr>
   <tr id="sampleRow">
     <td class="tableRow"><playerName>NAME</<playerName></td>
-    <td align="center" class="tableRow"><duoScore>1</<duoScore></td>
+    <td align="center" class="tableRow"><mixedScore>3</mixedScore></td>
+    <td align="center" class="tableRow"><duoScore>1</duoScore></td>
     <td align="center" class="tableRow"><duoWins>2/3</duoWins></td>
     <td align="center" class="tableRow"><soloScore>2</soloScore></td>
     <td align="center" class="tableRow"><soloWins>2/2</soloWins></td>
   </tr>
   <tr>
-    <td colspan="5"><a href="javascript:playersView.exportData(this)" class="tiny">Export</a></td>
+    <td colspan="6"><a href="javascript:playersView.exportData(this)" class="tiny">Export</a></td>
   </tr>
 </table>
 

@@ -172,11 +172,8 @@ function defaultScoreForPlayer(player)
 	return 1600;
 }
 
-function updateStatsOfPlayersByIdForMatch(playersById, matchData)
+function updateRatingForMatch(playersById, getStatsFunction, matchData)
 {
-	var isDuoGame = matchData.leftPlayers.length > 1 || matchData.rightPlayers.length > 1;
-	var getStatsFunction = isDuoGame ? getDuoStats : getSoloStats;
-
 	var Rleft = getAverageRatingOfPlayers(playersById, getStatsFunction, matchData.leftPlayers);
 	var Rright = getAverageRatingOfPlayers(playersById, getStatsFunction, matchData.rightPlayers);
 
@@ -191,6 +188,15 @@ function updateStatsOfPlayersByIdForMatch(playersById, matchData)
 	
 	addRatingToPlayers(playersById, getStatsFunction, matchData.leftPlayers, KDleft);
 	addRatingToPlayers(playersById, getStatsFunction, matchData.rightPlayers, -KDleft);
+}
+
+function updateStatsOfPlayersByIdForMatch(playersById, matchData)
+{
+	var isDuoGame = matchData.leftPlayers.length > 1 || matchData.rightPlayers.length > 1;
+	var getStatsFunction = isDuoGame ? getDuoStats : getSoloStats;
+
+	updateRatingForMatch(playersById, getStatsFunction, matchData);
+	updateRatingForMatch(playersById, getMixedStats, matchData);
 
 	var winners = [];
 	var losers;
@@ -293,6 +299,15 @@ function getProperty(obj, property, defaultValue)
 	return obj[property];
 }
 
+function getMixedStats(player)
+{
+	if(!player.mixedStats)
+	{
+		return player.mixedStats = {};
+	}
+	return player.mixedStats;
+}
+
 function getDuoStats(player)
 {
 	if(!player.duoStats)
@@ -315,4 +330,5 @@ function clearPlayerStats(player)
 {
 	player.soloStats = null;
 	player.duoStats = null;
+	player.mixedStats = null;
 }

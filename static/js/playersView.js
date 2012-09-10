@@ -63,8 +63,10 @@ function fillRowWithUser(tableRow, user)
 {
 	var soloStats = user.soloStats ? user.soloStats : {};
 	var duoStats = user.duoStats ? user.duoStats : {};
+	var mixedStats = user.mixedStats ? user.mixedStats : {};
 	
 	setContentsOfTag(tableRow, "playerName", user.name);
+	setContentsOfTag(tableRow, "mixedScore", safeStr(mixedStats.score));
 	setContentsOfTag(tableRow, "duoScore", safeStr(duoStats.score));
 	setContentsOfTag(tableRow, "duoWins", safeSlashNum(duoStats.wins, duoStats.games));
 	setContentsOfTag(tableRow, "soloScore", safeStr(soloStats.score));
