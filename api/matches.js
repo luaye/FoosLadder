@@ -203,6 +203,16 @@ function addMatchToDatabase(matchData, callback)
 	});
 }
 
+exports.repeatMatchStats = function(body, callback)
+{
+	exports.getMatches({}, function(matchDatas)
+	{
+		users.rebuiltPlayerStatsFromMatches(matchDatas, function(ok)
+		{
+			callback(ok);
+		}, true);
+	});
+}
 
 exports.rebuiltMatchStats = function(body, callback)
 {
@@ -211,6 +221,6 @@ exports.rebuiltMatchStats = function(body, callback)
 		users.rebuiltPlayerStatsFromMatches(matchDatas, function(ok)
 		{
 			callback(ok);
-		});
+		}, false);
 	});
 }

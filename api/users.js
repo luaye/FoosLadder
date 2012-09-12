@@ -118,7 +118,7 @@ function getPlayersByIdUsingIds(playerIds, callback)
 
 function getAverageRatingOfPlayers(playersById, getStatsFunction, players)
 {
-	var ratings;
+	var ratings = 0;
 	var player;
 	var index;
 	var stats;
@@ -126,17 +126,26 @@ function getAverageRatingOfPlayers(playersById, getStatsFunction, players)
 	{
 		player = playersById[players[index]];
 		stats = getStatsFunction(player);
-		ratings += getProperty(stats, "score", 1600);
+// 		console.log([index, player, stats]); 
+		ratings += getProperty(stats, "score", defaultScoreForPlayer(player));
 	}
-	return ratings / players.length;
+	
+	var average = ratings / players.length;
+	if (average < 0)
+	{
+		console.log("below 0! "+[ratings, players.length]);
+	   return 0;
+	}
+	return average;
 }
 
 function expectedScoreForRating(rating, opponent)
 {
-	var Qa = 10^(rating / 400);
-	var Qb = 10^(opponent / 400);
-	
-	return Qa / (Qa + Qb);
+	var Qa = Math.pow(10, (rating / 400));
+	var Qb = Math.pow(10, (opponent / 400));
+	var Es = Qa / (Qa + Qb);
+// 	console.log("Es "+[Qa, Qb, Es]);
+	return Es;
 }
 
 function addRatingToPlayers(playersById, getStatsFunction, players, deltaRating)
@@ -151,6 +160,7 @@ function addRatingToPlayers(playersById, getStatsFunction, players, deltaRating)
 		stats = getStatsFunction(player);
 		score = getProperty(stats, "score", defaultScoreForPlayer(player));
 		stats["score"] = score + deltaRating;
+		console.log(player.name+" "+Math.round(score)+" -> "+Math.round(score+deltaRating));
 	}
 	return ratings / players.length;
 }
@@ -186,6 +196,8 @@ function updateRatingForMatch(playersById, getStatsFunction, matchData)
 	
 	var K = 32;
 	var KDleft = K * ( Sleft - Eleft );
+	
+// 	console.log("R: "+[Math.round(Rleft), Math.round(Rright), Eleft, Sleft, KDleft]);
 
 	matchData.KDleft = KDleft;
 	
@@ -236,22 +248,31 @@ function updateStatsOfPlayersByIdForMatch(playersById, matchData)
 	return true;
 }
 
-exports.rebuiltPlayerStatsFromMatches = function(matchDatas, callback)
+exports.rebuiltPlayerStatsFromMatches = function(matchDatas, callback, keepOldStats)
 {
 	exports.getPlayersByIds({}, function(playersById)
 	{
 		var X;
-		for(X in playersById)
+		if (!keepOldStats)
 		{
-			clearPlayerStats(playersById[X]);
-		}
-		for(X in matchDatas)
-		{
-			var OK = updateStatsOfPlayersByIdForMatch(playersById, matchDatas[X]);
-			if(!OK)
+			console.log("Erasing stats for players...");
+			for(X in playersById)
 			{
-				console.log("FAILED TO CALCULATE PLAYER STATS FOR MATCH.");
-				callback(false);
+				clearPlayerStats(playersById[X]);
+			}
+		}
+		var iterations = keepOldStats ? 100 : 1;
+		for (var i=0; i < iterations; i++)
+		{
+			for(X in matchDatas)
+			{
+				var OK = updateStatsOfPlayersByIdForMatch(playersById, matchDatas[X]);
+				if(!OK)
+				{
+					console.log("FAILED TO CALCULATE PLAYER STATS FOR MATCH.");
+					callback(false);
+					return;
+				}
 			}
 		}
 		updateMatchesToDatabase(matchDatas, function(ok)

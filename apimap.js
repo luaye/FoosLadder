@@ -12,7 +12,8 @@ var map = {
 	getMatches:matches.getMatches,
 	getMatchesRaw:matches.getMatchesRaw,
 	addMatch:matches.addMatch,
-	rebuiltMatchStats:matches.rebuiltMatchStats
+	rebuiltMatchStats:matches.rebuiltMatchStats,
+	repeatMatchStats:matches.repeatMatchStats
 	};
 
 exports.runAPI = function(request, response)

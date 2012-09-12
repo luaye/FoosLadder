@@ -190,6 +190,13 @@ this.rebuiltStats = function()
 	callAPI({request:"rebuiltMatchStats"}, onRebuiltMatchStats);
 }
 
+this.repeatMatches = function()
+{
+	table.clear();
+	table.setLoading(true);
+	callAPI({request:"repeatMatchStats"}, onRebuiltMatchStats);
+}
+
 function onRebuiltMatchStats(ok)
 {
 	self.loadPlayers();

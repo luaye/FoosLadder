@@ -101,16 +101,17 @@ function setCurrentView(view)
 
 <div class="header"><a href="javascript:showMatches()">Matches</a> | <a href="javascript:showAddMatch()">Add Match</a>  | <a href="javascript:showPlayers()">Players</a></div>
 <br />
-<table width="580" border="0" align="center" id="matchesTable">
+<table width="600" border="0" align="center" id="matchesTable">
   <tr>
     <td colspan="5" align="center">Matches</td>
   </tr>
   <tr>
     <td width="60" align="center">&nbsp;</td>
-    <td width="180" align="center" bgcolor="#999999">Red/yellow</td>
-    <td align="center" bgcolor="#999999">Score</td>
-    <td width="180" align="center" bgcolor="#999999">Blue/white</td>
-    <td align="center" bgcolor="#999999">Rating change</td>
+    <td align="center" bgcolor="#999999">Yellow Rating Change</td>
+    <td width="180" align="center" bgcolor="#999999">Yellow</td>
+    <td width="60" align="center" bgcolor="#999999">Score</td>
+    <td width="180" align="center" bgcolor="#999999">White</td>
+    <td align="center" bgcolor="#999999">White Rating Change</td>
     <td width="60">&nbsp;</td>
   </tr>
   <tr id="loadingRow">
@@ -118,9 +119,10 @@ function setCurrentView(view)
   </tr>
   <tr id="sampleRow">
     <td align="center" >&nbsp;</td>
+    <td align="center" class="tableRow">-11<br />
     <td align="center" class="tableRow">player name 1<br />
     player name 2</td>
-    <td align="center" class="tableRow">2 - 1</td>
+    <td align="center" class="tableRow">10 - 8</td>
     <td align="center" class="tableRow">player name 1<br />
     <td align="center" class="tableRow">+11<br />
 player name 2 </td>
@@ -136,10 +138,11 @@ player name 2 </td>
   <tr>
     <td colspan="5" align="center">Players<br />
       <a href="javascript:playersView.addPlayer()" class="tiny">Add player</a>  |
-      <a href="javascript:playersView.rebuiltStats()" class="tiny">Rebuilt stats</a></td>
+      <a href="javascript:playersView.rebuiltStats()" class="tiny">Rebuilt stats</a> |
+      <a href="javascript:playersView.repeatMatches()" class="tiny">Repeat matches</a></td>
   </tr>
-  <tr>
-    <td align="center" bgcolor="#999999"><a href="javascript:playersView.toggleSortBy('name')">Name</a></td>
+  <tr id="headerRow">
+    <td width="160" align="center" bgcolor="#999999"><a href="javascript:playersView.toggleSortBy('name')">Name</a></td>
     <td width="100" align="center" bgcolor="#999999"><a href="javascript:playersView.toggleSortBy('mixedStats.score')">mixed<br />
     score</a></td>
     <td width="100" align="center" bgcolor="#999999"><a href="javascript:playersView.toggleSortBy('duoStats.score')">duo<br />

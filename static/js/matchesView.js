@@ -70,11 +70,17 @@ function fillRowWithMatch(tableRow, match)
 {
 	var cells = tableRow.getElementsByTagName("td");
 	var date = new Date(match.date);
-	cells[1].innerHTML = makePlayersStringFromIds(match.leftPlayers);
-	cells[2].innerHTML = match.leftScore + " - " + match.rightScore;
-	cells[3].innerHTML = makePlayersStringFromIds(match.rightPlayers);
-	cells[4].innerHTML = Math.round(Number(match.KDleft)*100)/100;
-	cells[5].innerHTML = date.getDate() + ", "+ (date.getMonth()+1) + ", " + date.getFullYear() + "<br/>" + doubleDigit(date.getHours()) + ":" + doubleDigit(date.getMinutes());
+	var cellIdx = 1;
+	var change = Math.round(Number(match.KDleft)*100)/100;
+	var colors = [ 'lightgreen', '#FFCCCC' ];
+	cells[cellIdx].style.cssText = 'background-color: '+colors[change > 0 ? 0 : 1];
+	cells[cellIdx++].innerHTML = change;
+	cells[cellIdx++].innerHTML = makePlayersStringFromIds(match.leftPlayers);
+	cells[cellIdx++].innerHTML = match.leftScore + " - " + match.rightScore;
+	cells[cellIdx++].innerHTML = makePlayersStringFromIds(match.rightPlayers);
+	cells[cellIdx].style.cssText = 'background-color: '+colors[change > 0 ? 1 : 0];
+	cells[cellIdx++].innerHTML = -change;
+	cells[cellIdx++].innerHTML = date.getDate() + ", "+ (date.getMonth()+1) + ", " + date.getFullYear() + "<br/>" + doubleDigit(date.getHours()) + ":" + doubleDigit(date.getMinutes());
 }
 
 function makePlayersStringFromIds(playerIds)
