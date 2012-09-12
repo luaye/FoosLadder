@@ -17,8 +17,6 @@ exports.getMatches = function(body, callback)
 			for (var X in body.rows)
 			{
 				var match = body.rows[X].value;
-				delete match._id;
-				delete match.rev;
 				result.push(match);
 			}
 			//console.log("matches.getMatches OK: " + JSON.stringify(result));

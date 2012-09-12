@@ -185,6 +185,8 @@ function updateRatingForMatch(playersById, getStatsFunction, matchData)
 	
 	var K = 32;
 	var KDleft = K * ( Sleft - Eleft );
+
+	matchData.KDleft = KDleft;
 	
 	addRatingToPlayers(playersById, getStatsFunction, matchData.leftPlayers, KDleft);
 	addRatingToPlayers(playersById, getStatsFunction, matchData.rightPlayers, -KDleft);
@@ -251,10 +253,39 @@ exports.rebuiltPlayerStatsFromMatches = function(matchDatas, callback)
 				callback(false);
 			}
 		}
+		updateMatchesToDatabase(matchDatas, function(ok)
+		{
+			console.log("updating matches: "+ok);
+		});
 		updatePlayersByIdToDatabase(playersById, function(ok)
 		{
 			callback(ok);
 		});
+	});
+}
+
+function updateMatchesToDatabase(matchDatas, callback)
+{
+	var bulk = {};
+	bulk.docs = [];
+	
+	for (X in matchDatas)
+	{
+		bulk.docs.push(matchDatas[X]);
+	}
+
+	GLOBAL.matchesDB.bulk(bulk, function (error, body, headers)
+	{
+		if(error || !body)
+		{
+			console.log("FAILED TO UPDATE MATCH STATS.");
+			callback(false);
+		}
+		else
+		{
+			console.log("Updated match stats.");
+			callback(true);
+		}
 	});
 }
 

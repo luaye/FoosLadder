@@ -73,7 +73,8 @@ function fillRowWithMatch(tableRow, match)
 	cells[1].innerHTML = makePlayersStringFromIds(match.leftPlayers);
 	cells[2].innerHTML = match.leftScore + " - " + match.rightScore;
 	cells[3].innerHTML = makePlayersStringFromIds(match.rightPlayers);
-	cells[4].innerHTML = date.getDate() + ", "+ (date.getMonth()+1) + ", " + date.getFullYear() + "<br/>" + doubleDigit(date.getHours()) + ":" + doubleDigit(date.getMinutes());
+	cells[4].innerHTML = Math.round(Number(match.KDleft)*100)/100;
+	cells[5].innerHTML = date.getDate() + ", "+ (date.getMonth()+1) + ", " + date.getFullYear() + "<br/>" + doubleDigit(date.getHours()) + ":" + doubleDigit(date.getMinutes());
 }
 
 function makePlayersStringFromIds(playerIds)
