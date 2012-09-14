@@ -99,15 +99,42 @@ function averagePlayerRatings(field1, field2)
 	return rating / nPlayers;
 }
 
+function expectedScoreForRating(rating, opponent)
+{
+	var Qa = Math.pow(10, (rating / 400));
+	var Qb = Math.pow(10, (opponent / 400));
+	var Es = Qa / (Qa + Qb);
+	return Es;
+}
+
 function updateRatings()
 {
-	var rating = averagePlayerRatings(rightPlayer1Field, rightPlayer2Field);
+	var rightRating = averagePlayerRatings(rightPlayer1Field, rightPlayer2Field);
 	
-	rightRating.innerHTML = Math.round(rating);
+	rightRating.innerHTML = Math.round(rightRating);
 	
-	rating = averagePlayerRatings(leftPlayer1Field, leftPlayer2Field);
+	var leftRating = averagePlayerRatings(leftPlayer1Field, leftPlayer2Field);
 	
-	leftRating.innerHTML = Math.round(rating);
+	leftRating.innerHTML = Math.round(leftRating);
+	
+	var Es = expectedScoreForRating(leftRating, rightRating);
+	var leftWins = Es > 0.5;
+	var minExpected = leftWins ? (1-Es) : Es;
+	var loserGoals = 10 * minExpected / (1-minExpected);
+	var leftGoals, rightGoals;
+	if (leftWins)
+	{
+		leftGoals = 10;
+		rightGoals = Math.round(loserGoals*10)/10;
+	}
+	else
+	{
+		leftGoals = Math.round(loserGoals*10)/10;
+		rightGoals = 10;
+	}
+	
+	leftExpectedScore.innerHTML = leftGoals;
+	rightExpectedScore.innerHTML = rightGoals;
 }
 
 this.playerChanged = function()
