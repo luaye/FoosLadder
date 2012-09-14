@@ -176,26 +176,28 @@ player name 2 </td>
     <td colspan="5" align="center">Add Match</td>
   </tr>
   <tr>
-    <td colspan="2" align="center" bgcolor="#FF5555"><strong>RED/yellow</strong></td>
+    <td colspan="3" align="center" bgcolor="#FFFF55"><strong>Yellow</strong></td>
     <td width="50" rowspan="2" align="center">
       VS    </td>
-    <td colspan="2" align="center" bgcolor="#6666FF"><strong>BLUE/white</strong></td>
+    <td colspan="3" align="center" bgcolor="#AAAAAA"><strong>White</strong></td>
   </tr>
   <tr>
-    <td align="right" bgcolor="#FF5555"><select name="leftPlayer1" id="leftPlayer1">
+  	<td  bgcolor="#FFFF55" id='leftRating'>rating</td>
+    <td align="right" bgcolor="#FFFF55"><select name="leftPlayer1" id="leftPlayer1" onchange="addMatchView.playerChanged();">
       </select><br />
-      <select name="leftPlayer2" id="leftPlayer2">
+      <select name="leftPlayer2" id="leftPlayer2" onchange="addMatchView.playerChanged();">
       </select>
     </td>
-    <td width="40" align="right" bgcolor="#FF5555">
+    <td width="40" align="right" bgcolor="#FFFF55">
       <input name="leftScore" type="text" id="leftScore" size="4" maxlength="2" />
     </td>
-    <td width="40" bgcolor="#6666FF">
+    <td width="40" bgcolor="#AAAAAA">
       <input name="rightScore" type="text" id="rightScore" size="4" maxlength="2" />
     </td>
-    <td align="left" bgcolor="#6666FF"><select name="rightPlayer1" id="rightPlayer1">
-      </select><br /><select name="rightPlayer2" id="rightPlayer2">
+    <td align="left" bgcolor="#AAAAAA"><select name="rightPlayer1" id="rightPlayer1" onchange="addMatchView.playerChanged();">
+      </select><br /><select name="rightPlayer2" id="rightPlayer2" onchange="addMatchView.playerChanged();">
 </select>      </td>
+  	<td  bgcolor="#AAAAAA" id='rightRating'>rating</td>
   </tr>
   <tr>
     <td colspan="5">

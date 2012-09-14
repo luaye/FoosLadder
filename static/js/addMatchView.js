@@ -4,6 +4,7 @@ function AddMatchView(tableElement)
 
 var table = tableElement;
 var players;
+var playersByName = {};
 var self = this;
 var leftPlayer1Field = document.getElementById("leftPlayer1");
 var leftPlayer2Field = document.getElementById("leftPlayer2");
@@ -48,6 +49,15 @@ this.onMatchAdded = function()
 function onPlayersLoaded(data)
 {
 	players = data;
+	
+	playersByName = {};
+	for (var X in players)
+	{
+		var player = players[X];
+		console.log(player);
+		playersByName[player.id] = player;
+	}
+	
 	fillSelectListWithPlayers(leftPlayer1Field, data, "-- attacker --");
 	
 	fillSelectListWithPlayers(leftPlayer2Field, data, "-- defender --");
@@ -66,6 +76,43 @@ function fillSelectListWithPlayers(selectElement, players, blankname)
 		var player = players[X];
 		selectElement.options.add(new Option(player.name, player.id));
 	}
+}
+
+function averagePlayerRatings(field1, field2)
+{
+	var rating = 0;
+	var nPlayers = 0;
+	
+	var player = playersByName[field1.value];
+	if (player) {
+		rating += player.mixedStats.score;
+		nPlayers++;
+	}
+	player = playersByName[field2.value];
+	if (player) {
+		rating += player.mixedStats.score;
+		nPlayers++;
+	}
+	
+	if (nPlayers == 0) return 0;
+	
+	return rating / nPlayers;
+}
+
+function updateRatings()
+{
+	var rating = averagePlayerRatings(rightPlayer1Field, rightPlayer2Field);
+	
+	rightRating.innerHTML = Math.round(rating);
+	
+	rating = averagePlayerRatings(leftPlayer1Field, leftPlayer2Field);
+	
+	leftRating.innerHTML = Math.round(rating);
+}
+
+this.playerChanged = function()
+{
+	updateRatings();
 }
 
 this.dateNowChanged = function()
