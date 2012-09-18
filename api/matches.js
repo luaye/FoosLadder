@@ -177,28 +177,28 @@ function validatePlayers(users, players1, players2)
 
 function addMatchToDatabase(matchData, callback)
 {
-	//console.log("matches.addMatchToDatabase: "+JSON.stringify(matchData));
-	GLOBAL.matchesDB.insert(matchData, null, function (error, body, headers)
+	users.updatePlayerStatsForMatch(matchData, function(ok)
 	{
-		if(error || !body)
+		if(ok)
 		{
-			console.log("matches.addMatch error: "+error);
-			callback({status:"error"});
-		}
-		else
-		{
-			//console.log("matches.addMatch OK: " + JSON.stringify(body));
-			users.updatePlayerStatsForMatch(matchData, function(ok)
+			//console.log("matches.addMatchToDatabase: "+JSON.stringify(matchData));
+			GLOBAL.matchesDB.insert(matchData, null, function (error, body, headers)
 			{
-				if(ok)
+				if(error || !body)
 				{
-					callback({status:"OK"});	
+					console.log("matches.addMatch error: "+error);
+					callback({status:"error"});
 				}
 				else
 				{
-					callback({status:"error", message:"unknown"});
+					//console.log("matches.addMatch OK: " + JSON.stringify(body));
+					callback({status:"OK"});	
 				}
 			});
+		}
+		else
+		{
+			callback({status:"error", message:"unknown"});
 		}
 	});
 }
