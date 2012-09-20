@@ -177,6 +177,7 @@ function defaultScoreForPlayer(player)
 		"Naree S": 1400,
 		"Joe R": 1400,
 		"Andy S": 1400,
+		"Toby M": 1500,
 	};
 	if (defaults[player.name]) return defaults[player.name];
 	 
