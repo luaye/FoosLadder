@@ -15,6 +15,9 @@
 <script type="text/javascript" src="js/matchesView.js"></script>
 <script type="text/javascript" src="js/addMatchView.js"></script>
 <script type="text/javascript" src="js/playersView.js"></script>
+
+<script src="//connect.facebook.net/en_US/all.js"></script>
+
 <script type="text/javascript">
 
 var matchesView;
@@ -44,6 +47,20 @@ function onLoad()
 	addMatchView.hide();
 	
 	showPlayers();
+
+FB.Event.subscribe('auth.authResponseChange', function(response)
+{
+ // alert('auth.authResponseChange: ' + JSON.stringify(response));
+  
+});
+
+  FB.init({
+    appId      : FACEBOOK_APP_ID,
+    channelUrl : '//WWW.foos.apelabs.net', // Channel File
+    status     : true, // check login status
+    cookie     : true, // enable cookies to allow the server to access the session
+    xfbml      : true  // parse XFBML
+  });
 }
 
 function loadPlayers()
@@ -95,27 +112,31 @@ function setCurrentView(view)
 }
 
 </script>
-
 </head> 
 <body onLoad="onLoad()"> 
+<div id="fb-root"></div>
 
 <div class="header"><a href="javascript:showMatches()">Matches</a> | <a href="javascript:showAddMatch()">Add Match</a>  | <a href="javascript:showPlayers()">Players</a></div>
 <br />
-<table width="600" border="0" align="center" id="matchesTable">
+<table border="0" align="center" id="matchesTable">
   <tr>
-    <td colspan="5" align="center">Matches</td>
+    <td colspan="7" align="center">Matches</td>
   </tr>
   <tr>
     <td width="60" align="center">&nbsp;</td>
-    <td align="center" bgcolor="#999999">Yellow Rating Change</td>
+    <td align="center" bgcolor="#999999">Yellow <br>
+    Rating <br>
+    Change</td>
     <td width="180" align="center" bgcolor="#999999">Yellow</td>
     <td width="60" align="center" bgcolor="#999999">Score</td>
     <td width="180" align="center" bgcolor="#999999">White</td>
-    <td align="center" bgcolor="#999999">White Rating Change</td>
+    <td align="center" bgcolor="#999999">White <br>
+    Rating <br>
+    Change</td>
     <td width="60">&nbsp;</td>
   </tr>
   <tr id="loadingRow">
-    <td colspan="5" align="center" bgcolor="#FFCC00">Getting matches...</td>
+    <td colspan="7" align="center" bgcolor="#FFCC00">Getting matches...</td>
   </tr>
   <tr id="sampleRow">
     <td align="center" >&nbsp;</td>
@@ -129,14 +150,14 @@ player name 2 </td>
     <td class="tiny">date</td>
   </tr>
   <tr>
-    <td colspan="5"><a href="javascript:matchesView.exportData(this)" class="tiny">Export</a></td>
+    <td colspan="7"><a href="javascript:matchesView.exportData(this)" class="tiny">Export</a></td>
   </tr>
 </table>
 
 
 <table width="580" border="0" align="center" id="playersTable">
   <tr>
-    <td colspan="5" align="center">Players<br />
+    <td colspan="6" align="center">Players<br />
       <a href="javascript:playersView.addPlayer()" class="tiny">Add player</a>  |
       <a href="javascript:playersView.rebuiltStats()" class="tiny">Rebuilt stats</a> |
       <a href="javascript:playersView.repeatMatches()" class="tiny">Repeat matches</a></td>
@@ -155,10 +176,10 @@ player name 2 </td>
     <a href="javascript:playersView.toggleSortBy('soloStats.wins')">win</a>/<a href="javascript:playersView.toggleSortBy('soloStats.games')">games</a></td>
   </tr>
   <tr id="loadingRow">
-    <td colspan="5" align="center" bgcolor="#FFCC00">Getting players...</td>
+    <td colspan="6" align="center" bgcolor="#FFCC00">Getting players...</td>
   </tr>
   <tr id="sampleRow">
-    <td class="tableRow"><playerName>NAME</<playerName></td>
+    <td class="tableRow"><playerImage></playerImage> <playerName>NAME</playerName></td>
     <td align="center" class="tableRow"><mixedScore>3</mixedScore></td>
     <td align="center" class="tableRow"><duoScore>1</duoScore></td>
     <td align="center" class="tableRow"><duoWins>2/3</duoWins></td>
@@ -173,7 +194,7 @@ player name 2 </td>
 
 <table width="480" border="0" align="center" cellpadding="4" cellspacing="0" id="addMatchTable">
   <tr>
-    <td colspan="5" align="center">Add Match</td>
+    <td colspan="7" align="center">Add Match</td>
   </tr>
   <tr>
     <td colspan="3" align="center" bgcolor="#FFFF55"><strong>Yellow</strong></td>
@@ -202,7 +223,7 @@ player name 2 </td>
   	<td  bgcolor="#AAAAAA" id='rightRating'>rating</td>
   </tr>
   <tr>
-    <td colspan="5">
+    <td colspan="7">
     Date: 
       now?
       <input name="dateNow" type="checkbox" id="dateNow" checked="checked" onchange="addMatchView.dateNowChanged();"/>
@@ -210,7 +231,7 @@ player name 2 </td>
     </td>
   </tr>
   <tr>
-    <td colspan="5" align="center"><input type="submit" name="submit" id="submit" value="Submit" onClick="addMatchView.onSubmit()"/></td>
+    <td colspan="7" align="center"><input type="submit" name="submit" id="submit" value="Submit" onClick="addMatchView.onSubmit()"/></td>
   </tr>
 </table>
 

@@ -65,6 +65,12 @@ function fillRowWithUser(tableRow, user)
 	var duoStats = user.duoStats ? user.duoStats : {};
 	var mixedStats = user.mixedStats ? user.mixedStats : {};
 	
+	var image = "";
+	if(user.facebookId)
+	{
+		image = "<img src='http://graph.facebook.com/"+user.facebookId+"/picture?type=square' width='25' height='25'/>";
+	}
+	setContentsOfTag(tableRow, "playerImage", image);
 	setContentsOfTag(tableRow, "playerName", user.name);
 	setContentsOfTag(tableRow, "mixedScore", safeStr(mixedStats.score));
 	setContentsOfTag(tableRow, "duoScore", safeStr(duoStats.score));

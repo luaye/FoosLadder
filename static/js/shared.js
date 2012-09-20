@@ -1,4 +1,5 @@
 var OFFLINE = false;
+var FACEBOOK_APP_ID = '362209653861831';
 
 function callAPI(postdata, callback)
 {
@@ -64,3 +65,4 @@ function setContentsOfTag(container, name, content)
 		}
 	}
 }
+
