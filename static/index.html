@@ -47,7 +47,27 @@ function onLoad()
 	addMatchView.onMatchAdded = onMatchAdded;
 	addMatchView.hide();
 	
-	showPlayers();
+	var location = String(window.location);
+	var hashPath = "";
+	var hashIndex = location.indexOf("#");
+	if(hashIndex >= 0)
+	{
+		hashPath = location.substring(hashIndex + 1);
+	}
+	var hashBits = hashPath.split("/");
+	
+	if(hashBits[0] == "match")
+	{
+		showMatches();
+	}
+	else if(hashBits[0] == "addMatch")
+	{
+		showAddMatch();
+	}
+	else
+	{
+		showPlayers();
+	}
 
 FB.Event.subscribe('auth.authResponseChange', function(response)
 {
