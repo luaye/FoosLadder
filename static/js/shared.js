@@ -87,7 +87,7 @@ function toggleCommentBox(key, docid)
 
 function showCommentBox(element, key)
 {
-	element.innerHTML = '<div class="fb-comments" data-href="'+makeCommentURL(key)+'" data-num-posts="4" data-width="470" mobile="false"></div>';
+	element.innerHTML = '<div class="fb-comments" data-href="'+makeCommentURL(key)+'" data-num-posts="4" data-width="560" mobile="false"></div>';
 	FB.XFBML.parse(element)
 }
 
@@ -98,12 +98,17 @@ function hideCommentBox(element)
 
 function addCommentCount(key, makeLink)
 {
+	document.write(getCommentCountNodeString(key, makeLink));
+}
+
+function getCommentCountNodeString(key, makeLink)
+{
 	var string = "<fb:comments-count href=\""+makeCommentURL(key)+"\"></fb:comments-count> comments";
 	if(makeLink)
 	{
 		string = "<a href=\"javascript:toggleCommentBox('"+key+"')\" >"+string+"</a>";
 	}
-	document.write(string);
+	return string;
 }
 
 function makeCommentURL(key)

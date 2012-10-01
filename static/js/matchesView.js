@@ -37,7 +37,10 @@ this.setPlayers = function(players)
 		var player = players[X];
 		playersById[player.id] = player;
 	}
- 	self.loadMatches();
+	//if(matches != null)
+	//{
+ 		self.loadMatches();
+	//}
 }
 
 this.loadMatches = function()
@@ -72,17 +75,17 @@ function fillRowWithMatch(tableRow, match)
 	var date = new Date(match.date);
 	var cellIdx = 1;
 	var change = Math.round(Number(match.KDleft)*100)/100;
-	var colors = [ 'lightgreen', '#FFCCCC' ];
+	var colors = [ '#1A1', '#E55' ];
 	
 	var leftScoreChange = getChildByTag(tableRow, "leftScoreChange");
-	leftScoreChange.parentNode.style.cssText = 'background-color: '+colors[change > 0 ? 0 : 1];
+	leftScoreChange.style.cssText = 'color: '+colors[change > 0 ? 0 : 1];
 	setContentsOfTag(tableRow, "leftScoreChange", change);
 	setContentsOfTag(tableRow, "leftAttacker", getPlayerNameFromId(match.leftPlayers[0]));
 	setContentsOfTag(tableRow, "leftDefender", match.leftPlayers.length > 1 ? getPlayerNameFromId(match.leftPlayers[1]) : "");
 	setContentsOfTag(tableRow, "leftScore", match.leftScore);
 	
 	var rightScoreChange = getChildByTag(tableRow, "rightScoreChange");
-	rightScoreChange.parentNode.style.cssText = 'background-color: '+colors[change > 0 ? 1 : 0];
+	rightScoreChange.style.cssText = 'color: '+colors[change > 0 ? 1 : 0];
 	setContentsOfTag(tableRow, "rightScoreChange", -change);
 	setContentsOfTag(tableRow, "rightAttacker", getPlayerNameFromId(match.rightPlayers[0]));
 	setContentsOfTag(tableRow, "rightDefender", match.rightPlayers.length > 1 ? getPlayerNameFromId(match.rightPlayers[1]) : "");
@@ -90,6 +93,40 @@ function fillRowWithMatch(tableRow, match)
 	
 	var dateStr = date.getDate() + ", "+ (date.getMonth()+1) + ", " + date.getFullYear() + "<br/>" + doubleDigit(date.getHours()) + ":" + doubleDigit(date.getMinutes());
 	setContentsOfTag(tableRow, "matchDate", dateStr);
+	
+	var matchId = match._id;
+	var key = "match"+matchId;
+	var commentLink = getCommentCountNodeString(key);
+	commentLink = "<a href=\"javascript:matchesView.toggleMatchBox('"+matchId+"')\" >"+commentLink+"</a>";
+	setContentsOfTag(tableRow, "commentToggle", commentLink);
+	var commentToggle = getChildByTag(tableRow, "commentToggle");
+	FB.XFBML.parse(commentToggle);
+	
+	
+	var commentHolder = getChildByTag(tableRow, "commentHolder");
+	commentHolder = commentHolder.parentNode;
+	commentHolder.id = key;
+	commentHolder.style.display = 'none';
+}
+
+
+
+this.toggleMatchBox = function(matchId)
+{
+	var key = "match"+matchId;
+	var holder = document.getElementById(key);
+	holder.innerHTML = "";
+	if(holder.style.display == 'none')
+	{
+		holder.style.display = '';
+		var div = document.createElement("div");
+		holder.appendChild(div);
+		showCommentBox(div, key);
+	}
+	else
+	{
+		holder.style.display = 'none';
+	}
 }
 
 function getPlayerNameFromId(playerId)

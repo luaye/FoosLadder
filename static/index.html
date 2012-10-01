@@ -120,40 +120,41 @@ function setCurrentView(view)
 <br />
 <table border="0" align="center" id="matchesTable">
   <tr>
-    <td colspan="7" align="center">Matches</td>
+    <td colspan="5" align="center">Matches</td>
   </tr>
   <tr>
-    <td width="60" align="center">&nbsp;</td>
-    <td align="center" bgcolor="#999999">Yellow <br>
-    Rating <br>
-    Change</td>
-    <td width="150" align="center" bgcolor="#999999">Yellow</td>
+    <td width="80" align="center">&nbsp;</td>
+    <td width="165" align="center" bgcolor="#999999">Yellow</td>
     <td width="60" align="center" bgcolor="#999999">Score</td>
-    <td width="150" align="center" bgcolor="#999999">White</td>
-    <td align="center" bgcolor="#999999">White <br>
-    Rating <br>
-    Change</td>
-    <td width="60">&nbsp;</td>
+    <td width="165" align="center" bgcolor="#999999">White</td>
+    <td width="80" align="center" >&nbsp;</td>
   </tr>
   <tr id="loadingRow">
-    <td colspan="7" align="center" bgcolor="#FFCC00">Getting matches...</td>
+    <td colspan="5" align="center" bgcolor="#FFCC00">Getting matches...</td>
   </tr>
   <tr id="sampleRow">
-    <td align="center" >&nbsp;</td>
-    <td align="center" class="tableRow"><leftScoreChange>-11</leftScoreChange><br />
-    <td align="center" class="tableRow"><leftAttacker>Left Attacker</leftAttacker><br />
+    <td colspan="5">
+    <table width="100%" border="0">
+      <tr>
+        <td width="80" align="center" class="tiny"><matchDate>1, 1, 2012<br />18:00</matchDate></td>
+        <td width="40" class="tableRow"><leftScoreChange>11</leftScoreChange></td>
+        <td width="125" class="tableRow"><leftAttacker>Left Attacker</leftAttacker><br />
     <leftDefender>Left Defender</leftDefender></td>
-    <td align="center" class="tableRow"><leftScore>10</leftScore> - <rightScore>9</rightScore></td>
-    <td align="center" class="tableRow"><rightAttacker>Right Attacker</rightAttacker><br />
+        <td width="60" class="tableRow"><leftScore>10</leftScore> - <rightScore>9</rightScore></td>
+        <td width="125" class="tableRow"><rightAttacker>Right Attacker</rightAttacker><br />
     <rightDefender>Right Defender</rightDefender></td>
-    <td align="center" class="tableRow"><rightScoreChange>-11</rightScoreChange></td>
-    <td class="tiny"><matchDate>1, 1, 2012<br />18:00</matchDate></td>
+        <td width="40" class="tableRow"><rightScoreChange>-11</rightScoreChange></td>
+        <td width="80" align="right" class="tiny"><commentToggle>2 comments</commentToggle></td>
+      </tr>
+      <tr>
+        <td colspan="7">
+        <commentHolder>Facebook comment</commentHolder>
+        box</td>
+        </tr>
+    </table></td>
   </tr>
   <tr>
-    <td colspan="7"><fb:comments numposts="4" title="Foos: Matches" xid="main" href="http://foos.apelabs.net/#matches" simple="true" publish_feed="false"></fb:comments></td>
-  </tr>
-  <tr>
-    <td colspan="7"><a href="javascript:matchesView.exportData(this)" class="tiny">Export</a></td>
+    <td colspan="5"><a href="javascript:matchesView.exportData(this)" class="tiny">Export</a></td>
   </tr>
 </table>
 
@@ -182,12 +183,12 @@ function setCurrentView(view)
     <td colspan="6" align="center" bgcolor="#FFCC00">Getting players...</td>
   </tr>
   <tr id="sampleRow">
-    <td class="tableRow"><playerImage></playerImage> <playerName>NAME</playerName></td>
-    <td align="center" class="tableRow"><mixedScore>3</mixedScore></td>
-    <td align="center" class="tableRow"><duoScore>1</duoScore></td>
-    <td align="center" class="tableRow"><duoWins>2/3</duoWins></td>
-    <td align="center" class="tableRow"><soloScore>2</soloScore></td>
-    <td align="center" class="tableRow"><soloWins>2/2</soloWins></td>
+    <td class="tableRow" style="text-align:left"><playerImage></playerImage> <playerName>NAME</playerName></td>
+    <td class="tableRow"><mixedScore>3</mixedScore></td>
+    <td class="tableRow"><duoScore>1</duoScore></td>
+    <td class="tableRow"><duoWins>2/3</duoWins></td>
+    <td class="tableRow"><soloScore>2</soloScore></td>
+    <td class="tableRow"><soloWins>2/2</soloWins></td>
   </tr>
   <tr>
     <td colspan="7">
