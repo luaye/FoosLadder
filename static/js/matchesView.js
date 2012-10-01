@@ -95,7 +95,7 @@ function fillRowWithMatch(tableRow, match)
 	setContentsOfTag(tableRow, "matchDate", dateStr);
 	
 	var matchId = match._id;
-	var key = "match"+matchId;
+	var key = "match/"+matchId;
 	var commentLink = getCommentCountNodeString(key);
 	commentLink = "<a href=\"javascript:matchesView.toggleMatchBox('"+matchId+"')\" >"+commentLink+"</a>";
 	setContentsOfTag(tableRow, "commentToggle", commentLink);
@@ -113,7 +113,7 @@ function fillRowWithMatch(tableRow, match)
 
 this.toggleMatchBox = function(matchId)
 {
-	var key = "match"+matchId;
+	var key = "match/"+matchId;
 	var holder = document.getElementById(key);
 	holder.innerHTML = "";
 	if(holder.style.display == 'none')

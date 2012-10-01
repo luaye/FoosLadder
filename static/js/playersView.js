@@ -41,8 +41,16 @@ this.updateRows = function()
 
 function onPlayersLoaded(data)
 {
+	var first = players == null;
 	players = data;
-	updateRows();
+	if(first)
+	{
+		self.toggleSortBy("mixedStats.score")	
+	}
+	else
+	{
+		updateRows();
+	}
 }
 
 function updateRows()
