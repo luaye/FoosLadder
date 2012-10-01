@@ -2,7 +2,7 @@
 <html lang='en' xml:lang='en' xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta name="viewport" id="viewport" content="width=640; user-scalable=no"/>
+<meta name="viewport" id="viewport" content="width=600; user-scalable=no"/>
 <title>Foos Ladder</title>
 
 <link href="css/style.css" rel="stylesheet" type="text/css" />
@@ -52,15 +52,14 @@ function onLoad()
 FB.Event.subscribe('auth.authResponseChange', function(response)
 {
  // alert('auth.authResponseChange: ' + JSON.stringify(response));
-  
 });
 
   FB.init({
     appId      : FACEBOOK_APP_ID,
-    channelUrl : '//WWW.foos.apelabs.net', // Channel File
-    status     : true, // check login status
-    cookie     : true, // enable cookies to allow the server to access the session
-    xfbml      : true  // parse XFBML
+    channelUrl : FACEBOOK_APP_URL_PART,
+    status     : true,
+    cookie     : true,
+    xfbml      : true
   });
 }
 
@@ -128,9 +127,9 @@ function setCurrentView(view)
     <td align="center" bgcolor="#999999">Yellow <br>
     Rating <br>
     Change</td>
-    <td width="180" align="center" bgcolor="#999999">Yellow</td>
+    <td width="150" align="center" bgcolor="#999999">Yellow</td>
     <td width="60" align="center" bgcolor="#999999">Score</td>
-    <td width="180" align="center" bgcolor="#999999">White</td>
+    <td width="150" align="center" bgcolor="#999999">White</td>
     <td align="center" bgcolor="#999999">White <br>
     Rating <br>
     Change</td>
@@ -141,14 +140,17 @@ function setCurrentView(view)
   </tr>
   <tr id="sampleRow">
     <td align="center" >&nbsp;</td>
-    <td align="center" class="tableRow">-11<br />
-    <td align="center" class="tableRow">player name 1<br />
-    player name 2</td>
-    <td align="center" class="tableRow">10 - 8</td>
-    <td align="center" class="tableRow">player name 1<br />
-    <td align="center" class="tableRow">+11<br />
-player name 2 </td>
-    <td class="tiny">date</td>
+    <td align="center" class="tableRow"><leftScoreChange>-11</leftScoreChange><br />
+    <td align="center" class="tableRow"><leftAttacker>Left Attacker</leftAttacker><br />
+    <leftDefender>Left Defender</leftDefender></td>
+    <td align="center" class="tableRow"><leftScore>10</leftScore> - <rightScore>9</rightScore></td>
+    <td align="center" class="tableRow"><rightAttacker>Right Attacker</rightAttacker><br />
+    <rightDefender>Right Defender</rightDefender></td>
+    <td align="center" class="tableRow"><rightScoreChange>-11</rightScoreChange></td>
+    <td class="tiny"><matchDate>1, 1, 2012<br />18:00</matchDate></td>
+  </tr>
+  <tr>
+    <td colspan="7"><fb:comments numposts="4" title="Foos: Matches" xid="main" href="http://foos.apelabs.net/#matches" simple="true" publish_feed="false"></fb:comments></td>
   </tr>
   <tr>
     <td colspan="7"><a href="javascript:matchesView.exportData(this)" class="tiny">Export</a></td>
@@ -186,6 +188,18 @@ player name 2 </td>
     <td align="center" class="tableRow"><duoWins>2/3</duoWins></td>
     <td align="center" class="tableRow"><soloScore>2</soloScore></td>
     <td align="center" class="tableRow"><soloWins>2/2</soloWins></td>
+  </tr>
+  <tr>
+    <td colspan="7">
+    <div id='commentbox_players'></div></td>
+  </tr>
+    <td colspan="7">
+    <script>
+	
+	addCommentCount('players', true);
+	
+	</script>
+    </td>
   </tr>
   <tr>
     <td colspan="6"><a href="javascript:playersView.exportData(this)" class="tiny">Export</a></td>

@@ -1,5 +1,7 @@
 var OFFLINE = false;
 var FACEBOOK_APP_ID = '362209653861831';
+var FACEBOOK_APP_URL_PART = '//foos.apelabs.net';
+var FACEBOOK_APP_URL = 'http:'+FACEBOOK_APP_URL_PART;
 
 function callAPI(postdata, callback)
 {
@@ -66,3 +68,45 @@ function setContentsOfTag(container, name, content)
 	}
 }
 
+function toggleCommentBox(key, docid)
+{
+	if(docid == null)
+	{
+		docid = "commentbox_" + key;
+	}
+	var element = document.getElementById(docid);
+	if(element.childNodes.length > 0)
+	{
+		hideCommentBox(element);
+	}
+	else
+	{
+		showCommentBox(element, key);
+	}
+}
+
+function showCommentBox(element, key)
+{
+	element.innerHTML = '<div class="fb-comments" data-href="'+makeCommentURL(key)+'" data-num-posts="4" data-width="470" mobile="false"></div>';
+	FB.XFBML.parse(element)
+}
+
+function hideCommentBox(element)
+{
+	element.innerHTML = '';
+}
+
+function addCommentCount(key, makeLink)
+{
+	var string = "<fb:comments-count href=\""+makeCommentURL(key)+"\"></fb:comments-count> comments";
+	if(makeLink)
+	{
+		string = "<a href=\"javascript:toggleCommentBox('"+key+"')\" >"+string+"</a>";
+	}
+	document.write(string);
+}
+
+function makeCommentURL(key)
+{
+	return FACEBOOK_APP_URL+'#'+key;
+}

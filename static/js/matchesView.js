@@ -73,25 +73,29 @@ function fillRowWithMatch(tableRow, match)
 	var cellIdx = 1;
 	var change = Math.round(Number(match.KDleft)*100)/100;
 	var colors = [ 'lightgreen', '#FFCCCC' ];
-	cells[cellIdx].style.cssText = 'background-color: '+colors[change > 0 ? 0 : 1];
-	cells[cellIdx++].innerHTML = change;
-	cells[cellIdx++].innerHTML = makePlayersStringFromIds(match.leftPlayers);
-	cells[cellIdx++].innerHTML = match.leftScore + " - " + match.rightScore;
-	cells[cellIdx++].innerHTML = makePlayersStringFromIds(match.rightPlayers);
-	cells[cellIdx].style.cssText = 'background-color: '+colors[change > 0 ? 1 : 0];
-	cells[cellIdx++].innerHTML = -change;
-	cells[cellIdx++].innerHTML = date.getDate() + ", "+ (date.getMonth()+1) + ", " + date.getFullYear() + "<br/>" + doubleDigit(date.getHours()) + ":" + doubleDigit(date.getMinutes());
+	
+	var leftScoreChange = getChildByTag(tableRow, "leftScoreChange");
+	leftScoreChange.parentNode.style.cssText = 'background-color: '+colors[change > 0 ? 0 : 1];
+	setContentsOfTag(tableRow, "leftScoreChange", change);
+	setContentsOfTag(tableRow, "leftAttacker", getPlayerNameFromId(match.leftPlayers[0]));
+	setContentsOfTag(tableRow, "leftDefender", match.leftPlayers.length > 1 ? getPlayerNameFromId(match.leftPlayers[1]) : "");
+	setContentsOfTag(tableRow, "leftScore", match.leftScore);
+	
+	var rightScoreChange = getChildByTag(tableRow, "rightScoreChange");
+	rightScoreChange.parentNode.style.cssText = 'background-color: '+colors[change > 0 ? 1 : 0];
+	setContentsOfTag(tableRow, "rightScoreChange", -change);
+	setContentsOfTag(tableRow, "rightAttacker", getPlayerNameFromId(match.rightPlayers[0]));
+	setContentsOfTag(tableRow, "rightDefender", match.rightPlayers.length > 1 ? getPlayerNameFromId(match.rightPlayers[1]) : "");
+	setContentsOfTag(tableRow, "rightScore", match.rightScore);
+	
+	var dateStr = date.getDate() + ", "+ (date.getMonth()+1) + ", " + date.getFullYear() + "<br/>" + doubleDigit(date.getHours()) + ":" + doubleDigit(date.getMinutes());
+	setContentsOfTag(tableRow, "matchDate", dateStr);
 }
 
-function makePlayersStringFromIds(playerIds)
+function getPlayerNameFromId(playerId)
 {
-	var players = [];
-	for(var X in playerIds)
-	{
-		var player = playersById[playerIds[X]];
-		players.push(player.name);
-	}
-	return players.join("<br/>");
+	var player = playersById[playerId];
+	return player ? player.name : "";
 }
 
 function doubleDigit(number)
