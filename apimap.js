@@ -46,7 +46,7 @@ function runAPIBody(body, response)
 	{
 		apifunction(body, function(data)
 		{
-			response.writeHeader(200, {"Content-Type": "text/plain"});  
+			response.writeHeader(200, {"Content-Type": "text/plain", "Cache-control": "no-cache"});
 			response.write(JSON.stringify(data)); 
 			response.end();
 		});
