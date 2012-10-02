@@ -167,6 +167,8 @@ function addRatingToPlayers(playersById, getStatsFunction, players, deltaRating)
 
 function defaultScoreForPlayer(player)
 {
+	return 1600;
+	
 	var defaults = {
 		"Lu Aye Oo": 1800, 
 		"John E": 1700, 
