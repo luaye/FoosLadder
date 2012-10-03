@@ -103,7 +103,7 @@ function addCommentCount(key, makeLink)
 
 function getCommentCountNodeString(key, makeLink)
 {
-	var string = "<fb:comments-count href=\""+makeCommentURL(key)+"\"></fb:comments-count> comments";
+	var string = "<span style=\"color:#569; size:12px; text-decoration:none;\"><img src=\"comments.gif\" width=\"20\" height=\"16\" style=\"vertical-align:text-top\" ><fb:comments-count href=\""+makeCommentURL(key)+"\"></fb:comments-count></span'>";
 	if(makeLink)
 	{
 		string = "<a href=\"javascript:toggleCommentBox('"+key+"')\" >"+string+"</a>";
