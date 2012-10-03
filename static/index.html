@@ -21,7 +21,6 @@
 <script src="//connect.facebook.net/en_US/all.js"></script>
 
 <script type="text/javascript">
-
 var matchesView;
 var playersView;
 var addMatchView;
@@ -77,7 +76,26 @@ FB.Event.subscribe('auth.statusChange', function(response)
 	{
 		facebookAccessToken = response.authResponse.accessToken;
 	}
+	else
+	{
+		facebookAccessToken = null;
+	}
+	
+	var loggedinButtons = document.getElementsByClassName("fbLoggedIn");
+	setStyleDisplayOfList(loggedinButtons, facebookAccessToken ? '' : 'none');
+	
+	var loggedoutButtons = document.getElementsByClassName("fbLoggedOut");
+	setStyleDisplayOfList(loggedoutButtons, facebookAccessToken ? 'none' : '');
 });
+
+function setStyleDisplayOfList(nodelist, value)
+{
+	for(var i = nodelist.length - 1; i >= 0; i--)
+	{
+		var element = nodelist[i];
+		element.style.display = value;
+	}
+}
 
   FB.init({
     appId      : FACEBOOK_APP_ID,
@@ -237,7 +255,7 @@ function setCurrentView(view)
     <td colspan="3" align="center" bgcolor="#AAAAAA"><strong>White</strong></td>
   </tr>
   <tr>
-  	<td  bgcolor="#FFFF55" id='leftRating'>rating</td>
+  	<td  bgcolor="#FFFF55" id='leftRating'>&nbsp;</td>
     <td align="right" bgcolor="#FFFF55"><select name="leftPlayer1" id="leftPlayer1" onchange="addMatchView.playerChanged();">
       </select><br />
       <select name="leftPlayer2" id="leftPlayer2" onchange="addMatchView.playerChanged();">
@@ -254,7 +272,7 @@ function setCurrentView(view)
     <td align="left" bgcolor="#AAAAAA"><select name="rightPlayer1" id="rightPlayer1" onchange="addMatchView.playerChanged();">
       </select><br /><select name="rightPlayer2" id="rightPlayer2" onchange="addMatchView.playerChanged();">
 </select>      </td>
-  	<td  bgcolor="#AAAAAA" id='rightRating'>rating</td>
+  	<td  bgcolor="#AAAAAA" id='rightRating'>&nbsp;</td>
   </tr>
   <tr>
     <td colspan="7">
@@ -265,7 +283,7 @@ function setCurrentView(view)
     </td>
   </tr>
   <tr>
-    <td colspan="7" align="center"><input type="submit" name="submit" id="submit" value="Submit" onClick="addMatchView.onSubmit()"/></td>
+    <td colspan="7" align="center"><div class="fb-login-button fbLoggedOut" data-show-faces="false" data-width="200" data-max-rows="1">Login to Submit</div> <div class="fbLoggedIn" ><input type="submit" name="submit" id="submit" value="Submit" onClick="addMatchView.onSubmit()"/> </div></td>
   </tr>
 </table>
 
