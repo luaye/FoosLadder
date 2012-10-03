@@ -1,9 +1,10 @@
 {
-	"port":8000,
+	"port":80,
 	"couch": {
 		"host": "localhost",
 		"port": 5984,
 		"usersDB": "foosplayers",
 		"matchesDB": "foosmatches"
-		}
+		},
+	"allowedFacebookIds": ["luapeoo"]
 }

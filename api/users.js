@@ -1,4 +1,5 @@
 var utils = require("./../utils.js");
+var config = require("./../config.json");
 
 exports.getUsers = function(body, callback)
 {
@@ -418,20 +419,27 @@ exports.isAsscessTokenValidForAdding = function(accessToken, callback)
 		{
 			var id = response.body.id;
 			var username = response.body.username;
-			var found = false;
-			exports.getPlayersByIds({}, function (playersById)
+			if(config.allowedFacebookIds.indexOf(id) >= 0 || config.allowedFacebookIds.indexOf(username) >= 0)
 			{
-				for (var X in playersById)
+				callback(true);
+			}
+			else
+			{
+				exports.getPlayersByIds({}, function (playersById)
 				{
-					var player = playersById[X];
-					if(player.facebookId == id || player.facebookId == username)
+					var found = false;
+					for (var X in playersById)
 					{
-						found = true;
-						break;
+						var player = playersById[X];
+						if(player.facebookId == id || player.facebookId == username)
+						{
+							found = true;
+							break;
+						}
 					}
-				}
-				callback(found);
-			});
+					callback(found);
+				});
+			}
 		}
 		else
 		{
