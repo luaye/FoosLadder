@@ -1,4 +1,3 @@
-
 function PlayersView(loadableTable)
 {
 
@@ -114,6 +113,11 @@ this.addPlayer = function()
 		alert("User loading in progress.");
 		return;
 	}
+	if(facebookAccessToken == null)
+	{
+		FB.login();
+		return;
+	}
 	var username = prompt("Enter your name to add : ", "your name here");
 	if(username == null)
 	{
@@ -128,14 +132,21 @@ this.addPlayer = function()
 		var yes = confirm("Do you really want to add new user '" + username+ "'?");
 	   if( yes )
 	   {
-			callAPI({request:"addPlayer", name:username}, onPlayerAdded);
+			callAPI({request:"addPlayer", name:username, fbAccessToken:facebookAccessToken}, onPlayerAdded);
 	   }
 	}
 }
 
-function onPlayerAdded(data)
+function onPlayerAdded(response)
 {
-	self.loadPlayers();
+	if(response.status == "error")
+	{
+		alert(response.message ? response.message : "Error adding player.")
+	}
+	else
+	{
+		self.loadPlayers();
+	}
 }
 
 

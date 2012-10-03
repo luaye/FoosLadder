@@ -154,8 +154,14 @@ function updateDateSelectorVisibility()
 
 this.onSubmit = function()
 {
+	if(facebookAccessToken == null)
+	{
+		FB.login();
+		return;
+	}
 	var request = {};
 	request.request = "addMatch";
+	request.fbAccessToken = facebookAccessToken;
 	request.leftPlayer1 = String(leftPlayer1Field.value);
 	request.leftPlayer2 = String(leftPlayer2Field.value);
 	request.leftScore = Number(document.getElementById("leftScore").value);

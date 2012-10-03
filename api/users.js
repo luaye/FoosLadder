@@ -1,3 +1,4 @@
+var utils = require("./../utils.js");
 
 exports.getUsers = function(body, callback)
 {
@@ -53,17 +54,33 @@ exports.getPlayersByIds = function(body, callback)
 exports.addUser = function(body, callback)
 {
 	//console.log("users.addUser: "+body.name);
-	GLOBAL.usersDB.insert({name: body.name}, null, function (error, body, headers)
+	
+	exports.isAsscessTokenValidForAdding(body.fbAccessToken, function(ok) {
+		if(ok)
+		{
+			addUserToDB(body.name, callback);
+		}
+		else
+		{
+			console.log("addUser: "+ body.name +" NOT AUTHORIZED");
+			callback({status:"error", message:"Not authorized."});
+		}
+	});	
+}
+
+function addUserToDB(name, callback)
+{
+	GLOBAL.usersDB.insert({name: name}, null, function (error, body, headers)
 	{
 		if(error || !body)
 		{
 			console.log("users.addUser error: "+error);
-			callback({status:"error"});
+			callback({status:"error", message:error.message});
 		}
 		else
 		{
 			console.log("users.addUser OK: " + JSON.stringify(body));
-			callback({status:"OK"});
+			callback({status:"ok"});
 		}
 	});
 }
@@ -387,4 +404,39 @@ function clearPlayerStats(player)
 	player.soloStats = null;
 	player.duoStats = null;
 	player.mixedStats = null;
+}
+
+exports.isAsscessTokenValidForAdding = function(accessToken, callback)
+{
+	if(accessToken == null) {
+		callback(false);
+		return;
+	}
+	utils.getFacebookData(accessToken, function (response)
+	{
+		if(response.status == "ok")
+		{
+			var id = response.body.id;
+			var username = response.body.username;
+			var found = false;
+			exports.getPlayersByIds({}, function (playersById)
+			{
+				for (var X in playersById)
+				{
+					var player = playersById[X];
+					if(player.facebookId == id || player.facebookId == username)
+					{
+						found = true;
+						break;
+					}
+				}
+				callback(found);
+			});
+		}
+		else
+		{
+			console.log("isAsscessTokenValidForAdding: FAILED", response.body.message);
+			callback(false);
+		}
+	})	
 }

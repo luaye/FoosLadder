@@ -23,7 +23,7 @@ function getAPIPath(apistring)
 	}
 	else
 	{
-		return getServerRoot() + "api";	
+		return getServerRoot() + "api?"+(new Date().getTime());	
 	}
 }
 

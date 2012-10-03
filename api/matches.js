@@ -53,6 +53,22 @@ exports.addMatch = function(body, callback)
 {
 	console.log("matches.addMatch: "+JSON.stringify(body));
 	
+	users.isAsscessTokenValidForAdding(body.fbAccessToken, function(ok)
+	{
+		if(ok)
+		{
+			addMatchToDb(body, callback);
+		}
+		else
+		{
+			console.log("addMatch: NOT AUTHORIZED");
+			callback({status:"error", message:"Not authorized."});
+		}
+	})
+}
+
+function addMatchToDb(body, callback)
+{
 	var matchData = {};
 	
 	if(!isNaN(body.date))

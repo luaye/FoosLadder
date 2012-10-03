@@ -2,7 +2,7 @@
 <html lang='en' xml:lang='en' xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta name="viewport" id="viewport" content="width=600; user-scalable=no"/>
+<meta name="viewport" id="viewport" content="width=580; user-scalable=no"/>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>Foos Ladder</title>
 
@@ -25,6 +25,7 @@
 var matchesView;
 var playersView;
 var addMatchView;
+var facebookAccessToken;
 
 var currentView;
 var self = this;
@@ -70,9 +71,12 @@ function onLoad()
 		showPlayers();
 	}
 
-FB.Event.subscribe('auth.authResponseChange', function(response)
+FB.Event.subscribe('auth.statusChange', function(response)
 {
- // alert('auth.authResponseChange: ' + JSON.stringify(response));
+	if(response.authResponse != null)
+	{
+		facebookAccessToken = response.authResponse.accessToken;
+	}
 });
 
   FB.init({
@@ -213,16 +217,8 @@ function setCurrentView(view)
   </tr>
   <tr>
     <td colspan="7">
-    <script>
-	
-	addCommentCount('players', true);
-	
-	</script>
+	<div class="fb-comments" data-href="http://foos.apelabs.net#players" data-num-posts="3" data-width="560" mobile="false"></div>
     </td>
-  </tr>
-  <tr>
-    <td colspan="7">
-    <div id='commentbox_players'></div></td>
   </tr>
   <tr>
     <td colspan="6"><a href="javascript:playersView.exportData(this)" class="tiny">Export</a></td>
