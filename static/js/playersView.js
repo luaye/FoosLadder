@@ -5,6 +5,9 @@ var players;
 var table = loadableTable;
 var self = this;
 
+var sortKey = "mixedStats.score";
+var sortReversed;
+
 table.clear();
 table.setLoading(true);
 
@@ -40,16 +43,8 @@ this.updateRows = function()
 
 function onPlayersLoaded(data)
 {
-	var first = players == null;
 	players = data.concat();
-	if(first)
-	{
-		self.toggleSortBy("mixedStats.score")	
-	}
-	else
-	{
-		updateRows();
-	}
+	updateSort();
 }
 
 function updateRows()
@@ -149,21 +144,23 @@ function onPlayerAdded(response)
 	}
 }
 
-
-var forwardSortKey;
 this.toggleSortBy = function(key)
 {
-	var reversed;
-	if(forwardSortKey == key)
+	if(sortKey == key)
 	{
-		reversed = true;
-		forwardSortKey = null;
+		sortReversed = !sortReversed;
 	}
 	else
 	{
-		forwardSortKey = key;
+		sortReversed = false;
+		sortKey = key;
 	}
-	var properties = key.split(".");
+	updateSort();
+}
+
+function updateSort()
+{
+	var properties = sortKey.split(".");
 	players.sort(function(a, b)
 	{
 		var avalue = readPropertyChain(a, properties);
@@ -186,7 +183,7 @@ this.toggleSortBy = function(key)
 		{
 			value = -1;
 		}
-		if(reversed)
+		if(sortReversed)
 		{
 			return -value;
 		}
