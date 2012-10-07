@@ -409,6 +409,11 @@ function clearPlayerStats(player)
 
 exports.isAsscessTokenValidForAdding = function(accessToken, callback)
 {
+	if(config.useFacebookAuth == false)
+	{
+		callback(true);
+		return;
+	}
 	if(accessToken == null) {
 		callback(false);
 		return;

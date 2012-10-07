@@ -6,5 +6,6 @@
 		"usersDB": "foosplayers",
 		"matchesDB": "foosmatches"
 		},
+	"useFacebookAuth":true,
 	"allowedFacebookIds": ["luapeoo"]
 }
