@@ -201,6 +201,11 @@ function showPlayerSelection(title, callback)
 	}
 	
 	var buttons = {};
+	buttons["-none-"] = function()
+	{
+		dialogDiv.dialog("close");
+		callback(null);
+	}
 	for (var X in players)
 	{
 		var player = players[X];
