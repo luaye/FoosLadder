@@ -69,24 +69,44 @@ function onLoad()
 	{
 		showPlayers();
 	}
-
-FB.Event.subscribe('auth.statusChange', function(response)
-{
-	if(response.authResponse != null)
+	
+	if(FACEBOOK_ENABLED)
 	{
-		facebookAccessToken = response.authResponse.accessToken;
+		FB.Event.subscribe('auth.statusChange', function(response)
+		{
+			if(response.authResponse != null)
+			{
+				facebookAccessToken = response.authResponse.accessToken;
+			}
+			else
+			{
+				facebookAccessToken = null;
+			}
+			setFacebookLoginStatusDisplay(facebookAccessToken ? true : false);
+		});
+
+		FB.init({
+			appId      : FACEBOOK_APP_ID,
+			channelUrl : FACEBOOK_APP_URL_PART,
+			status     : true,
+			cookie     : true,
+			xfbml      : true
+		});
 	}
 	else
 	{
-		facebookAccessToken = null;
+		setFacebookLoginStatusDisplay(true);
 	}
-	
+}
+
+function setFacebookLoginStatusDisplay(loggedIn)
+{
 	var loggedinButtons = document.getElementsByClassName("fbLoggedIn");
-	setStyleDisplayOfList(loggedinButtons, facebookAccessToken ? '' : 'none');
-	
+	setStyleDisplayOfList(loggedinButtons, loggedIn ? '' : 'none');
+			
 	var loggedoutButtons = document.getElementsByClassName("fbLoggedOut");
-	setStyleDisplayOfList(loggedoutButtons, facebookAccessToken ? 'none' : '');
-});
+	setStyleDisplayOfList(loggedoutButtons, loggedIn ? 'none' : '');	
+}
 
 function setStyleDisplayOfList(nodelist, value)
 {
@@ -95,15 +115,6 @@ function setStyleDisplayOfList(nodelist, value)
 		var element = nodelist[i];
 		element.style.display = value;
 	}
-}
-
-  FB.init({
-    appId      : FACEBOOK_APP_ID,
-    channelUrl : FACEBOOK_APP_URL_PART,
-    status     : true,
-    cookie     : true,
-    xfbml      : true
-  });
 }
 
 function loadPlayers()
@@ -121,7 +132,7 @@ function onPlayersLoaded(players)
 function onMatchAdded()
 {
 	loadPlayers();
-	matchesView.loadMatches();
+	//matchesView.loadMatches();
 	setCurrentView(matchesView);
 }
 
@@ -158,7 +169,6 @@ function setCurrentView(view)
 </head> 
 <body onLoad="onLoad()"> 
 <div id="fb-root"></div>
-
 <div class="header"><a href="javascript:showMatches()">Matches</a> | <a href="javascript:showAddMatch()">Add Match</a>  | <a href="javascript:showPlayers()">Players</a></div>
 <br />
 <table border="0" align="center" id="matchesTable">
@@ -244,38 +254,64 @@ function setCurrentView(view)
 </table>
 
 
-<table width="480" border="0" align="center" cellpadding="4" cellspacing="0" id="addMatchTable">
+<table border="0" align="center" cellpadding="4" cellspacing="0" id="addMatchTable">
   <tr>
-    <td colspan="7" align="center">Add Match</td>
+    <td colspan="5" align="center">Add Match</td>
   </tr>
   <tr>
-    <td colspan="3" align="center" bgcolor="#FFFF55"><strong>Yellow</strong></td>
-    <td width="50" rowspan="2" align="center">
+    <td align="right" bgcolor="#FFFF55"><strong>Yellow</strong></td>
+    <td align="center" bgcolor="#FFFF55">&nbsp;</td>
+    <td width="40" rowspan="2" align="center">
       VS    </td>
-    <td colspan="3" align="center" bgcolor="#AAAAAA"><strong>White</strong></td>
+    <td align="center" bgcolor="#AAAAAA">&nbsp;</td>
+    <td align="left" bgcolor="#AAAAAA"><strong>White</strong></td>
   </tr>
   <tr>
-  	<td  bgcolor="#FFFF55" id='leftRating'>&nbsp;</td>
-    <td align="right" bgcolor="#FFFF55"><select name="leftPlayer1" id="leftPlayer1" onchange="addMatchView.playerChanged();">
-      </select><br />
-      <select name="leftPlayer2" id="leftPlayer2" onchange="addMatchView.playerChanged();">
-      </select>
+  	<td width="150" height="80" align="right"  bgcolor="#EEEE44" id='leftRating'>
+  	  <a href="javascript:addMatchView.selectPlayer(true, 0)"><span class="leftAttacker">Left offence</span></a>
+  	  <br /><br/>
+  	  <a href="javascript:addMatchView.selectPlayer(true, 1)"><span class="leftDefender">Left defender</span></a>
+      </td>
+    <td width="50" align="right" bgcolor="#FFFF55">
+      <br>
+      <select name="leftScore" id="leftScore">
+        <option>0</option>
+        <option>1</option>
+        <option>2</option>
+        <option>3</option>
+        <option>4</option>
+        <option>5</option>
+        <option>6</option>
+        <option>7</option>
+        <option>8</option>
+        <option>9</option>
+        <option selected>10</option>
+      </select>[<span id='leftExpectedScore'>x</span>]
     </td>
-    <td width="40" align="right" bgcolor="#FFFF55">
-      <input name="leftScore" type="text" id="leftScore" size="4" maxlength="2" />
-      <br/>[<span id='leftExpectedScore'>x</span>]
+    <td width="50" bgcolor="#AAAAAA">
+    <br>
+    <select name="rightScore" id="rightScore">
+        <option>0</option>
+        <option>1</option>
+        <option>2</option>
+        <option>3</option>
+        <option>4</option>
+        <option>5</option>
+        <option>6</option>
+        <option>7</option>
+        <option>8</option>
+        <option>9</option>
+        <option selected>10</option>
+      </select>[<span id='rightExpectedScore'>x</span>]
     </td>
-    <td width="40" bgcolor="#AAAAAA">
-      <input name="rightScore" type="text" id="rightScore" size="4" maxlength="2" />
-      <br/>[<span id='rightExpectedScore'>x</span>]
+    <td width="150" align="left" bgcolor="#999999">
+      <a href="javascript:addMatchView.selectPlayer(false, 0)"><span class="rightAttacker">Right offence</span></a>
+      <br /><br/>
+      <a href="javascript:addMatchView.selectPlayer(false, 1)"><span class="rightDefender">Right defender</span></a>
     </td>
-    <td align="left" bgcolor="#AAAAAA"><select name="rightPlayer1" id="rightPlayer1" onchange="addMatchView.playerChanged();">
-      </select><br /><select name="rightPlayer2" id="rightPlayer2" onchange="addMatchView.playerChanged();">
-</select>      </td>
-  	<td  bgcolor="#AAAAAA" id='rightRating'>&nbsp;</td>
   </tr>
   <tr>
-    <td colspan="7">
+    <td colspan="5">
     Date: 
       now?
       <input name="dateNow" type="checkbox" id="dateNow" checked="checked" onchange="addMatchView.dateNowChanged();"/>
@@ -283,7 +319,7 @@ function setCurrentView(view)
     </td>
   </tr>
   <tr>
-    <td colspan="7" align="center"><div class="fb-login-button fbLoggedOut" data-show-faces="false" data-width="200" data-max-rows="1">Login to Submit</div> <div class="fbLoggedIn" ><input type="submit" name="submit" id="submit" value="Submit" onClick="addMatchView.onSubmit()"/> </div></td>
+    <td colspan="5" align="center"><div class="fb-login-button fbLoggedOut" data-show-faces="false" data-width="200" data-max-rows="1">Login to Submit</div> <div class="fbLoggedIn" ><input type="submit" name="submit" id="submit" value="Submit" onClick="addMatchView.onSubmit()"/> </div></td>
   </tr>
 </table>
 

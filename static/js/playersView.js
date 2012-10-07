@@ -41,7 +41,7 @@ this.updateRows = function()
 function onPlayersLoaded(data)
 {
 	var first = players == null;
-	players = data;
+	players = data.concat();
 	if(first)
 	{
 		self.toggleSortBy("mixedStats.score")	
@@ -113,7 +113,7 @@ this.addPlayer = function()
 		alert("User loading in progress.");
 		return;
 	}
-	if(facebookAccessToken == null)
+	if(FACEBOOK_ENABLED && facebookAccessToken == null)
 	{
 		FB.login();
 		return;

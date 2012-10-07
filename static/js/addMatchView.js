@@ -4,15 +4,16 @@ function AddMatchView(tableElement)
 
 var table = tableElement;
 var players;
-var playersByName = {};
+var playersById = {};
 var self = this;
-var leftPlayer1Field = document.getElementById("leftPlayer1");
-var leftPlayer2Field = document.getElementById("leftPlayer2");
-var rightPlayer1Field = document.getElementById("rightPlayer1");
-var rightPlayer2Field = document.getElementById("rightPlayer2");
+var leftPlayer1;
+var leftPlayer2;
+var rightPlayer1;
+var rightPlayer2;
 var dateNowCheckbox = document.getElementById("dateNow");
 var datePicker = document.getElementById("datePicker");
 var submitButton = document.getElementById("submit");
+var activePlayerSelectDialog;
 
 $('#datePicker').datetimepicker();
 updateDateSelectorVisibility();
@@ -29,6 +30,7 @@ this.show = function()
 this.hide = function()
 {
 	table.style.display  = 'none';
+	hideActivePlayerSelectDialog();
 }
 
 this.loadPlayers = function()
@@ -50,32 +52,14 @@ function onPlayersLoaded(data)
 {
 	players = data;
 	
-	playersByName = {};
+	playersById = {};
 	for (var X in players)
 	{
 		var player = players[X];
 		console.log(player);
-		playersByName[player.id] = player;
+		playersById[player.id] = player;
 	}
-	
-	fillSelectListWithPlayers(leftPlayer1Field, data, "-- attacker --");
-	
-	fillSelectListWithPlayers(leftPlayer2Field, data, "-- defender --");
-	
-	fillSelectListWithPlayers(rightPlayer1Field, data, "-- attacker --");
-	
-	fillSelectListWithPlayers(rightPlayer2Field, data, "-- defender --");
-}
-
-function fillSelectListWithPlayers(selectElement, players, blankname)
-{
-	selectElement.options.length = 0;
-	selectElement.options.add(new Option(blankname, ""));
-	for (var X in players)
-	{
-		var player = players[X];
-		selectElement.options.add(new Option(player.name, player.id));
-	}
+	updateViewNames();
 }
 
 function averagePlayerRatings(field1, field2)
@@ -83,12 +67,12 @@ function averagePlayerRatings(field1, field2)
 	var rating = 0;
 	var nPlayers = 0;
 	
-	var player = playersByName[field1.value];
+	var player = playersById[field1];
 	if (player) {
 		rating += player.mixedStats.score;
 		nPlayers++;
 	}
-	player = playersByName[field2.value];
+	player = playersById[field2];
 	if (player) {
 		rating += player.mixedStats.score;
 		nPlayers++;
@@ -109,11 +93,11 @@ function expectedScoreForRating(rating, opponent)
 
 function updateRatings()
 {
-	var rightRating = averagePlayerRatings(rightPlayer1Field, rightPlayer2Field);
+	var rightRating = averagePlayerRatings(rightPlayer1, rightPlayer2);
 	
 	rightRating.innerHTML = Math.round(rightRating);
 	
-	var leftRating = averagePlayerRatings(leftPlayer1Field, leftPlayer2Field);
+	var leftRating = averagePlayerRatings(leftPlayer1, leftPlayer2);
 	
 	leftRating.innerHTML = Math.round(leftRating);
 	
@@ -136,12 +120,6 @@ function updateRatings()
 	leftExpectedScore.innerHTML = leftGoals;
 	rightExpectedScore.innerHTML = rightGoals;
 }
-
-this.playerChanged = function()
-{
-	updateRatings();
-}
-
 this.dateNowChanged = function()
 {
 	updateDateSelectorVisibility();
@@ -152,9 +130,113 @@ function updateDateSelectorVisibility()
 	datePicker.style.display = dateNowCheckbox.checked ? 'none' : 'inherit';
 }
 
+function updateViewNames()
+{
+	$(".leftAttacker").html(leftPlayer1 ? playersById[leftPlayer1].name : "-offence-");
+	$(".leftDefender").html(leftPlayer2 ? playersById[leftPlayer2].name : "-defence-");
+	$(".rightAttacker").html(rightPlayer1 ? playersById[rightPlayer1].name : "-offence-");
+	$(".rightDefender").html(rightPlayer2 ? playersById[rightPlayer2].name : "-defence-");
+}
+
+this.selectPlayer = function(isLeftSide, index)
+{
+	var title = "";
+	if(isLeftSide)
+	{
+		if(index == 0) title = "Left Offence";
+		else title = "Left Defender";
+	}
+	else
+	{
+		if(index == 0) title = "Right Offence";
+		else title = "Left Defender";
+	}
+	
+	showPlayerSelection(title, function(playerid)
+	{
+		setPlayerFromOptions(isLeftSide, index, playerid);
+		updateViewNames();
+		updateRatings();
+	});
+}
+
+function setPlayerFromOptions(isLeftSide, index, value)
+{
+	if(isLeftSide)
+	{
+		if(index == 0) leftPlayer1 = value;
+		else leftPlayer2 = value;
+	}
+	else
+	{
+		if(index == 0) rightPlayer1 = value;
+		else rightPlayer2 = value;
+	}
+}
+
+function showPlayerSelection(title, callback)
+{
+	hideActivePlayerSelectDialog();
+	var dialogDiv = $(document.createElement('div'));
+	activePlayerSelectDialog = dialogDiv;
+	
+	var dialogClickOutsideHandler = function(e)
+	{
+		if(dialogDiv.dialog('isOpen')
+		&& !jQuery(e.target).is('.ui-dialog, a')
+		&& !jQuery(e.target).closest('.ui-dialog').length)
+		{
+			hideActivePlayerSelectDialog();
+		}
+	}
+	
+	// done outside so the 'player' is not static scoped.
+	var createButtonCB = function(player)
+	{
+		return function()
+		{
+			dialogDiv.dialog("close");
+			callback(player.id);
+		} 
+	}
+	
+	var buttons = {};
+	for (var X in players)
+	{
+		var player = players[X];
+		buttons[player.name] = createButtonCB(player);
+	}
+	
+	dialogDiv.dialog(
+	{
+		title:title,
+		minWidth:480,
+		position:['center', 50],
+		open: function()
+			{
+			   jQuery('body').bind('click',	dialogClickOutsideHandler);
+			},
+		close: function()
+			{
+			   jQuery('body').unbind('click', dialogClickOutsideHandler);
+			},
+		buttons:buttons
+	});
+	$(".ui-dialog-content").hide();	
+}
+
+function hideActivePlayerSelectDialog()
+{
+	if(activePlayerSelectDialog)
+	{
+		activePlayerSelectDialog.dialog("close");
+		activePlayerSelectDialog = null;
+	}
+}
+
 this.onSubmit = function()
 {
-	if(facebookAccessToken == null)
+	if(FACEBOOK_ENABLED && facebookAccessToken == null)
 	{
 		FB.login();
 		return;
@@ -162,12 +244,12 @@ this.onSubmit = function()
 	var request = {};
 	request.request = "addMatch";
 	request.fbAccessToken = facebookAccessToken;
-	request.leftPlayer1 = String(leftPlayer1Field.value);
-	request.leftPlayer2 = String(leftPlayer2Field.value);
+	request.leftPlayer1 = leftPlayer1;
+	request.leftPlayer2 = leftPlayer2;
 	request.leftScore = Number(document.getElementById("leftScore").value);
 	
-	request.rightPlayer1 = String(rightPlayer1Field.value);
-	request.rightPlayer2 = String(rightPlayer2Field.value);
+	request.rightPlayer1 = rightPlayer1;
+	request.rightPlayer2 = rightPlayer2;
 	request.rightScore = Number(document.getElementById("rightScore").value);;	
 	
 	if(!dateNowCheckbox.checked && datePicker.value)
