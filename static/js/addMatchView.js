@@ -211,7 +211,7 @@ function showPlayerSelection(title, callback)
 	{
 		title:title,
 		minWidth:480,
-		position:['center', 50],
+		position:['center', 60],
 		open: function()
 			{
 			   jQuery('body').bind('click',	dialogClickOutsideHandler);
