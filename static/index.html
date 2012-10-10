@@ -9,7 +9,7 @@
 <link href="css/style.css" rel="stylesheet" type="text/css" />
 <link href="css/jquery-ui.css" rel="stylesheet" type="text/css" />
 
-<script type="text/javascript" src="js/jquery-1.8.1.min.js"></script>
+<script type="text/javascript" src="js/jquery-1.8.2.min.js"></script>
 <script type="text/javascript" src="js/jquery-ui-1.8.23.custom.min.js"></script>
 <script type="text/javascript" src="js/jquery-ui-timepicker-addon.js"></script>
 <script type="text/javascript" src="js/shared.js"></script>
@@ -131,8 +131,8 @@ function onPlayersLoaded(players)
 
 function onMatchAdded()
 {
+	matchesView.onReloading()
 	loadPlayers();
-	//matchesView.loadMatches();
 	setCurrentView(matchesView);
 }
 
@@ -323,7 +323,14 @@ function setCurrentView(view)
     <td colspan="5" align="center"><div class="fb-login-button fbLoggedOut" data-show-faces="false" data-width="200" data-max-rows="1">Login to Submit</div> <div class="fbLoggedIn" ><input type="submit" name="submit" id="submit" value="Submit" onClick="addMatchView.onSubmit()"/> </div></td>
   </tr>
 </table>
+<script>
 
+
+document.getElementById("matchesTable").children[0].style.display = 'none';
+document.getElementById("playersTable").children[0].style.display = 'none';
+document.getElementById("addMatchTable").children[0].style.display = 'none';
+
+</script>
 <div id="exportArea"></div>
 </body> 
 </html>

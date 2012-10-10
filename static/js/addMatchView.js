@@ -241,11 +241,30 @@ function hideActivePlayerSelectDialog()
 
 this.onSubmit = function()
 {
-	if(FACEBOOK_ENABLED && facebookAccessToken == null)
+	if(FACEBOOK_ENABLED)
 	{
-		FB.login();
-		return;
+		FB.getLoginStatus(function(response) {
+		  if (response.status === 'connected')
+		  {
+			//var uid = response.authResponse.userID;
+			facebookAccessToken = response.authResponse.accessToken;
+			submitMatch();
+		  }
+		  else if (response.status === 'not_authorized')
+		  {
+			FB.login();
+		  }
+		 });
 	}
+	else
+	{
+		submitMatch();
+	}
+}
+
+function submitMatch()
+{
+	
 	var request = {};
 	request.request = "addMatch";
 	request.fbAccessToken = facebookAccessToken;

@@ -43,6 +43,12 @@ this.setPlayers = function(players)
 	//}
 }
 
+this.onReloading = function()
+{
+	table.clear();
+	table.setLoading(true);
+}
+
 this.loadMatches = function()
 {
 	if(playersById == null)
