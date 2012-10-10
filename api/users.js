@@ -215,7 +215,7 @@ function updateRatingForMatch(playersById, getStatsFunction, matchData)
 	var Gtotal = Gleft + matchData.rightScore;
 	var Sleft = Gleft / Gtotal;
 	
-	var K = 32;
+	var K = 64;
 	var KDleft = K * ( Sleft - Eleft );
 	
 // 	console.log("R: "+[Math.round(Rleft), Math.round(Rright), Eleft, Sleft, KDleft]);
