@@ -71,13 +71,12 @@ function draw()
 	}
 	
 	var composite, player, playerId, matchi, match, rating, index, color;
-	var i = 0;
 	var playerNameHTMLs = [];
 	
-	for(var playeri in playersById)
+	for(var selindex in selectedPlayers)
 	{
-		player = playersById[playeri];
-		playerId = player.id;
+		playerId = selectedPlayers[selindex];
+		player = playersById[playerId];
 		
 		var selectionIndex = selectedPlayers.indexOf(playerId);
 		if(selectionIndex < 0)
@@ -110,7 +109,7 @@ function draw()
 			}
 			ratings.push(Math.round(rating));
 		}
-		color = colors[i % colors.length];
+		color = colors[selindex % colors.length];
 		
 		graph.sparkline(ratings, {
 			fillColor:false,
@@ -124,7 +123,6 @@ function draw()
 		
 		playerNameHTMLs.push(" <a href='javascript:graphView.clearPlayer("+ selectionIndex +");'><span style='color:"+color+"'>" + player.name + "</span></a>");
 		
-		i++;
 		composite = true;
 	}
 	
