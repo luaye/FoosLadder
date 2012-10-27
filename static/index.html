@@ -9,14 +9,16 @@
 <link href="css/style.css" rel="stylesheet" type="text/css" />
 <link href="css/jquery-ui.css" rel="stylesheet" type="text/css" />
 
-<script type="text/javascript" src="js/jquery-1.8.2.min.js"></script>
-<script type="text/javascript" src="js/jquery-ui-1.8.23.custom.min.js"></script>
-<script type="text/javascript" src="js/jquery-ui-timepicker-addon.js"></script>
+<script type="text/javascript" src="jslib/jquery-1.8.2.min.js"></script>
+<script type="text/javascript" src="jslib/jquery-ui-1.8.23.custom.min.js"></script>
+<script type="text/javascript" src="jslib/jquery-ui-timepicker-addon.js"></script>
+<script type="text/javascript" src="jslib/jquery.sparkline.js"></script>
 <script type="text/javascript" src="js/shared.js"></script>
 <script type="text/javascript" src="js/table.js"></script>
 <script type="text/javascript" src="js/matchesView.js"></script>
 <script type="text/javascript" src="js/addMatchView.js"></script>
 <script type="text/javascript" src="js/playersView.js"></script>
+<script type="text/javascript" src="js/graphView.js"></script>
 
 <script src="//connect.facebook.net/en_US/all.js"></script>
 
@@ -35,6 +37,7 @@ function onLoad()
 	var matchesTable = new LoadableTable(document.getElementById("matchesTable").children[0]);
 	matchesView = new MatchesView(matchesTable);
 	matchesView.loadPlayers = loadPlayers;
+	matchesView.loadMatches = loadMatches;
 	matchesView.hide();
 	
 	var playersTable = new LoadableTable(document.getElementById("playersTable").children[0]);
@@ -47,6 +50,12 @@ function onLoad()
 	addMatchView.loadPlayers = loadPlayers;
 	addMatchView.onMatchAdded = onMatchAdded;
 	addMatchView.hide();
+	
+	var graphDiv = $("#graphView");
+	graphView = new GraphView(graphDiv);
+	graphView.loadPlayers = loadPlayers;
+	graphView.hide();
+	
 	
 	var location = String(window.location);
 	var hashPath = "";
@@ -124,15 +133,30 @@ function loadPlayers()
 
 function onPlayersLoaded(players)
 {
+	graphView.setPlayers(players);
 	matchesView.setPlayers(players);
 	playersView.setPlayers(players);
 	addMatchView.setPlayers(players);
+}
+
+function loadMatches()
+{
+	matchesView.onReloading();
+	graphView.onReloading();
+	callAPI({request:"getMatches"}, onMatchesLoaded);
+}
+
+function onMatchesLoaded(data)
+{
+	matchesView.setMatches(data);
+	graphView.setMatches(data);
 }
 
 function onMatchAdded()
 {
 	matchesView.onReloading()
 	loadPlayers();
+	loadMatches();
 	setCurrentView(matchesView);
 }
 
@@ -151,12 +175,18 @@ function showPlayers()
 	setCurrentView(playersView);
 }
 
+function showGraph()
+{
+	setCurrentView(graphView);
+}
+
 
 function setCurrentView(view)
 {
 	if(currentView)
 	{
 		currentView.hide();
+		hideActivePlayerSelectDialog();
 	}
 	currentView = view;
 	if(currentView)
@@ -165,16 +195,58 @@ function setCurrentView(view)
 	}
 }
 
+
+var activePlayerSelectDialog;
+
+function showPlayerSelectionDialog(title, buttonObjs)
+{
+	hideActivePlayerSelectDialog();
+	var dialogDiv = $(document.createElement('div'));
+	activePlayerSelectDialog = dialogDiv;
+	
+	var dialogClickOutsideHandler = function(e)
+	{
+		if(dialogDiv.dialog('isOpen')
+		&& !jQuery(e.target).is('.ui-dialog, a')
+		&& !jQuery(e.target).closest('.ui-dialog').length)
+		{
+			hideActivePlayerSelectDialog();
+		}
+	}
+	
+	dialogDiv.dialog(
+	{
+		title:title,
+		minWidth:480,
+		position:['center', 60],
+		open: function()
+			{
+			   jQuery('body').bind('click',	dialogClickOutsideHandler);
+			},
+		close: function()
+			{
+			   jQuery('body').unbind('click', dialogClickOutsideHandler);
+			},
+		buttons:buttonObjs
+	});
+	$(".ui-dialog-content").hide();	
+}
+
+function hideActivePlayerSelectDialog()
+{
+	if(activePlayerSelectDialog)
+	{
+		activePlayerSelectDialog.dialog("close");
+		activePlayerSelectDialog = null;
+	}
+}
 </script>
 </head> 
 <body onLoad="onLoad()"> 
 <div id="fb-root"></div>
-<div class="header"><a href="javascript:showMatches()">Matches</a> | <a href="javascript:showAddMatch()">Add Match</a>  | <a href="javascript:showPlayers()">Players</a></div>
+<div class="header"><a href="javascript:showMatches()">Matches</a> | <a href="javascript:showAddMatch()">Add Match</a>  | <a href="javascript:showPlayers()">Players</a>  | <a href="javascript:showGraph()">Graph</a></div>
 <br />
 <table border="0" align="center" id="matchesTable">
-  <tr>
-    <td colspan="5" align="center">Matches</td>
-  </tr>
   <tr>
     <td width="80" align="center">&nbsp;</td>
     <td width="165" align="center" bgcolor="#999999">Yellow</td>
@@ -214,8 +286,7 @@ function setCurrentView(view)
 
 <table width="580" border="0" align="center" id="playersTable">
   <tr>
-    <td colspan="6" align="center">Players<br />
-      <a href="javascript:playersView.addPlayer()" class="tiny">Add player</a>  |
+    <td colspan="6" align="center"><a href="javascript:playersView.addPlayer()" class="tiny">Add player</a>  |
       <a href="javascript:playersView.rebuiltStats()" class="tiny">Rebuilt stats</a> |
       <a href="javascript:playersView.repeatMatches()" class="tiny">Repeat matches</a> |
       <a href="javascript:playersView.loadPlayers()" class="tiny">Reload</a></td>
@@ -223,13 +294,13 @@ function setCurrentView(view)
   <tr id="headerRow">
     <td width="160" align="center" bgcolor="#999999"><a href="javascript:playersView.toggleSortBy('name')">Name</a></td>
     <td width="100" align="center" bgcolor="#999999"><a href="javascript:playersView.toggleSortBy('mixedStats.score')">mixed<br />
-    score</a></td>
+    rating</a></td>
     <td width="100" align="center" bgcolor="#999999"><a href="javascript:playersView.toggleSortBy('duoStats.score')">duo<br />
-    score</a></td>
+    rating</a></td>
     <td width="100" align="center" bgcolor="#999999">duo<br />
     <a href="javascript:playersView.toggleSortBy('duoStats.wins')">wins</a>/<a href="javascript:playersView.toggleSortBy('duoStats.games')">games</a></td>
     <td width="100" align="center" bgcolor="#999999"><a href="javascript:playersView.toggleSortBy('soloStats.score')">solo<br />
-    score</a></td>
+    rating</a></td>
     <td width="100" align="center" bgcolor="#999999">solo<br />
     <a href="javascript:playersView.toggleSortBy('soloStats.wins')">win</a>/<a href="javascript:playersView.toggleSortBy('soloStats.games')">games</a></td>
   </tr>
@@ -256,9 +327,6 @@ function setCurrentView(view)
 
 
 <table border="0" align="center" cellpadding="4" cellspacing="0" id="addMatchTable">
-  <tr>
-    <td colspan="5" align="center">Add Match</td>
-  </tr>
   <tr>
     <td align="right" bgcolor="#FFFF55"><strong>Yellow</strong></td>
     <td align="center" bgcolor="#FFFF55">&nbsp;</td>
@@ -323,8 +391,13 @@ function setCurrentView(view)
     <td colspan="5" align="center"><div class="fb-login-button fbLoggedOut" data-show-faces="false" data-width="200" data-max-rows="1">Login to Submit</div> <div class="fbLoggedIn" ><input type="submit" name="submit" id="submit" value="Submit" onClick="addMatchView.onSubmit()"/> </div></td>
   </tr>
 </table>
+<div id="graphView" style="text-align:center"><a href="javascript:graphView.selectPlayers();">Choose players</a><br>
+  <br>
+<graphSelectedPlayers>players...</graphSelectedPlayers>
+<br>
+<br>
+</div>
 <script>
-
 
 document.getElementById("matchesTable").children[0].style.display = 'none';
 document.getElementById("playersTable").children[0].style.display = 'none';

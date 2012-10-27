@@ -37,10 +37,6 @@ this.setPlayers = function(players)
 		var player = players[X];
 		playersById[player.id] = player;
 	}
-	//if(matches != null)
-	//{
- 		self.loadMatches();
-	//}
 }
 
 this.onReloading = function()
@@ -51,17 +47,11 @@ this.onReloading = function()
 
 this.loadMatches = function()
 {
-	if(playersById == null)
-	{
-		self.loadPlayers();
-		return;
-	}
-	table.clear();
-	table.setLoading(true);
-	callAPI({request:"getMatches"}, onMatchesLoaded);
+	callAPI({request:"getMatches"}, self.setMatches);
 }
 
-function onMatchesLoaded(data)
+
+this.setMatches = function(data)
 {
 	matches = data;
 	table.setLoading(false);

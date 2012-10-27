@@ -13,7 +13,6 @@ var rightPlayer2;
 var dateNowCheckbox = document.getElementById("dateNow");
 var datePicker = document.getElementById("datePicker");
 var submitButton = document.getElementById("submit");
-var activePlayerSelectDialog;
 
 $('#datePicker').datetimepicker();
 updateDateSelectorVisibility();
@@ -30,7 +29,6 @@ this.show = function()
 this.hide = function()
 {
 	table.style.display  = 'none';
-	hideActivePlayerSelectDialog();
 }
 
 this.loadPlayers = function()
@@ -144,12 +142,12 @@ this.selectPlayer = function(isLeftSide, index)
 	if(isLeftSide)
 	{
 		if(index == 0) title = "Left Offence";
-		else title = "Left Defender";
+		else title = "Left Defence";
 	}
 	else
 	{
 		if(index == 0) title = "Right Offence";
-		else title = "Left Defender";
+		else title = "Left Defence";
 	}
 	
 	showPlayerSelection(title, function(playerid)
@@ -177,66 +175,33 @@ function setPlayerFromOptions(isLeftSide, index, value)
 function showPlayerSelection(title, callback)
 {
 	hideActivePlayerSelectDialog();
-	var dialogDiv = $(document.createElement('div'));
-	activePlayerSelectDialog = dialogDiv;
-	
-	var dialogClickOutsideHandler = function(e)
-	{
-		if(dialogDiv.dialog('isOpen')
-		&& !jQuery(e.target).is('.ui-dialog, a')
-		&& !jQuery(e.target).closest('.ui-dialog').length)
-		{
-			hideActivePlayerSelectDialog();
-		}
-	}
 	
 	// done outside so the 'player' is not static scoped.
 	var createButtonCB = function(player)
 	{
 		return function()
 		{
-			dialogDiv.dialog("close");
+			$(this).dialog("close");
 			callback(player.id);
-		} 
+		}
 	}
 	
 	var buttons = {};
 	buttons["-none-"] = function()
 	{
-		dialogDiv.dialog("close");
+		$(this).dialog("close");
 		callback(null);
 	}
 	for (var X in players)
 	{
 		var player = players[X];
-		buttons[player.name] = createButtonCB(player);
+		var playerid = player.id;
+		if(playerid != leftPlayer1 && playerid != leftPlayer2 && playerid != rightPlayer1 && playerid != rightPlayer2 )
+		{
+			buttons[player.name] = createButtonCB(player);
+		}
 	}
-	
-	dialogDiv.dialog(
-	{
-		title:title,
-		minWidth:480,
-		position:['center', 60],
-		open: function()
-			{
-			   jQuery('body').bind('click',	dialogClickOutsideHandler);
-			},
-		close: function()
-			{
-			   jQuery('body').unbind('click', dialogClickOutsideHandler);
-			},
-		buttons:buttons
-	});
-	$(".ui-dialog-content").hide();	
-}
-
-function hideActivePlayerSelectDialog()
-{
-	if(activePlayerSelectDialog)
-	{
-		activePlayerSelectDialog.dialog("close");
-		activePlayerSelectDialog = null;
-	}
+	showPlayerSelectionDialog(title, buttons);
 }
 
 this.onSubmit = function()

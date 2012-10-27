@@ -166,6 +166,23 @@ function expectedScoreForRating(rating, opponent)
 	return Es;
 }
 
+
+
+function getPlayerMixedRatingListByPlayerIds(playerIds, playersById)
+{
+	var result = [];
+	var player, stats, score;
+	for (var index in playerIds)
+	{
+		player = playersById[playerIds[index]];
+		stats = getMixedStats(player);
+		score = getProperty(stats, "score", defaultScoreForPlayer(player));
+		result.push(getProperty(stats, "score", defaultScoreForPlayer(player)));
+	}
+	return result;
+}
+
+
 function addRatingToPlayers(playersById, getStatsFunction, players, deltaRating)
 {
 	var ratings;
@@ -230,7 +247,10 @@ function updateStatsOfPlayersByIdForMatch(playersById, matchData)
 {
 	var isDuoGame = matchData.leftPlayers.length > 1 || matchData.rightPlayers.length > 1;
 	var getStatsFunction = isDuoGame ? getDuoStats : getSoloStats;
-
+	
+	matchData.preLeftRatings = getPlayerMixedRatingListByPlayerIds(matchData.leftPlayers, playersById);
+	matchData.preRightRatings = getPlayerMixedRatingListByPlayerIds(matchData.rightPlayers, playersById);
+	
 	updateRatingForMatch(playersById, getStatsFunction, matchData);
 	updateRatingForMatch(playersById, getMixedStats, matchData);
 
