@@ -152,12 +152,17 @@ this.selectPlayers = function()
 	{
 		return function()
 		{
-			if(selectedPlayers.indexOf(player.id) < 0)
+			var index = selectedPlayers.indexOf(player.id);
+			if(index < 0)
 			{
 				//$(this).dialog("close");
 				selectedPlayers.push(player.id);
-				draw();
 			}
+			else
+			{
+				selectedPlayers.splice(index, 1);
+			}
+			draw();
 		}
 	}
 	var buttons = {};
