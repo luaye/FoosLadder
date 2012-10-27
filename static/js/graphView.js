@@ -97,7 +97,7 @@ function draw()
 			}
 			else
 			{
-				index = match.preRightRatings.indexOf(playerId);
+				index = match.rightPlayers.indexOf(playerId);
 				if(index >= 0)
 				{
 					rating = match.preRightRatings[index];
@@ -115,7 +115,8 @@ function draw()
 			fillColor:false,
 			lineColor:color,
 			chartRangeMin:1400,
-			chartRangeMax:1800,
+			chartRangeMax:1900,
+			chartRangeClip:true,
 			height:600,
 			width:640,
 			composite:composite
