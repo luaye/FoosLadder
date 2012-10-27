@@ -5,6 +5,9 @@ function GraphView(view)
 	var showing;
 	var selectedPlayers = [];
 	
+	var colors = ["#C00", "#00C", "#0C0", "#880", "#088", "#808", "#000", "#666", "#AAA"];
+
+	
 	var playerNamesEle = $("graphSelectedPlayers");
 	playerNamesEle.empty();
 	
@@ -58,9 +61,6 @@ this.setMatches = function(data)
 	}
 }
 
-
-var colors = ["#800", "#080", "#008", "#880", "#088", "#808", "#222", "#666"];
-
 function draw()
 {
 	if(selectedPlayers.length == 0)
@@ -113,6 +113,7 @@ function draw()
 		
 		graph.sparkline(ratings, {
 			fillColor:false,
+			lineWidth:1,
 			lineColor:color,
 			chartRangeMin:1400,
 			chartRangeMax:1900,
@@ -151,9 +152,12 @@ this.selectPlayers = function()
 	{
 		return function()
 		{
-			$(this).dialog("close");
-			selectedPlayers.push(player.id);
-			draw();
+			if(selectedPlayers.indexOf(player.id) < 0)
+			{
+				//$(this).dialog("close");
+				selectedPlayers.push(player.id);
+				draw();
+			}
 		}
 	}
 	var buttons = {};
