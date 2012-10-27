@@ -66,16 +66,19 @@ function onLoad()
 	}
 	var hashBits = hashPath.split("/");
 	
-	if(hashBits[0] == "match" || hashBits[0] == "matches")
+	switch (hashBits[0])
 	{
-		showMatches();
-	}
-	else if(hashBits[0] == "addMatch")
-	{
-		showAddMatch();
-	}
-	else
-	{
+		case "match":
+		case "matches":
+			showMatches();
+		break;
+		case "addMatch":
+			showAddMatch();
+		break;
+		case "graph":
+			showGraph();
+		break;
+		default:
 		showPlayers();
 	}
 	
