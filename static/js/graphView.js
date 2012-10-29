@@ -3,10 +3,11 @@ function GraphView(view)
 	var playersById;
 	var matches;
 	var showing;
-	var selectedPlayers = [];
+	var selectedPlayers;
 	
 	var colors = ["#C00", "#00C", "#0C0", "#880", "#088", "#808", "#000", "#666", "#AAA"];
 
+	var graphLoading = $("#graphLoading");
 	
 	var playerNamesEle = $("graphSelectedPlayers");
 	playerNamesEle.empty();
@@ -21,9 +22,28 @@ this.show = function()
 	
 	if(matches == null)
 	{
+		graphLoading.show();
 		self.loadMatches();
 	}
+	else if(selectedPlayers == null)
+	{
+		selectAllIfEmpty();
+	}
 	else if(playersById) draw();
+}
+
+function selectAllIfEmpty()
+{
+	if(selectedPlayers == null)
+	{
+		selectedPlayers = [];
+		for (var X in playersById)
+		{
+			var player = playersById[X];
+			selectedPlayers.push(player.id);
+		}
+		draw();
+	}
 }
 
 this.hide = function()
@@ -49,21 +69,26 @@ this.setPlayers = function(players)
 
 this.onReloading = function()
 {
-	
+	graphLoading.show();
 }
 
 this.setMatches = function(data)
 {
 	matches = data;
+	graphLoading.hide();
 	if(showing)
 	{
-		draw();
+		if(selectedPlayers == null)
+		{
+			selectAllIfEmpty();
+		}
+		else if(playersById) draw();
 	}
 }
 
 function draw()
 {
-	if(selectedPlayers.length == 0)
+	if(!selectedPlayers || selectedPlayers.length == 0)
 	{
 		graph.empty();
 		playerNamesEle.text("");
@@ -154,6 +179,8 @@ this.selectPlayers = function()
 {
 	hideActivePlayerSelectDialog();
 	
+	if(!selectedPlayers) selectedPlayers = [];
+	
 	// done outside so the 'player' is not static scoped.
 	var createButtonCB = function(player)
 	{
@@ -181,6 +208,7 @@ this.selectPlayers = function()
 			buttons[player.name] = createButtonCB(player);
 		}
 	}
+	
 	showPlayerSelectionDialog("", buttons);
 }
 }
