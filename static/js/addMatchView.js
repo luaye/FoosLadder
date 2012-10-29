@@ -196,10 +196,10 @@ function showPlayerSelection(title, callback)
 	{
 		var player = players[X];
 		var playerid = player.id;
-		if(playerid != leftPlayer1 && playerid != leftPlayer2 && playerid != rightPlayer1 && playerid != rightPlayer2 )
-		{
+		//if(playerid != leftPlayer1 && playerid != leftPlayer2 && playerid != rightPlayer1 && playerid != rightPlayer2 )
+		//{
 			buttons[player.name] = createButtonCB(player);
-		}
+		//}
 	}
 	showPlayerSelectionDialog(title, buttons);
 }
