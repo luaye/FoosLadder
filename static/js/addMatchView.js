@@ -129,7 +129,7 @@ function updateDateSelectorVisibility()
 }
 
 function updateViewNames()
-{
+{	
 	$(".leftAttacker").html(leftPlayer1 ? playersById[leftPlayer1].name : "-offence-");
 	$(".leftDefender").html(leftPlayer2 ? playersById[leftPlayer2].name : "-defence-");
 	$(".rightAttacker").html(rightPlayer1 ? playersById[rightPlayer1].name : "-offence-");
@@ -196,10 +196,10 @@ function showPlayerSelection(title, callback)
 	{
 		var player = players[X];
 		var playerid = player.id;
-		//if(playerid != leftPlayer1 && playerid != leftPlayer2 && playerid != rightPlayer1 && playerid != rightPlayer2 )
-		//{
+		if(playerid != leftPlayer1 && playerid != leftPlayer2 && playerid != rightPlayer1 && playerid != rightPlayer2 )
+		{
 			buttons[player.name] = createButtonCB(player);
-		//}
+		}
 	}
 	showPlayerSelectionDialog(title, buttons);
 }
@@ -288,6 +288,7 @@ function isScoreValid(score)
 
 function onMatchSubmitted(body)
 {
+	
 	if(body.status == "error")
 	{
 		submitButton.disabled = false;
@@ -295,6 +296,13 @@ function onMatchSubmitted(body)
 	}
 	else
 	{
+		document.getElementById("leftScore").value = "10";
+		document.getElementById("rightScore").value = "10";
+		leftPlayer1 = null;
+		leftPlayer2 = null;
+		rightPlayer1 = null;
+		rightPlayer2 = null;
+		updateViewNames();
 		submitButton.disabled = false;
 		self.onMatchAdded();
 	}
