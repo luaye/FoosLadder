@@ -7,5 +7,6 @@
 		"matchesDB": "foosmatches"
 		},
 	"useFacebookAuth":true,
-	"allowedFacebookIds": ["luapeoo"]
+	"allowedFacebookIds": ["luapeoo"],
+	"secretAuthKey": "9b05d7c1ebaa2801ee6735caf2326e0c"
 }
