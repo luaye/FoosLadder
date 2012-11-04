@@ -61,7 +61,7 @@ function respondError(response, message)
 {
 	console.log("Erorr with request. "+message);
 	response.writeHeader(500, {"Content-Type": "text/plain"});  
-	response.write('{"status":"error", "message":"+message+"}\n'); 
+	response.write('{"status":"error", "message":"'+message+'"}'); 
 	response.end();
 }
 
