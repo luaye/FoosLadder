@@ -6,6 +6,7 @@
 		"usersDB": "foosplayers",
 		"matchesDB": "foosmatches"
 		},
+	"maxRatingChange":64,
 	"useFacebookAuth":true,
 	"allowedFacebookIds": ["luapeoo"],
 	"secretAuthKey": "972c6b99b84937c0a0d4df39499036a4"

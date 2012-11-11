@@ -115,12 +115,8 @@ exports.updatePlayerStatsForMatch = function(matchData, callback)
 
 exports.getExpectedScores = function(body, callback)
 {
-	var leftPlayers = [];
-	if(body.leftPlayer1) leftPlayers.push(body.leftPlayer1);
-	if(body.leftPlayer2) leftPlayers.push(body.leftPlayer2);
-	var rightPlayers = [];
-	if(body.rightPlayer1) rightPlayers.push(body.rightPlayer1);
-	if(body.rightPlayer2) rightPlayers.push(body.rightPlayer2);
+	var leftPlayers = utils.getLeftPlayersOfObject(body);
+	var rightPlayers = utils.getRightPlayersOfObject(body);
 	
 	if(leftPlayers.length == 0 || rightPlayers.length == 0)
 	{
@@ -142,6 +138,22 @@ exports.getExpectedScores = function(body, callback)
 
 exports.getRatingChange = function(body, callback)
 {
+	var leftPlayers = utils.getLeftPlayersOfObject(body);
+	var rightPlayers = utils.getRightPlayersOfObject(body);
+	
+	if(leftPlayers.length == 0 || rightPlayers.length == 0)
+	{
+		callback({leftRating:0, rightRating:0});
+		return;
+	}
+	
+	var playerIds = leftPlayers.concat(rightPlayers);
+	getPlayersByIdUsingIds(playerIds, function(playersById)
+	{
+		var KDleft = getLeftRatingChange(playersById, getMixedStats, leftPlayers, Number(body.leftScore), rightPlayers, Number(body.rightScore));
+	
+		callback({leftRating:KDleft, rightRating:-KDleft});
+	});
 	
 }
 
@@ -186,7 +198,7 @@ function getPlayersByIdUsingIds(playerIds, callback)
 			callback(null);
 		}
 		else
-		{		
+		{
 			for (var X in body.rows)
 			{
 				var row = body.rows[X];
@@ -257,7 +269,6 @@ function getPlayerMixedRatingListByPlayerIds(playerIds, playersById)
 
 function addRatingToPlayers(playersById, getStatsFunction, players, deltaRating)
 {
-	var ratings;
 	var player;
 	var index;
 	var stats;
@@ -269,7 +280,6 @@ function addRatingToPlayers(playersById, getStatsFunction, players, deltaRating)
 		stats["score"] = score + deltaRating;
 		console.log(player.name+" "+Math.round(score)+" -> "+Math.round(score+deltaRating));
 	}
-	return ratings / players.length;
 }
 
 function defaultScoreForPlayer(player)
@@ -293,26 +303,46 @@ function defaultScoreForPlayer(player)
 	return 1600;
 }
 
-function updateRatingForMatch(playersById, getStatsFunction, matchData)
+function updateRatingForMatch(playersById, getStatsFunction, o)
 {
-	var Rleft = getAverageRatingOfPlayers(playersById, getStatsFunction, matchData.leftPlayers);
-	var Rright = getAverageRatingOfPlayers(playersById, getStatsFunction, matchData.rightPlayers);
+	var KDleft = getLeftRatingChange(playersById, getStatsFunction, o.leftPlayers, o.leftScore, o.rightPlayers, o.rightScore);
+	
+	o.KDleft = KDleft;
+	
+	addRatingToPlayers(playersById, getStatsFunction, o.leftPlayers, KDleft);
+	addRatingToPlayers(playersById, getStatsFunction, o.rightPlayers, -KDleft);
+}
 
+function getLeftRatingChange(playersById, getStatsFunction, leftPlayerIds, leftScore, rightPlayerIds, rightScore)
+{
+	var Rleft = getAverageRatingOfPlayers(playersById, getStatsFunction, leftPlayerIds);
+	var Rright = getAverageRatingOfPlayers(playersById, getStatsFunction, rightPlayerIds);
+
+		console.log("playersById", JSON.stringify(playersById));
+		console.log("leftScore", leftScore);
+		console.log("leftPlayers", leftPlayerIds);
+		console.log("rightScore", rightScore);
+		console.log("rightPlayers", rightPlayerIds);
+		console.log("Rleft", Rleft);
+		console.log("Rright", Rright);
+		
 	var Eleft = expectedScoreForRating(Rleft, Rright);
 	
-	var Gleft = matchData.leftScore;
-	var Gtotal = Gleft + matchData.rightScore;
+	
+	var Gleft = leftScore;
+	var Gtotal = Gleft + rightScore;
 	var Sleft = Gleft / Gtotal;
 	
-	var K = 64;
-	var KDleft = K * ( Sleft - Eleft );
+	var K = config.maxRatingChange;
 	
-// 	console.log("R: "+[Math.round(Rleft), Math.round(Rright), Eleft, Sleft, KDleft]);
-
-	matchData.KDleft = KDleft;
-	
-	addRatingToPlayers(playersById, getStatsFunction, matchData.leftPlayers, KDleft);
-	addRatingToPlayers(playersById, getStatsFunction, matchData.rightPlayers, -KDleft);
+		console.log("Eleft", Eleft);
+		console.log("Gleft", Gleft);
+		console.log("Gtotal", Gtotal);
+		console.log("Sleft", Sleft);
+		console.log("K", K);
+		console.log("---", K * ( Sleft - Eleft ));
+		
+	return K * ( Sleft - Eleft );
 }
 
 function updateStatsOfPlayersByIdForMatch(playersById, matchData)

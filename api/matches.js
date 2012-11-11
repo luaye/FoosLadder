@@ -1,4 +1,5 @@
 var users = require("./users.js");
+var utils = require("./../utils.js");
 
 exports.getMatches = function(body, callback)
 {
@@ -93,13 +94,8 @@ function addMatchToDb(body, callback)
 		matchData.date = new Date().getTime();
 	}
 	
-	matchData.leftPlayers = [];
-	addToListIfExists(matchData.leftPlayers, body.leftPlayer1);
-	addToListIfExists(matchData.leftPlayers, body.leftPlayer2);
-	
-	matchData.rightPlayers = [];
-	addToListIfExists(matchData.rightPlayers, body.rightPlayer1);
-	addToListIfExists(matchData.rightPlayers, body.rightPlayer2);
+	matchData.leftPlayers = utils.getLeftPlayersOfObject(body);
+	matchData.rightPlayers = utils.getRightPlayersOfObject(body);
 	
 	matchData.leftScore = Number(body.leftScore);
 	matchData.rightScore = Number(body.rightScore);
@@ -129,14 +125,6 @@ function addMatchToDb(body, callback)
 			callback({status:"error", message:"Invalid players."});
 		}
 	});
-}
-
-function addToListIfExists(list, value)
-{
-	if(value)
-	{
-		list.push(value);
-	}
 }
 
 function validateScore(score)

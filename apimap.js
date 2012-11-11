@@ -10,6 +10,7 @@ var map = {
 	addPlayer:users.addUser,
 	getPlayersByIds:users.getPlayersByIds,
 	getExpectedScores:users.getExpectedScores,
+	getRatingChange:users.getRatingChange,
 	getMatches:matches.getMatches,
 	getMatchesRaw:matches.getMatchesRaw,
 	addMatch:matches.addMatch,
@@ -44,7 +45,7 @@ exports.runAPI = function(request, response)
 function runAPIBody(body, response)
 {
 	var requestkey = body.request;
-	console.log("runAPI: " + requestkey);
+	//console.log("runAPI: " + requestkey);
 	var apifunction = map[requestkey];
 	if(apifunction)
 	{

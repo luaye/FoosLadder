@@ -33,3 +33,28 @@ exports.getFacebookData = function (accessToken, callback)
 	  callback({status:"error", body:e});
 	});
 }
+
+
+exports.getLeftPlayersOfObject = function(body)
+{
+	var players = [];
+	addToListIfExists(players, body.leftPlayer1);
+	addToListIfExists(players, body.leftPlayer2);
+	return players;
+}
+
+exports.getRightPlayersOfObject = function(body)
+{
+	var players = [];
+	addToListIfExists(players, body.rightPlayer1);
+	addToListIfExists(players, body.rightPlayer2);
+	return players;
+}
+
+function addToListIfExists(list, value)
+{
+	if(value)
+	{
+		list.push(value);
+	}
+}
