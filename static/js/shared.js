@@ -1,4 +1,3 @@
-var OFFLINE = false;
 var FACEBOOK_ENABLED = true;
 var FACEBOOK_APP_ID = '362209653861831';
 var FACEBOOK_APP_URL_PART = '//foos.apelabs.net';
@@ -18,14 +17,7 @@ function callAPI(postdata, callback)
 
 function getAPIPath(apistring)
 {
-	if(OFFLINE)
-	{
-		return getServerRoot() + "offlineapi/" +apistring + ".js";	
-	}
-	else
-	{
-		return getServerRoot() + "api?"+(new Date().getTime());	
-	}
+	return getServerRoot() + "api?"+(new Date().getTime());	
 }
 
 function getServerRoot()
