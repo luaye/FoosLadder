@@ -317,31 +317,13 @@ function getLeftRatingChange(playersById, getStatsFunction, leftPlayerIds, leftS
 {
 	var Rleft = getAverageRatingOfPlayers(playersById, getStatsFunction, leftPlayerIds);
 	var Rright = getAverageRatingOfPlayers(playersById, getStatsFunction, rightPlayerIds);
-
-		console.log("playersById", JSON.stringify(playersById));
-		console.log("leftScore", leftScore);
-		console.log("leftPlayers", leftPlayerIds);
-		console.log("rightScore", rightScore);
-		console.log("rightPlayers", rightPlayerIds);
-		console.log("Rleft", Rleft);
-		console.log("Rright", Rright);
-		
 	var Eleft = expectedScoreForRating(Rleft, Rright);
-	
 	
 	var Gleft = leftScore;
 	var Gtotal = Gleft + rightScore;
 	var Sleft = Gleft / Gtotal;
 	
 	var K = config.maxRatingChange;
-	
-		console.log("Eleft", Eleft);
-		console.log("Gleft", Gleft);
-		console.log("Gtotal", Gtotal);
-		console.log("Sleft", Sleft);
-		console.log("K", K);
-		console.log("---", K * ( Sleft - Eleft ));
-		
 	return K * ( Sleft - Eleft );
 }
 
