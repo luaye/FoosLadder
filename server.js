@@ -16,7 +16,7 @@ console.log("Listening on port "+SERVER_PORT);
 function onServerConnection(request, response)
 {
 	var relativepath = url.parse(request.url).pathname;  
-	console.log('onServerConnection: '+relativepath);
+	//console.log('onServerConnection: '+relativepath);
 	
 	if(relativepath.indexOf("api") == 0 || relativepath.indexOf("/api") == 0)
 	{
@@ -28,6 +28,14 @@ function onServerConnection(request, response)
 	}
 }
 
+var mimeTypes = {
+    "html": "text/html",
+    "jpeg": "image/jpeg",
+    "jpg": "image/jpeg",
+    "png": "image/png",
+    "js": "text/javascript",
+    "css": "text/css"};
+
 function serveStaticFile(request, response)
 {
 	var relativepath = url.parse(request.url).pathname;
@@ -36,7 +44,7 @@ function serveStaticFile(request, response)
 		relativepath = "index.html";
 	}
     var fullpath = path.join(process.cwd(), "static", relativepath);
-	console.log('serveStaticFile: ' + fullpath );
+	//console.log('serveStaticFile: ' + fullpath );
 	
 	filesys.exists(fullpath,function(exists)
 	{  
@@ -52,8 +60,23 @@ function serveStaticFile(request, response)
                      response.write("ERROR: "+err + "\n");  
                      response.end();
                  }  
-                 else{  
-                    response.writeHeader(200);  
+                 else{
+					var mimeType = null;
+					var extIndex = fullpath.lastIndexOf(".");
+					if(extIndex >= 0)
+					{
+						var ext = fullpath.substring(extIndex + 1, fullpath.length);
+						mimeType = mimeTypes[ext];
+					}
+					
+					if(mimeType)
+					{
+                   		response.writeHeader(200, {'Content-Type':mimeType});  
+					}
+					else
+					{
+                    	response.writeHeader(200);  
+					}
                     response.write(file, "binary");  
                     response.end();  
                 }  
