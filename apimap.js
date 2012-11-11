@@ -9,6 +9,7 @@ var map = {
 	getPlayers:users.getUsers,
 	addPlayer:users.addUser,
 	getPlayersByIds:users.getPlayersByIds,
+	getExpectedScores:users.getExpectedScores,
 	getMatches:matches.getMatches,
 	getMatchesRaw:matches.getMatchesRaw,
 	addMatch:matches.addMatch,
@@ -33,7 +34,10 @@ exports.runAPI = function(request, response)
     }
 	else
 	{
-		respondError(response, "undefined request");
+		var body = require('url').parse(request.url, true).query;
+		console.log("body: "+JSON.stringify(body));
+			
+		runAPIBody(body, response);
 	}
 };
 

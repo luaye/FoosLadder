@@ -113,6 +113,69 @@ exports.updatePlayerStatsForMatch = function(matchData, callback)
 	});
 }
 
+exports.getExpectedScores = function(body, callback)
+{
+	var leftPlayers = [];
+	if(body.leftPlayer1) leftPlayers.push(body.leftPlayer1);
+	if(body.leftPlayer2) leftPlayers.push(body.leftPlayer2);
+	var rightPlayers = [];
+	if(body.rightPlayer1) rightPlayers.push(body.rightPlayer1);
+	if(body.rightPlayer2) rightPlayers.push(body.rightPlayer2);
+	
+	if(leftPlayers.length == 0 || rightPlayers.length == 0)
+	{
+		callback({leftScore:0, rightScore:0});
+		return;
+	}
+	
+	var playerIds = leftPlayers.concat(rightPlayers);
+	getPlayersByIdUsingIds(playerIds, function(playersById)
+	{
+		var Rleft = getAverageRatingOfPlayers(playersById, getMixedStats, leftPlayers);
+		var Rright = getAverageRatingOfPlayers(playersById, getMixedStats, rightPlayers);
+	
+		var Es = expectedScoreForRating(Rleft, Rright);
+		
+		callback({leftScore:getLeftGoalsGivenExpectedScore(Es), rightScore:getRightGoalsGivenExpectedScore(Es)});
+	});
+}
+
+exports.getRatingChange = function(body, callback)
+{
+	
+}
+
+function getLeftGoalsGivenExpectedScore(Es)
+{
+	if(Es > 0.5)
+	{
+		return 10;
+	}
+	else
+	{
+		return getLoserGoalsGivenExpectedScore(Es);
+	}
+}
+
+function getRightGoalsGivenExpectedScore(Es)
+{
+	if(Es < 0.5)
+	{
+		return 10;
+	}
+	else
+	{
+		return getLoserGoalsGivenExpectedScore(Es);
+	}
+}
+
+function getLoserGoalsGivenExpectedScore(Es)
+{
+	var minExpected = Es > 0.5 ? (1-Es) : Es;
+	var goals = 10 * minExpected / (1-minExpected);
+	return Math.round(goals*10)/10;
+}
+
 function getPlayersByIdUsingIds(playerIds, callback)
 {
 	var playersById = {};
@@ -129,6 +192,15 @@ function getPlayersByIdUsingIds(playerIds, callback)
 				var row = body.rows[X];
 				playersById[row.id] = row.doc;
 			}
+			for (var X in playerIds)
+			{
+				var playerid = playerIds[X];
+				if(playersById[playerid] == null)
+				{
+					playersById[playerid] = {};
+				}
+			}
+			
 			callback(playersById);
 		}
 	});
