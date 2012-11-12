@@ -185,7 +185,7 @@ function getLoserGoalsGivenExpectedScore(Es)
 {
 	var minExpected = Es > 0.5 ? (1-Es) : Es;
 	var goals = 10 * minExpected / (1-minExpected);
-	return Math.round(goals*10)/10;
+	return 10 * minExpected / (1-minExpected);
 }
 
 function getPlayersByIdUsingIds(playerIds, callback)
