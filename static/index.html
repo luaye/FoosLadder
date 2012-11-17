@@ -45,12 +45,12 @@ function onLoad()
 	matchesView.loadMatches = loadMatches;
 	matchesView.hide();
 	
-	var playersTable = new LoadableTable(document.getElementById("playersTable").children[0]);
+	var playersTable = new LoadableTable(document.getElementById("playersTable"));
 	playersView = new PlayersView(playersTable);
 	playersView.loadPlayers = loadPlayers;
 	playersView.hide();
 	
-	var addMatchTable = document.getElementById("addMatchTable").children[0];
+	var addMatchTable = document.getElementById("addMatchTable");
 	addMatchView = new AddMatchView(addMatchTable);
 	addMatchView.loadPlayers = loadPlayers;
 	addMatchView.onMatchAdded = onMatchAdded;

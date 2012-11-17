@@ -43,3 +43,9 @@ body {
 {
 	text-align:left;
 }
+
+.modal-backdrop,
+.modal-backdrop.fade.in {
+  opacity: 0.25;
+  filter: alpha(opacity=25);
+}
