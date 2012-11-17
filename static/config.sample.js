@@ -1,0 +1,3 @@
+var FACEBOOK_ENABLED = true;
+var FACEBOOK_APP_ID = '362209653861831';
+var FACEBOOK_APP_URL_PART = '//foos.apelabs.net';

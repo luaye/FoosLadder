@@ -104,12 +104,13 @@ this.addPlayer = function()
 		alert("User loading in progress.");
 		return;
 	}
-	if(FACEBOOK_ENABLED && facebookAccessToken == null)
-	{
-		FB.login();
-		return;
-	}
-	var username = prompt("Enter your name to add : ", "your name here");
+	
+	ensureAuthorisedAndCall(addPlayerAfterAuth);
+}
+
+function addPlayerAfterAuth()
+{
+	var username = prompt("Enter your name to add : ", "");
 	if(username == null)
 	{
 		return;

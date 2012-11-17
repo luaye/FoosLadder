@@ -1,8 +1,9 @@
-var FACEBOOK_ENABLED = true;
-var FACEBOOK_APP_ID = '362209653861831';
-var FACEBOOK_APP_URL_PART = '//foos.apelabs.net';
+
 var FACEBOOK_APP_URL = 'http:'+FACEBOOK_APP_URL_PART;
 
+
+
+var facebookAccessToken;
 function callAPI(postdata, callback)
 {
 	if(!postdata.request) return;
@@ -275,4 +276,81 @@ function getDatePickerDate(picker)
 	var month = Number(picker.find('.date-month').val()) - 1;
 	var year = picker.find('.date-year').val();
 	return new Date(year, month, day, hour, min);
+}
+
+
+function initAuth()
+{
+	if(FACEBOOK_ENABLED)
+	{
+		FB.Event.subscribe('auth.statusChange', function(response)
+		{
+			if(response.authResponse != null)
+			{
+				facebookAccessToken = response.authResponse.accessToken;
+			}
+			else
+			{
+				facebookAccessToken = null;
+			}
+			setFacebookLoginStatusDisplay(facebookAccessToken ? true : false);
+		});
+		setFacebookLoginStatusDisplay(false);
+		FB.init({
+			appId      : FACEBOOK_APP_ID,
+			channelUrl : FACEBOOK_APP_URL_PART,
+			status     : true,
+			cookie     : true,
+			xfbml      : true
+		});
+	}
+	else
+	{
+		setFacebookLoginStatusDisplay(true);
+	}
+}
+
+function setFacebookLoginStatusDisplay(loggedIn)
+{
+	var loggedIns = $(".fbLoggedIn");
+	var loggedOuts = $(".fbLoggedOut");
+	if(loggedIn)
+	{
+		loggedIns.show();
+		loggedOuts.hide();
+	}
+	else
+	{
+		loggedIns.hide();
+		loggedOuts.show();
+	}
+}
+
+function ensureAuthorisedAndCall(callback)
+{
+	if(FACEBOOK_ENABLED)
+	{
+		FB.getLoginStatus(function(response){
+		  if (response.status === 'connected')
+		  {
+			//var uid = response.authResponse.userID;
+			facebookAccessToken = response.authResponse.accessToken;
+			callback();
+		  }
+		  else if (response.status === 'not_authorized')
+		  {
+			FB.login(function(response) {
+				if(response.authResponse != null)
+				{
+					facebookAccessToken = response.authResponse.accessToken;
+					callback();
+				}
+			});
+		  }
+		 });
+	}
+	else
+	{
+		callback();
+	}
 }

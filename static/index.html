@@ -19,6 +19,7 @@
 <script type="text/javascript" src="jslib/jquery-1.8.2.min.js"></script>
 <script type="text/javascript" src="jslib/jquery.sparkline.js"></script>
 <script type="text/javascript" src="jslib/bootstrap.min.js"></script>
+<script type="text/javascript" src="config.js"></script>
 <script type="text/javascript" src="js/shared.js"></script>
 <script type="text/javascript" src="js/matchesView.js"></script>
 <script type="text/javascript" src="js/addMatchView.js"></script>
@@ -31,7 +32,6 @@
 var matchesView;
 var playersView;
 var addMatchView;
-var facebookAccessToken;
 
 var currentView;
 var self = this;
@@ -89,52 +89,7 @@ function onLoad()
 		default:
 		showPlayers();
 	}
-	
-	if(FACEBOOK_ENABLED)
-	{
-		FB.Event.subscribe('auth.statusChange', function(response)
-		{
-			if(response.authResponse != null)
-			{
-				facebookAccessToken = response.authResponse.accessToken;
-			}
-			else
-			{
-				facebookAccessToken = null;
-			}
-			setFacebookLoginStatusDisplay(facebookAccessToken ? true : false);
-		});
-
-		FB.init({
-			appId      : FACEBOOK_APP_ID,
-			channelUrl : FACEBOOK_APP_URL_PART,
-			status     : true,
-			cookie     : true,
-			xfbml      : true
-		});
-	}
-	else
-	{
-		setFacebookLoginStatusDisplay(true);
-	}
-}
-
-function setFacebookLoginStatusDisplay(loggedIn)
-{
-	var loggedinButtons = document.getElementsByClassName("fbLoggedIn");
-	setStyleDisplayOfList(loggedinButtons, loggedIn ? '' : 'none');
-			
-	var loggedoutButtons = document.getElementsByClassName("fbLoggedOut");
-	setStyleDisplayOfList(loggedoutButtons, loggedIn ? 'none' : '');	
-}
-
-function setStyleDisplayOfList(nodelist, value)
-{
-	for(var i = nodelist.length - 1; i >= 0; i--)
-	{
-		var element = nodelist[i];
-		element.style.display = value;
-	}
+	initAuth();
 }
 
 function loadPlayers()

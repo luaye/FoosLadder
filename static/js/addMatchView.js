@@ -210,30 +210,11 @@ function setPlayerFromOptions(isLeftSide, index, value)
 
 this.onSubmit = function()
 {
-	if(FACEBOOK_ENABLED)
-	{
-		FB.getLoginStatus(function(response) {
-		  if (response.status === 'connected')
-		  {
-			//var uid = response.authResponse.userID;
-			facebookAccessToken = response.authResponse.accessToken;
-			submitMatch();
-		  }
-		  else if (response.status === 'not_authorized')
-		  {
-			FB.login();
-		  }
-		 });
-	}
-	else
-	{
-		submitMatch();
-	}
+	ensureAuthorisedAndCall(submitMatch);
 }
 
 function submitMatch()
 {
-	
 	var request = {};
 	request.request = "addMatch";
 	request.fbAccessToken = facebookAccessToken;
