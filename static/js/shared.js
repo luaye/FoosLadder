@@ -88,7 +88,8 @@ function showPlayerSelectionDialog(callback, title, players, options)
 	{
 		var btn = $("<a />");
 		btn.addClass("btn");
-		btn.width(120);
+		btn.width(136);
+		btn.css('margin', 5);
 		btn.addClass("btn-left");
 		
 		if((currentPlayer && currentPlayer == player) || (!currentPlayer && player == null))
@@ -106,7 +107,7 @@ function showPlayerSelectionDialog(callback, title, players, options)
 			{
 				btn.append(image);
 			}
-			btn.append(player.name);
+			btn.append(" "+player.name);
 		}
 		else
 		{
@@ -138,9 +139,8 @@ function showPlayerSelectionDialog(callback, title, players, options)
 		body.append("  ");
 	}
 	dialog.modal().css({
-        width: '640px',
-		top: '80px',
-      	margin: '0 0 0 -320px'
+		top: '60px',
+		'margin-top':0
     });
 	
 	dialog.modal('show');
