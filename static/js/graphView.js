@@ -40,7 +40,7 @@ function selectAllIfEmpty()
 		for (var X in playersById)
 		{
 			var player = playersById[X];
-			selectedPlayers.push(player.id);
+			selectedPlayers.push(player);
 		}
 		draw();
 	}
@@ -100,10 +100,10 @@ function draw()
 	
 	for(var selindex in selectedPlayers)
 	{
-		playerId = selectedPlayers[selindex];
-		player = playersById[playerId];
+		player = selectedPlayers[selindex];
+		playerId = player.id;
 		
-		var selectionIndex = selectedPlayers.indexOf(playerId);
+		var selectionIndex = selectedPlayers.indexOf(player);
 		if(selectionIndex < 0)
 		{
 			continue;
@@ -181,34 +181,24 @@ this.selectPlayers = function()
 	
 	if(!selectedPlayers) selectedPlayers = [];
 	
-	// done outside so the 'player' is not static scoped.
-	var createButtonCB = function(player)
+	var options = {};
+	options.inactivePlayers = selectedPlayers;
+	
+	showPlayerSelectionDialog(function(dialog, player)
 	{
-		return function()
+		if(player)
 		{
-			var index = selectedPlayers.indexOf(player.id);
-			if(index < 0)
-			{
-				//$(this).dialog("close");
-				selectedPlayers.push(player.id);
-			}
-			else
+			var index = selectedPlayers.indexOf(player)
+			if(index >= 0)
 			{
 				selectedPlayers.splice(index, 1);
 			}
+			else
+			{
+				selectedPlayers.push(player);
+			}
 			draw();
 		}
-	}
-	var buttons = {};
-	for (var X in playersById)
-	{
-		var player = playersById[X];
-		if(selectedPlayers.indexOf(player.id) < 0)
-		{
-			buttons[player.name] = createButtonCB(player);
-		}
-	}
-	
-	showPlayerSelectionDialog("", buttons);
+	}, "Select players", playersById, options);
 }
 }

@@ -81,7 +81,8 @@ function showPlayerSelectionDialog(callback, title, players, options)
 {
 	var inactivePlayers = options ? options.inactivePlayers : null;
 	var currentPlayer = options ? options.currentPlayer : null;
-	
+	var activeBtnClass = "btn-info";
+	var selectionBtnClass = "btn-warning";
 	function makePlayerButton(player)
 	{
 		var btn = $("<a />");
@@ -91,11 +92,11 @@ function showPlayerSelectionDialog(callback, title, players, options)
 		
 		if((currentPlayer && currentPlayer == player) || (!currentPlayer && player == null))
 		{
-			btn.addClass("btn-warning");
+			btn.addClass(selectionBtnClass);
 		}
 		else if(!inactivePlayers || inactivePlayers.indexOf(player) < 0)
 		{
-			btn.addClass("btn-info");
+			btn.addClass(activeBtnClass);
 		}
 		if(player)
 		{
@@ -113,8 +114,9 @@ function showPlayerSelectionDialog(callback, title, players, options)
 		
 		btn.click(function(e)
 		{
-			dialog.modal('hide');
-            callback(player);
+			if(btn.hasClass(activeBtnClass)) btn.removeClass(activeBtnClass);
+			else btn.addClass(activeBtnClass);
+            callback(dialog, player);
         });
 		
 		return btn;
@@ -125,10 +127,6 @@ function showPlayerSelectionDialog(callback, title, players, options)
 	
 	var body = dialog.find(".modal-body");
 	body.empty();
-	
-	var btn;
-	body.append(makePlayerButton(null));
-	body.append("  ");
 	
 	for( var X in players)
 	{

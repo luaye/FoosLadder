@@ -167,27 +167,27 @@ this.selectPlayer = function(isLeftSide, index)
 		}
 	}
 	
+	var playersList = players.concat();
+	playersList.unshift(null);
 	
 	hideActivePlayerSelectDialog();
 	var options = {};
-	options.currentPlayer = currentPlayer ? playersById[currentPlayer] : null;
-	options.inactivePlayers = [];
-	for (var X in players)
-	{
-		var player = players[X];
-		var playerid = player.id;
-		if(playerid == leftPlayer1 || playerid == leftPlayer2 || playerid == rightPlayer1 || playerid == rightPlayer2)
-		{
-			options.inactivePlayers.push(player);
-		}
-	}
 	
-	showPlayerSelectionDialog(function(player)
+	options.currentPlayer = currentPlayer ? playersById[currentPlayer] : null;
+	
+	var inactivePlayers = options.inactivePlayers = [];
+	if(leftPlayer1) inactivePlayers.push(playersById[leftPlayer1]);
+	if(leftPlayer2) inactivePlayers.push(playersById[leftPlayer2]);
+	if(rightPlayer1) inactivePlayers.push(playersById[rightPlayer1]);
+	if(rightPlayer2) inactivePlayers.push(playersById[rightPlayer2]);
+	
+	showPlayerSelectionDialog(function(dialog, player)
 	{
+		dialog.modal('hide');
 		setPlayerFromOptions(isLeftSide, index, player ? player.id : null);
 		updateViewNames();
 		updateRatings();
-	}, title, players, options);
+	}, title, playersList, options);
 }
 
 function setPlayerFromOptions(isLeftSide, index, value)
