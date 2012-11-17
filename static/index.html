@@ -74,6 +74,7 @@ function onLoad()
 	}
 	var hashBits = hashPath.split("/");
 	
+	$(".body").show();
 	switch (hashBits[0])
 	{
 		case "match":
@@ -289,6 +290,7 @@ function hideActivePlayerSelectDialog()
         </div>
       </div>
 
+<div class="body">
 <table class="table table-condensed table-hover table-striped" id="matchesTable" >
   <thead>
   <tr>
@@ -468,13 +470,12 @@ function hideActivePlayerSelectDialog()
     <button class="btn btn-primary">Save changes</button>
   </div>
 </div>
+
+</div>
 <script>
 
-/*
-document.getElementById("matchesTable").style.display = 'none';
-document.getElementById("playersTable").style.display = 'none';
-document.getElementById("addMatchTable").style.display = 'none';
-*/
+$(".body").hide();
+
 </script>
 </div>
 </body> 
