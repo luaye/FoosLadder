@@ -72,3 +72,109 @@ function makeCommentURL(key)
 {
 	return FACEBOOK_APP_URL+'#'+key;
 }
+
+
+
+var activePlayerSelectDialog;
+
+function showPlayerSelectionDialog(callback, title, players, options)
+{
+	var inactivePlayers = options ? options.inactivePlayers : null;
+	var currentPlayer = options ? options.currentPlayer : null;
+	
+	function makePlayerButton(player)
+	{
+		var btn = $("<a />");
+		btn.addClass("btn");
+		btn.width(120);
+		btn.addClass("btn-left");
+		
+		if((currentPlayer && currentPlayer == player) || (!currentPlayer && player == null))
+		{
+			btn.addClass("btn-warning");
+		}
+		else if(!inactivePlayers || inactivePlayers.indexOf(player) < 0)
+		{
+			btn.addClass("btn-info");
+		}
+		if(player)
+		{
+			var image = getPlayerImageElement(player, 25);
+			if(image)
+			{
+				btn.append(image);
+			}
+			btn.append(player.name);
+		}
+		else
+		{
+			btn.append("-none-");
+		}
+		
+		btn.click(function(e)
+		{
+			dialog.modal('hide');
+            callback(player);
+        });
+		
+		return btn;
+	}
+	
+	var dialog = $('#playerSelectionModal');
+	dialog.find("#dialogLabel").text(title);
+	
+	var body = dialog.find(".modal-body");
+	body.empty();
+	
+	var btn;
+	body.append(makePlayerButton(null));
+	body.append("  ");
+	
+	for( var X in players)
+	{
+		var player = players[X];
+		
+		btn = makePlayerButton(player);
+		body.append(btn);
+		body.append("  ");
+	}
+	dialog.modal().css({
+        width: '640px',
+		top: '80px',
+      	margin: '0 0 0 -320px'
+    });
+	
+	dialog.modal('show');
+}
+
+function hideActivePlayerSelectDialog()
+{
+	var dialog = $('#playerSelectionModal');
+	dialog.hide();
+}
+
+function getPlayerImageElement(player, size)
+{
+	var image = getPlayerImageURL(player);
+	if(image)
+	{
+		var img = $("<img />");
+		img.attr("src", image);
+		if(size > 0)
+		{
+			img.attr("width", size);
+			img.attr("height", size);
+		}
+		return img;
+	}
+	return null;
+}
+
+function getPlayerImageURL(player)
+{
+	if(player.facebookId)
+	{
+		return "http://graph.facebook.com/"+player.facebookId+"/picture?type=square";
+	}
+	return null;
+}

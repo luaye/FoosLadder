@@ -39,6 +39,10 @@ body {
 	color:#999;
 }
 
+.btn-left
+{
+	text-align:left;
+}
 
 .ui-timepicker-div .ui-widget-header { margin-bottom: 8px; }
 .ui-timepicker-div dl { text-align: left; }

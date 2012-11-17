@@ -139,23 +139,55 @@ function updateViewNames()
 this.selectPlayer = function(isLeftSide, index)
 {
 	var title = "";
+	var currentPlayer = null;
 	if(isLeftSide)
 	{
-		if(index == 0) title = "Left Offence";
-		else title = "Left Defence";
+		if(index == 0) 
+		{
+			title = "Left Offence";
+			currentPlayer = leftPlayer1;
+		}
+		else 
+		{
+			title = "Left Defence";
+			currentPlayer = leftPlayer2;
+		}
 	}
 	else
 	{
-		if(index == 0) title = "Right Offence";
-		else title = "Left Defence";
+		if(index == 0) 
+		{
+			title = "Right Offence";
+			currentPlayer = rightPlayer1;
+		}
+		else 
+		{
+			title = "Right Defence";
+			currentPlayer = rightPlayer2;
+		}
 	}
 	
-	showPlayerSelection(title, function(playerid)
+	
+	hideActivePlayerSelectDialog();
+	var options = {};
+	options.currentPlayer = currentPlayer ? playersById[currentPlayer] : null;
+	options.inactivePlayers = [];
+	for (var X in players)
 	{
-		setPlayerFromOptions(isLeftSide, index, playerid);
+		var player = players[X];
+		var playerid = player.id;
+		if(playerid == leftPlayer1 || playerid == leftPlayer2 || playerid == rightPlayer1 || playerid == rightPlayer2)
+		{
+			options.inactivePlayers.push(player);
+		}
+	}
+	
+	showPlayerSelectionDialog(function(player)
+	{
+		setPlayerFromOptions(isLeftSide, index, player ? player.id : null);
 		updateViewNames();
 		updateRatings();
-	});
+	}, title, players, options);
 }
 
 function setPlayerFromOptions(isLeftSide, index, value)
@@ -170,38 +202,6 @@ function setPlayerFromOptions(isLeftSide, index, value)
 		if(index == 0) rightPlayer1 = value;
 		else rightPlayer2 = value;
 	}
-}
-
-function showPlayerSelection(title, callback)
-{
-	hideActivePlayerSelectDialog();
-	
-	// done outside so the 'player' is not static scoped.
-	var createButtonCB = function(player)
-	{
-		return function()
-		{
-			$(this).dialog("close");
-			callback(player.id);
-		}
-	}
-	
-	var buttons = {};
-	buttons["-none-"] = function()
-	{
-		$(this).dialog("close");
-		callback(null);
-	}
-	for (var X in players)
-	{
-		var player = players[X];
-		var playerid = player.id;
-		if(playerid != leftPlayer1 && playerid != leftPlayer2 && playerid != rightPlayer1 && playerid != rightPlayer2 )
-		{
-			buttons[player.name] = createButtonCB(player);
-		}
-	}
-	showPlayerSelectionDialog(title, buttons);
 }
 
 this.onSubmit = function()
