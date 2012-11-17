@@ -337,7 +337,7 @@ function ensureAuthorisedAndCall(callback)
 			facebookAccessToken = response.authResponse.accessToken;
 			callback();
 		  }
-		  else if (response.status === 'not_authorized')
+		  else
 		  {
 			FB.login(function(response) {
 				if(response.authResponse != null)

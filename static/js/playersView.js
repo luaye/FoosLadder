@@ -204,16 +204,22 @@ function readPropertyChain(obj, properties)
 
 this.rebuiltStats = function()
 {
-	table.clear();
-	table.setLoading(true);
-	callAPI({request:"rebuiltMatchStats"}, onRebuiltMatchStats);
+	ensureAuthorisedAndCall(function()
+	{
+		table.clear();
+		table.setLoading(true);
+		callAPI({request:"rebuiltMatchStats"}, onRebuiltMatchStats);
+	});
 }
 
 this.repeatMatches = function()
 {
-	table.clear();
-	table.setLoading(true);
-	callAPI({request:"repeatMatchStats"}, onRebuiltMatchStats);
+	ensureAuthorisedAndCall(function()
+	{
+		table.clear();
+		table.setLoading(true);
+		callAPI({request:"repeatMatchStats"}, onRebuiltMatchStats);
+	});
 }
 
 function onRebuiltMatchStats(ok)
