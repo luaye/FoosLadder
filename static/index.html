@@ -17,12 +17,9 @@
 	<link href="css/jquery-ui.css" rel="stylesheet" type="text/css" />
 
 <script type="text/javascript" src="jslib/jquery-1.8.2.min.js"></script>
-<script type="text/javascript" src="jslib/jquery-ui-1.8.23.custom.min.js"></script>
-<script type="text/javascript" src="jslib/jquery-ui-timepicker-addon.js"></script>
 <script type="text/javascript" src="jslib/jquery.sparkline.js"></script>
 <script type="text/javascript" src="jslib/bootstrap.min.js"></script>
 <script type="text/javascript" src="js/shared.js"></script>
-<script type="text/javascript" src="js/table.js"></script>
 <script type="text/javascript" src="js/matchesView.js"></script>
 <script type="text/javascript" src="js/addMatchView.js"></script>
 <script type="text/javascript" src="js/playersView.js"></script>
@@ -327,24 +324,22 @@ function setCurrentView(view)
 </table>
 
 
-<table border="0" align="center" cellpadding="4" cellspacing="0" id="addMatchTable">
+<table class="table table-bordered" border="0" align="center" cellpadding="4" cellspacing="0" id="addMatchTable">
   <tr>
-    <td align="right" bgcolor="#FFFF55"><strong>Yellow</strong></td>
-    <td align="center" bgcolor="#FFFF55">&nbsp;</td>
-    <td width="40" rowspan="2" align="center">
-      VS    </td>
-    <td align="center" bgcolor="#AAAAAA">&nbsp;</td>
-    <td align="left" bgcolor="#AAAAAA"><strong>White</strong></td>
-  </tr>
+    <th colspan="2" bgcolor="#EE3" class="rightCell">Yellow</th>
+    <th width="20" rowspan="2" class="centerCell">
+      <br><br><br>VS</th>
+    <th colspan="2" bgcolor="#CCC">White</th>
+    </tr>
   <tr>
-  	<td width="150" height="80" align="right"  bgcolor="#EEEE44" id='leftRating'>
+  	<td width="150" height="80" id='leftRating' class="rightCell">
   	  <a href="javascript:addMatchView.selectPlayer(true, 0)"><span class="leftAttacker">Left offence</span></a>
   	  <br /><br/>
   	  <a href="javascript:addMatchView.selectPlayer(true, 1)"><span class="leftDefender">Left defender</span></a>
       </td>
-    <td width="50" align="right" bgcolor="#FFFF55">
+    <td width="40" class="rightCell">
       <br>
-      <select name="leftScore" id="leftScore">
+      <select class="span1" name="leftScore" id="leftScore">
         <option>0</option>
         <option>1</option>
         <option>2</option>
@@ -356,11 +351,12 @@ function setCurrentView(view)
         <option>8</option>
         <option>9</option>
         <option selected>10</option>
-      </select>[<span id='leftExpectedScore'>x</span>]
+      </select><br>
+[<span id='leftExpectedScore'>x</span>]
     </td>
-    <td width="50" bgcolor="#AAAAAA">
+    <td width="40">
     <br>
-    <select name="rightScore" id="rightScore">
+    <select class="span1" name="rightScore" id="rightScore">
         <option>0</option>
         <option>1</option>
         <option>2</option>
@@ -372,9 +368,10 @@ function setCurrentView(view)
         <option>8</option>
         <option>9</option>
         <option selected>10</option>
-      </select>[<span id='rightExpectedScore'>x</span>]
+      </select><br>
+[<span id='rightExpectedScore'>x</span>]
     </td>
-    <td width="150" align="left" >
+    <td width="150">
       <a href="javascript:addMatchView.selectPlayer(false, 0)"><span class="rightAttacker">Right offence</span></a>
       <br /><br/>
       <a href="javascript:addMatchView.selectPlayer(false, 1)"><span class="rightDefender">Right defender</span></a>
@@ -385,11 +382,25 @@ function setCurrentView(view)
     Date: 
       now?
       <input name="dateNow" type="checkbox" id="dateNow" checked="checked" onchange="addMatchView.dateNowChanged();"/>
-      <input type="text" id="datePicker" name="datePicker" style="width: 140px" />
+      <div id="datePicker" style="margin-top:10px;">
+          <i class="icon-calendar"></i> 
+          <select class="input-small date-year">
+          </select>
+          <select class="input-mini date-month">
+          </select>
+          <select class="input-mini date-day">
+          </select>
+          
+          <i class="icon-time"></i>
+          <select class="input-mini date-hour">
+          </select>
+          <select class="input-mini date-min">
+          </select>
+      </div>
     </td>
   </tr>
   <tr>
-    <td colspan="5" align="center"><div class="fb-login-button fbLoggedOut" data-show-faces="false" data-width="200" data-max-rows="1">Login to Submit</div> <div class="fbLoggedIn" ><input type="submit" name="submit" id="submit" value="Submit" onClick="addMatchView.onSubmit()" class="btn btn-primary"/> </div></td>
+    <td colspan="5" class="centerCell"><div class="fb-login-button fbLoggedOut" data-show-faces="false" data-width="200" data-max-rows="1">Login to Submit</div> <div class="fbLoggedIn" ><div style="position:absolute; text-align:left;"><input type="submit" name="reset" value="Reset" onClick="addMatchView.reset()" class="btn btn btn-warning"/></div><input type="submit" name="submit" id="submit" value="Submit" onClick="addMatchView.onSubmit()" class="btn btn-primary"/> </div></td>
   </tr>
 </table>
 

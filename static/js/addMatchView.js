@@ -11,15 +11,14 @@ var leftPlayer2;
 var rightPlayer1;
 var rightPlayer2;
 var dateNowCheckbox = document.getElementById("dateNow");
-var datePicker = document.getElementById("datePicker");
+var datePicker = $("#datePicker");
 var submitButton = document.getElementById("submit");
 
-$('#datePicker').datetimepicker();
 updateDateSelectorVisibility();
 
 this.show = function()
 {
-	table.style.display = 'inherit';
+	table.style.display = null;
 	if(players == null)
 	{
 		self.loadPlayers();
@@ -125,7 +124,12 @@ this.dateNowChanged = function()
 
 function updateDateSelectorVisibility()
 {
-	datePicker.style.display = dateNowCheckbox.checked ? 'none' : 'inherit';
+	if(dateNowCheckbox.checked) datePicker.hide();
+	else 
+	{
+		setupDatePicker(datePicker);
+		datePicker.show();
+	}
 }
 
 function updateViewNames()
@@ -241,9 +245,9 @@ function submitMatch()
 	request.rightPlayer2 = rightPlayer2;
 	request.rightScore = Number(document.getElementById("rightScore").value);;	
 	
-	if(!dateNowCheckbox.checked && datePicker.value)
+	if(!dateNowCheckbox.checked)
 	{
-		var date = new Date(datePicker.value);
+		var date = getDatePickerDate(datePicker);
 		request.date = date.getTime();
 	}
 	if(
@@ -286,6 +290,7 @@ function isScoreValid(score)
 	return score >= 0 && score <= 10;
 }
 
+
 function onMatchSubmitted(body)
 {
 	
@@ -296,16 +301,24 @@ function onMatchSubmitted(body)
 	}
 	else
 	{
-		document.getElementById("leftScore").value = "10";
-		document.getElementById("rightScore").value = "10";
-		leftPlayer1 = null;
-		leftPlayer2 = null;
-		rightPlayer1 = null;
-		rightPlayer2 = null;
-		updateViewNames();
-		submitButton.disabled = false;
+		self.reset();
 		self.onMatchAdded();
 	}
+}
+
+this.reset = function()
+{
+	
+	document.getElementById("leftScore").value = "10";
+	document.getElementById("rightScore").value = "10";
+	leftPlayer1 = null;
+	leftPlayer2 = null;
+	rightPlayer1 = null;
+	rightPlayer2 = null;
+	dateNowCheckbox.checked = true;
+	updateDateSelectorVisibility();
+	updateViewNames();
+	submitButton.disabled = false;
 }
 
 }

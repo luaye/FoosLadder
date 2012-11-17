@@ -5,7 +5,7 @@ function GraphView(view)
 	var showing;
 	var selectedPlayers;
 	
-	var colors = ["#C00", "#00C", "#0C0", "#880", "#088", "#808", "#000", "#666", "#AAA"];
+	var colors = ["#C00", "#00C", "#0C0", "#880", "#088", "#808", "#000", "#666", "#999", "#F93", "#7A3", "#39F", "#3F9", "#F39"];
 
 	var graphLoading = $("#graphLoading");
 	
