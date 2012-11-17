@@ -206,7 +206,7 @@ function setCurrentView(view)
     <th colspan="2">White</th>
     <th>&nbsp;</th>
   </tr>
-  <tr id="sampleRow">
+  <tr id="sampleRow" style="cursor: pointer;">
     <td class="tiny" style="width:80px"><matchDate>1, 1, 2012<br />18:00</matchDate></td>
     <td class="rightCell" style="width:60px"><leftScoreChange>11</leftScoreChange></td>
     <td class="rightCell"><leftAttacker>Left Attacker</leftAttacker><br />
@@ -215,7 +215,7 @@ function setCurrentView(view)
     <td><rightAttacker>Right Attacker</rightAttacker><br />
     <rightDefender>Right Defender</rightDefender></td>
     <td style="width:60px"><rightScoreChange>-11</rightScoreChange></td>
-    <td class="rightCell" style="width:80px"><commentToggle><a href="#"><span  style="color:#569; font-size:12px; text-decoration:none;"><span class=\"fb-comments-count\" data-href=\""+makeCommentURL(key)+"\"?</span> <i class="icon-comment"></i></span></a></commentToggle></td>
+    <td class="rightCell" style="width:80px"><commentToggle><span class=\"fb-comments-count\" data-href=\""+makeCommentURL(key)+"\"?</span> <i class="icon-comment"></i></commentToggle></td>
   </tr>
   <tr id="loadingRow">
     <td colspan="7">Getting matches...</td>

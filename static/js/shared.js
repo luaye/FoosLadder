@@ -64,7 +64,7 @@ function setContentsOfTag(container, name, content)
 
 function getCommentCountNodeString(key)
 {
-	var string = "<span style=\"color:#569; font-size:12px; \"><span class=\"fb-comments-count\" style=\"text-decoration:none;\"data-href=\""+makeCommentURL(key)+"\">?</span> <i class=\"icon-comment\"></i></span'>";
+	var string = "<span class=\"fb-comments-count\" style=\"color:#569; font-size:12px;\" data-href=\""+makeCommentURL(key)+"\">?</span> <i class=\"icon-comment\"></i>";
 
 	return string;
 }

@@ -106,12 +106,13 @@ function fillRowWithMatch(tableRow, match)
 	
 	var matchId = match._id;
 	tableRow.id = "match-"+matchId;
-	var commentLink = getCommentCountNodeString("match/"+matchId);
-	commentLink = "<a href=\"javascript:matchesView.toggleMatchBox('"+matchId+"')\" >"+commentLink+"</a>";
+	var commentCount = getChildByTag(tableRow, "commentToggle");
+	commentCount.innerHTML = getCommentCountNodeString("match/"+matchId);
+	FB.XFBML.parse(commentCount);
 	
-	setContentsOfTag(tableRow, "commentToggle", commentLink);
-	var commentToggle = getChildByTag(tableRow, "commentToggle");
-	FB.XFBML.parse(commentToggle);
+	$(tableRow).click(function() {
+		self.toggleMatchBox(matchId);
+	});
 }
 
 
