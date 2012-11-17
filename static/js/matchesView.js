@@ -8,6 +8,7 @@ var self = this;
 var playersById;
 var exportText;
 var matches;
+var commentToShowOnLoad;
 
 table.clear();
 table.setLoading(true);
@@ -15,7 +16,12 @@ table.setLoading(true);
 this.show = function()
 {
 	table.element.show();
-	if(matches == null)
+	if(playersById == null)
+	{
+		self.loadPlayers();
+		self.loadMatches();
+	}
+	else if(matches == null)
 	{
 		self.loadMatches();
 	}
@@ -52,7 +58,6 @@ this.loadMatches = function()
 	callAPI({request:"getMatches"}, self.setMatches);
 }
 
-
 this.setMatches = function(data)
 {
 	matches = data;
@@ -64,6 +69,14 @@ this.setMatches = function(data)
 	{
 		playerRow = table.createRow();
 		fillRowWithMatch(playerRow, data[i]);
+	}
+	if(commentToShowOnLoad)
+	{
+		self.toggleMatchBox(commentToShowOnLoad);
+		$('html, body').animate({
+			 scrollTop: $("#match-" + commentToShowOnLoad).offset().top
+		 }, 1000);
+		commentToShowOnLoad = null;
 	}
 }
 
@@ -127,6 +140,18 @@ this.toggleMatchBox = function(matchId)
 		FB.XFBML.parse(holder[0]);
 		
 		holder.insertAfter(matchRow);
+	}
+}
+
+this.gotoComment = function (matchId)
+{
+	if(matches)
+	{
+		self.toggleMatchBox(matchId);
+	}
+	else
+	{
+		commentToShowOnLoad = matchId;
 	}
 }
 

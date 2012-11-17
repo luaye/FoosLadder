@@ -20,7 +20,13 @@ this.show = function()
 	showing = true;
 	view.show();
 	
-	if(matches == null)
+	if(playersById == null)
+	{
+		graphLoading.show();
+		self.loadPlayers();
+		self.loadMatches();
+	}
+	else if(matches == null)
 	{
 		graphLoading.show();
 		self.loadMatches();

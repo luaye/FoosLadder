@@ -59,6 +59,7 @@ function onLoad()
 	var graphDiv = $("#graphView");
 	graphView = new GraphView(graphDiv);
 	graphView.loadPlayers = loadPlayers;
+	graphView.loadMatches = loadMatches;
 	graphView.hide();
 	
 	
@@ -69,14 +70,15 @@ function onLoad()
 	{
 		hashPath = location.substring(hashIndex + 1);
 	}
-	var hashBits = hashPath.split("/");
+	var urlComponents = hashPath.split("/");
 	
 	$(".body").show();
-	switch (hashBits[0])
+	switch (urlComponents[0])
 	{
 		case "match":
 		case "matches":
 			showMatches();
+			matchesView.gotoComment(urlComponents[1]);
 		break;
 		case "addMatch":
 			showAddMatch();
