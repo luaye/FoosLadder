@@ -12,7 +12,7 @@ table.setLoading(true);
 
 this.show = function()
 {
-	table.table.style.display = 'inherit';
+	table.element.show();
 	if(matches == null)
 	{
 		self.loadMatches();
@@ -21,7 +21,7 @@ this.show = function()
 
 this.hide = function()
 {
-	table.table.style.display  = 'none';
+	table.element.hide();
 }
 
 this.loadPlayers = function()
@@ -67,7 +67,6 @@ this.setMatches = function(data)
 
 function fillRowWithMatch(tableRow, match)
 {
-	var cells = tableRow.getElementsByTagName("td");
 	var date = new Date(match.date);
 	var cellIdx = 1;
 	var change = Math.round(Number(match.KDleft)*100)/100;
@@ -89,11 +88,12 @@ function fillRowWithMatch(tableRow, match)
 	
 	var dateStr = date.getDate() + ", "+ (date.getMonth()+1) + ", " + date.getFullYear() + "<br/>" + doubleDigit(date.getHours()) + ":" + doubleDigit(date.getMinutes());
 	setContentsOfTag(tableRow, "matchDate", dateStr);
-	
+	/*
 	var matchId = match._id;
 	var key = "match/"+matchId;
 	var commentLink = getCommentCountNodeString(key);
 	commentLink = "<a href=\"javascript:matchesView.toggleMatchBox('"+matchId+"')\" >"+commentLink+"</a>";
+	
 	setContentsOfTag(tableRow, "commentToggle", commentLink);
 	var commentToggle = getChildByTag(tableRow, "commentToggle");
 	FB.XFBML.parse(commentToggle);
@@ -102,13 +102,14 @@ function fillRowWithMatch(tableRow, match)
 	var commentHolder = getChildByTag(tableRow, "commentHolder");
 	commentHolder = commentHolder.parentNode;
 	commentHolder.id = key;
-	commentHolder.style.display = 'none';
+	commentHolder.style.display = 'none';*/
 }
 
 
 
 this.toggleMatchBox = function(matchId)
 {
+	
 	var key = "match/"+matchId;
 	var holder = document.getElementById(key);
 	holder.innerHTML = "";
@@ -146,23 +147,4 @@ function onRebuiltMatchStats(ok)
 	self.loadMatches();
 	alert(ok ? "Successful" : "Failed");
 }
-
-
-this.exportData = function()
-{
-	var exportArea = document.getElementById("exportArea");
-	if(exportArea == null)
-	{
-		alert("can't find exportArea in view");
-		return;
-	}
-	exportArea.innerHTML = "";
-	callAPI({request:"getMatchesRaw"}, 
-	function(docs)
-	{
-		var obj = {docs:docs};
-		exportArea.appendChild(document.createTextNode(JSON.stringify(obj)));
-	});
-}
-
 }

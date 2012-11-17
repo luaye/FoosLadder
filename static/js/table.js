@@ -1,13 +1,15 @@
 function LoadableTable (tableElement)
 {
+	this.element = $(tableElement);
+	
 	var rows = [];
-	var loadingElement = $(tableElement).find("#loadingRow")[0];
-	var rowSample = $(tableElement).find("#sampleRow")[0];
+	var loadingElement = this.element.find("#loadingRow")[0];
+	var rowSample = this.element.find("#sampleRow")[0];
 	
 	var container = rowSample.parentNode;
 	var elementAfterSampleRow = rowSample.nextSibling;
 	
-	tableElement.removeChild(rowSample);
+	container.removeChild(rowSample);
 
 	this.table = tableElement;
 	

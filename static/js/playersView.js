@@ -13,7 +13,7 @@ table.setLoading(true);
 
 this.show = function()
 {
-	table.table.style.display = 'inherit';
+	table.element.show();
 	if(players == null)
 	{
 		self.loadPlayers();
@@ -22,7 +22,7 @@ this.show = function()
 
 this.hide = function()
 {
-	table.table.style.display  = 'none';
+	table.element.hide();
 }
 
 this.loadPlayers = function()
@@ -227,27 +227,4 @@ function onRebuiltMatchStats(ok)
 		alert("Failed");
 	}
 }
-
-this.exportData = function()
-{
-	var exportArea = document.getElementById("exportArea");
-	if(exportArea == null)
-	{
-		alert("can't find exportArea in view");
-		return;
-	}
-	exportArea.innerHTML = "";
-	callAPI({request:"getPlayersByIds"}, 
-	function(data)
-	{
-		var docs = [];
-		for (var X in data)
-		{
-			docs.push(data[X]);
-		}
-		var obj = {docs:docs};
-		exportArea.appendChild(document.createTextNode(JSON.stringify(obj)));
-	});
-}
-
 }

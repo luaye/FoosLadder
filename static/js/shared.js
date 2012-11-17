@@ -96,7 +96,7 @@ function addCommentCount(key, makeLink)
 
 function getCommentCountNodeString(key, makeLink)
 {
-	var string = "<span style=\"color:#569; font-size:12px; \"><img src=\"comments.gif\" width=\"20\" height=\"16\" style=\"vertical-align:text-top\" ><span class=\"fb-comments-count\" style=\"text-decoration:none;\"data-href=\""+makeCommentURL(key)+"\">0</span></span'>";
+	var string = "<span style=\"color:#569; font-size:12px; \"><img src=\"img/comments.gif\" width=\"20\" height=\"16\" style=\"vertical-align:text-top\" ><span class=\"fb-comments-count\" style=\"text-decoration:none;\"data-href=\""+makeCommentURL(key)+"\">0</span></span'>";
 	if(makeLink)
 	{
 		string = "<a href=\"javascript:toggleCommentBox('"+key+"')\" >"+string+"</a>";

@@ -1,18 +1,26 @@
-<!doctype html>
-<html lang='en' xml:lang='en' xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta name="viewport" id="viewport" content="width=580;"/>
-<meta name="apple-mobile-web-app-capable" content="yes">
-<title>Foos Ladder</title>
+    <meta charset="utf-8">
+	<meta name="viewport" id="viewport" content="width=700;"/>
+	<meta name="apple-mobile-web-app-capable" content="yes">
+    
+	<title>Foos Ladder</title>
 
-<link href="css/style.css" rel="stylesheet" type="text/css" />
-<link href="css/jquery-ui.css" rel="stylesheet" type="text/css" />
+	<link href="css/style.css" rel="stylesheet" type="text/css" />
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+	<link href="css/jquery-ui.css" rel="stylesheet" type="text/css" />
 
 <script type="text/javascript" src="jslib/jquery-1.8.2.min.js"></script>
 <script type="text/javascript" src="jslib/jquery-ui-1.8.23.custom.min.js"></script>
 <script type="text/javascript" src="jslib/jquery-ui-timepicker-addon.js"></script>
 <script type="text/javascript" src="jslib/jquery.sparkline.js"></script>
+<script type="text/javascript" src="jslib/bootstrap.min.js"></script>
 <script type="text/javascript" src="js/shared.js"></script>
 <script type="text/javascript" src="js/table.js"></script>
 <script type="text/javascript" src="js/matchesView.js"></script>
@@ -34,7 +42,7 @@ var self = this;
 function onLoad()
 {
 	
-	var matchesTable = new LoadableTable(document.getElementById("matchesTable").children[0]);
+	var matchesTable = new LoadableTable(document.getElementById("matchesTable"));
 	matchesView = new MatchesView(matchesTable);
 	matchesView.loadPlayers = loadPlayers;
 	matchesView.loadMatches = loadMatches;
@@ -160,26 +168,45 @@ function onMatchAdded()
 	matchesView.onReloading()
 	loadPlayers();
 	loadMatches();
-	setCurrentView(matchesView);
+	showMatches();
+}
+
+var lastMenu;
+
+function setActiveMenu(newMenu)
+{
+	if(lastMenu)
+	{
+		lastMenu.removeClass("active");
+	}
+	lastMenu = newMenu;
+	if(newMenu)
+	{
+		newMenu.addClass("active");
+	}
 }
 
 function showMatches()
 {
+	setActiveMenu($("#matchesMenu"));
 	setCurrentView(matchesView);
 }
 
 function showAddMatch()
 {
+	setActiveMenu($("#addMatchesMenu"));
 	setCurrentView(addMatchView);
 }
 
 function showPlayers()
 {
+	setActiveMenu($("#playersMenu"));
 	setCurrentView(playersView);
 }
 
 function showGraph()
 {
+	setActiveMenu($("#graphMenu"));
 	setCurrentView(graphView);
 }
 
@@ -247,84 +274,97 @@ function hideActivePlayerSelectDialog()
 </head> 
 <body onLoad="onLoad()"> 
 <div id="fb-root"></div>
-<div class="header"><a href="javascript:showMatches()">Matches</a> | <a href="javascript:showAddMatch()">Add Match</a>  | <a href="javascript:showPlayers()">Players</a>  | <a href="javascript:showGraph()">Graph</a></div>
-<br />
-<table border="0" align="center" id="matchesTable">
+    <div class="container-narrow">
+    
+    
+      <div class="navbar navbar-inner">
+        <a class="brand" style="font-weight:bold">Foos Ladder</a>
+      	<div >
+        <ul class="nav">
+          <li id="matchesMenu"><a href="javascript:showMatches()" >Matches</a></li>
+          <li id="addMatchesMenu"><a href="javascript:showAddMatch()">Add Match</a></li>
+          <li id="playersMenu"><a href="javascript:showPlayers()">Players</a></li>
+          <li id="graphMenu"><a href="javascript:showGraph()">Graph</a></li>
+        </ul>
+        </div>
+      </div>
+
+<table class="table table-condensed table-hover table-striped" id="matchesTable" >
+  <thead>
   <tr>
-    <td width="80" align="center">&nbsp;</td>
-    <td width="165" align="center" bgcolor="#999999">Yellow</td>
-    <td width="60" align="center" bgcolor="#999999">Score</td>
-    <td width="165" align="center" bgcolor="#999999">White</td>
-    <td width="80" align="center" >&nbsp;</td>
+    <th>&nbsp;</th>
+    <th colspan="2" class="rightCell">Yellow</th>
+    <th>&nbsp;</th>
+    <th colspan="2">White</th>
+    <th>&nbsp;</th>
   </tr>
+  </thead>
+  <tbody>
   <tr id="loadingRow">
-    <td colspan="5" align="center" bgcolor="#FFCC00">Getting matches...</td>
+    <td colspan="7">Getting matches...</td>
   </tr>
   <tr id="sampleRow">
-    <td colspan="5">
-    <table width="100%" border="0">
-      <tr>
-        <td width="80" align="center" class="tiny"><matchDate>1, 1, 2012<br />18:00</matchDate></td>
-        <td width="40" class="tableRow"><leftScoreChange>11</leftScoreChange></td>
-        <td width="125" class="tableRow"><leftAttacker>Left Attacker</leftAttacker><br />
+    <td class="tiny" style="width:80px"><matchDate>1, 1, 2012<br />18:00</matchDate></td>
+    <td class="rightCell" style="width:60px"><leftScoreChange>11</leftScoreChange></td>
+    <td class="rightCell"><leftAttacker>Left Attacker</leftAttacker><br />
     <leftDefender>Left Defender</leftDefender></td>
-        <td width="60" class="tableRow"><leftScore>10</leftScore> - <rightScore>9</rightScore></td>
-        <td width="125" class="tableRow"><rightAttacker>Right Attacker</rightAttacker><br />
+    <td style="width:60px" class="centerCell"><leftScore>10</leftScore> - <rightScore>9</rightScore></td>
+    <td><rightAttacker>Right Attacker</rightAttacker><br />
     <rightDefender>Right Defender</rightDefender></td>
-        <td width="40" class="tableRow"><rightScoreChange>-11</rightScoreChange></td>
-        <td width="80" align="center"><commentToggle><a href="#"><span  style="color:#569; font-size:12px; text-decoration:none;"><img src="comments.gif" width="20" height="16" style="vertical-align:text-top" ><span class=\"fb-comments-count\" data-href=\""+makeCommentURL(key)+"\">0</span></span></a></commentToggle></td>
-      </tr>
-      <tr>
-        <td colspan="7">
-        <commentHolder>Facebook comment</commentHolder>
-        box</td>
-        </tr>
-    </table></td>
+    <td style="width:60px"><rightScoreChange>-11</rightScoreChange></td>
+    <td class="rightCell" style="width:80px"><commentToggle><a href="#"><span  style="color:#569; font-size:12px; text-decoration:none;"><span class=\"fb-comments-count\" data-href=\""+makeCommentURL(key)+"\">0</span> <i class="icon-comment"></i></span></a></commentToggle></td>
   </tr>
-  <tr>
-    <td colspan="5"><a href="javascript:matchesView.exportData(this)" class="tiny">Export</a></td>
-  </tr>
+  </tbody>
 </table>
 
 
-<table width="580" border="0" align="center" id="playersTable">
+<table id="playersTable" class="table table-bordered table-condensed table-hover table-striped" >
   <tr>
-    <td colspan="6" align="center"><a href="javascript:playersView.addPlayer()" class="tiny">Add player</a>  |
-      <a href="javascript:playersView.rebuiltStats()" class="tiny">Rebuilt stats</a> |
-      <a href="javascript:playersView.repeatMatches()" class="tiny">Repeat matches</a> |
-      <a href="javascript:playersView.loadPlayers()" class="tiny">Reload</a></td>
+    <td colspan="6" align="center">
+    <div class="btn-group tiny">
+      <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+        <i class="icon-edit"></i>
+        <span class="caret"></span>
+      </a>
+      <ul class="dropdown-menu">
+          <li><a href="javascript:playersView.addPlayer()"><i class="icon-plus-sign"></i> Add player</a></li>
+          <li><a href="javascript:playersView.loadPlayers()"><i class="icon-refresh"></i> Reload</a></li>
+          <li class="divider"></li>
+          
+          <li><a href="javascript:playersView.rebuiltStats()"><i class="icon-repeat"></i> Rebuilt stats</a></li>
+          <li><a href="javascript:playersView.repeatMatches()"><i class="icon-fast-forward"></i> Repeat matches</a></li>
+      </ul>
+    </div>
+    </td>
   </tr>
   <tr id="headerRow">
-    <td width="160" align="center" bgcolor="#999999"><a href="javascript:playersView.toggleSortBy('name')">Name</a></td>
-    <td width="100" align="center" bgcolor="#999999"><a href="javascript:playersView.toggleSortBy('mixedStats.score')">mixed<br />
-    rating</a></td>
-    <td width="100" align="center" bgcolor="#999999"><a href="javascript:playersView.toggleSortBy('duoStats.score')">duo<br />
-    rating</a></td>
-    <td width="100" align="center" bgcolor="#999999">duo<br />
-    <a href="javascript:playersView.toggleSortBy('duoStats.wins')">wins</a>/<a href="javascript:playersView.toggleSortBy('duoStats.games')">games</a></td>
-    <td width="100" align="center" bgcolor="#999999"><a href="javascript:playersView.toggleSortBy('soloStats.score')">solo<br />
-    rating</a></td>
-    <td width="100" align="center" bgcolor="#999999">solo<br />
-    <a href="javascript:playersView.toggleSortBy('soloStats.wins')">win</a>/<a href="javascript:playersView.toggleSortBy('soloStats.games')">games</a></td>
+    <th width="160" align="center" ><a href="javascript:playersView.toggleSortBy('name')">Name</a></th>
+    <th width="100" align="center" ><a href="javascript:playersView.toggleSortBy('mixedStats.score')">mixed<br />
+    rating</a></th>
+    <th width="100" align="center" ><a href="javascript:playersView.toggleSortBy('duoStats.score')">duo<br />
+    rating</a></th>
+    <th width="100" align="center" >duo<br />
+    <a href="javascript:playersView.toggleSortBy('duoStats.wins')">wins</a>/<a href="javascript:playersView.toggleSortBy('duoStats.games')">games</a></th>
+    <th width="100" align="center" ><a href="javascript:playersView.toggleSortBy('soloStats.score')">solo<br />
+    rating</a></th>
+    <th width="100" align="center" >solo<br />
+    <a href="javascript:playersView.toggleSortBy('soloStats.wins')">win</a>/<a href="javascript:playersView.toggleSortBy('soloStats.games')">games</a></th>
   </tr>
   <tr id="loadingRow">
     <td colspan="6" align="center" bgcolor="#FFCC00">Getting players...</td>
   </tr>
   <tr id="sampleRow">
-    <td class="tableRow" style="text-align:left"><playerImage></playerImage> <playerName>NAME</playerName></td>
-    <td class="tableRow"><mixedScore>3</mixedScore></td>
-    <td class="tableRow"><duoScore>1</duoScore></td>
-    <td class="tableRow"><duoWins>2/3</duoWins></td>
-    <td class="tableRow"><soloScore>2</soloScore></td>
-    <td class="tableRow"><soloWins>2/2</soloWins></td>
+    <td  style="text-align:left"><playerImage></playerImage> <playerName>NAME</playerName></td>
+    <td ><mixedScore>3</mixedScore></td>
+    <td ><duoScore>1</duoScore></td>
+    <td ><duoWins>2/3</duoWins></td>
+    <td ><soloScore>2</soloScore></td>
+    <td ><soloWins>2/2</soloWins></td>
   </tr>
   <tr>
     <td colspan="7">
 	<div class="fb-comments" data-href="http://foos.apelabs.net#players" data-num-posts="3" data-width="560" mobile="false"></div>
     </td>
-  </tr>
-  <tr>
-    <td colspan="6"><a href="javascript:playersView.exportData(this)" class="tiny">Export</a></td>
   </tr>
 </table>
 
@@ -340,6 +380,7 @@ function hideActivePlayerSelectDialog()
   </tr>
   <tr>
   	<td width="150" height="80" align="right"  bgcolor="#EEEE44" id='leftRating'>
+  	  <a href="javascript:$('#myModal').modal('show')">test</a>
   	  <a href="javascript:addMatchView.selectPlayer(true, 0)"><span class="leftAttacker">Left offence</span></a>
   	  <br /><br/>
   	  <a href="javascript:addMatchView.selectPlayer(true, 1)"><span class="leftDefender">Left defender</span></a>
@@ -376,7 +417,7 @@ function hideActivePlayerSelectDialog()
         <option selected>10</option>
       </select>[<span id='rightExpectedScore'>x</span>]
     </td>
-    <td width="150" align="left" bgcolor="#999999">
+    <td width="150" align="left" >
       <a href="javascript:addMatchView.selectPlayer(false, 0)"><span class="rightAttacker">Right offence</span></a>
       <br /><br/>
       <a href="javascript:addMatchView.selectPlayer(false, 1)"><span class="rightDefender">Right defender</span></a>
@@ -391,9 +432,10 @@ function hideActivePlayerSelectDialog()
     </td>
   </tr>
   <tr>
-    <td colspan="5" align="center"><div class="fb-login-button fbLoggedOut" data-show-faces="false" data-width="200" data-max-rows="1">Login to Submit</div> <div class="fbLoggedIn" ><input type="submit" name="submit" id="submit" value="Submit" onClick="addMatchView.onSubmit()"/> </div></td>
+    <td colspan="5" align="center"><div class="fb-login-button fbLoggedOut" data-show-faces="false" data-width="200" data-max-rows="1">Login to Submit</div> <div class="fbLoggedIn" ><input type="submit" name="submit" id="submit" value="Submit" onClick="addMatchView.onSubmit()" class="btn btn-primary"/> </div></td>
   </tr>
 </table>
+
 <div id="graphView" style="text-align:center"><a href="javascript:graphView.selectPlayers();">select players</a><br>
   <br>
 <graphSelectedPlayers>players...</graphSelectedPlayers>
@@ -401,13 +443,34 @@ function hideActivePlayerSelectDialog()
 <br>
 <div id="graphLoading">Loading...</div>
 </div>
+
+
+<div id="myModal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Modal header</h3>
+  </div>
+  <div class="modal-body">
+    <p>
+    
+    <a class="btn"><img src="http://graph.facebook.com/luaye/picture?type=square" width='25' height='25'/> Lu Aye Oo</a>
+    <a class="btn btn-info"><img src="http://graph.facebook.com/luaye/picture?type=square" width='25' height='25'/> Lu Aye Oo</a>
+    
+    </p>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+    <button class="btn btn-primary">Save changes</button>
+  </div>
+</div>
 <script>
 
-document.getElementById("matchesTable").children[0].style.display = 'none';
-document.getElementById("playersTable").children[0].style.display = 'none';
-document.getElementById("addMatchTable").children[0].style.display = 'none';
-
+/*
+document.getElementById("matchesTable").style.display = 'none';
+document.getElementById("playersTable").style.display = 'none';
+document.getElementById("addMatchTable").style.display = 'none';
+*/
 </script>
-<div id="exportArea"></div>
+</div>
 </body> 
 </html>
