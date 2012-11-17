@@ -61,34 +61,6 @@ function setContentsOfTag(container, name, content)
 	}
 }
 
-function toggleCommentBox(key, docid)
-{
-	if(docid == null)
-	{
-		docid = "commentbox_" + key;
-	}
-	var element = document.getElementById(docid);
-	if(element.childNodes.length > 0)
-	{
-		hideCommentBox(element);
-	}
-	else
-	{
-		showCommentBox(element, key);
-	}
-}
-
-function showCommentBox(element, key)
-{
-	element.innerHTML = '<div class="fb-comments" data-href="'+makeCommentURL(key)+'" data-num-posts="4" data-width="560" mobile="false"></div>';
-	FB.XFBML.parse(element)
-}
-
-function hideCommentBox(element)
-{
-	element.innerHTML = '';
-}
-
 function getCommentCountNodeString(key)
 {
 	var string = "<span style=\"color:#569; font-size:12px; \"><span class=\"fb-comments-count\" style=\"text-decoration:none;\"data-href=\""+makeCommentURL(key)+"\">?</span> <i class=\"icon-comment\"></i></span'>";

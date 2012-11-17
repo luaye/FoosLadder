@@ -2,7 +2,8 @@ function MatchesView(loadableTable)
 {
 	
 var table = loadableTable;
-var sampleComment = table.element.find("#sampleComment")[0];
+var sampleComment = table.element.find("#sampleComment");
+sampleComment.remove();
 var self = this;
 var playersById;
 var exportText;
@@ -91,58 +92,42 @@ function fillRowWithMatch(tableRow, match)
 	setContentsOfTag(tableRow, "matchDate", dateStr);
 	
 	var matchId = match._id;
-	var key = "match/"+matchId;
-	tableRow.id = key;
-	var commentLink = getCommentCountNodeString(key);
+	tableRow.id = "match-"+matchId;
+	var commentLink = getCommentCountNodeString("match/"+matchId);
 	commentLink = "<a href=\"javascript:matchesView.toggleMatchBox('"+matchId+"')\" >"+commentLink+"</a>";
 	
 	setContentsOfTag(tableRow, "commentToggle", commentLink);
 	var commentToggle = getChildByTag(tableRow, "commentToggle");
 	FB.XFBML.parse(commentToggle);
-	/*
-	var commentHolder = getChildByTag(tableRow, "commentHolder");
-	commentHolder = commentHolder.parentNode;
-	commentHolder.id = key;
-	commentHolder.style.display = 'none';*/
 }
 
 
 
 this.toggleMatchBox = function(matchId)
 {
-	var fbkey = "match/"+matchId;
-	var rowid = "matchcomment/"+matchId;
-	var holder = document.getElementById(rowid);
-	if(holder)
+	var rowid = "matchcomment-"+matchId;
+	var holder = $("#"+rowid);
+	if(holder.length > 0)
 	{
-		holder.parentNode.removeChild(holder);
+		holder.remove();
 	}
 	else
 	{
-		holder = sampleComment.cloneNode(true);
-		holder.id = rowid;
-		var matchRow = document.getElementById(fbkey);
+		holder = sampleComment.clone();
+		holder.attr("id", rowid);
 		
-		var td = getChildByTag(holder, "td");
-		var div = document.createElement("div");
-		td.appendChild(div);
-		showCommentBox(div, fbkey);
+		var fbkey = "match/"+matchId;
+		var matchRow = $("#match-"+matchId);
 		
-		$(holder).insertAfter($(matchRow));
+		var commentArea = holder.find(".commentArea");
+		
+		var width = matchRow.innerWidth() - 10;
+		
+		commentArea.replaceWith('<div class="fb-comments" data-href="'+makeCommentURL(fbkey)+'" data-num-posts="4" data-width="'+width+'" mobile="false"></div>');
+		FB.XFBML.parse(holder[0]);
+		
+		holder.insertAfter(matchRow);
 	}
-	/*
-	holder.innerHTML = "";
-	if(holder.style.display == 'none')
-	{
-		holder.style.display = '';
-		var div = document.createElement("div");
-		holder.appendChild(div);
-		showCommentBox(div, key);
-	}
-	else
-	{
-		holder.style.display = 'none';
-	}*/
 }
 
 function getPlayerNameFromId(playerId)
