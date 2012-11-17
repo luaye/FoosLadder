@@ -2,6 +2,7 @@ function MatchesView(loadableTable)
 {
 	
 var table = loadableTable;
+var sampleComment = table.element.find("#sampleComment")[0];
 var self = this;
 var playersById;
 var exportText;
@@ -88,17 +89,17 @@ function fillRowWithMatch(tableRow, match)
 	
 	var dateStr = date.getDate() + ", "+ (date.getMonth()+1) + ", " + date.getFullYear() + "<br/>" + doubleDigit(date.getHours()) + ":" + doubleDigit(date.getMinutes());
 	setContentsOfTag(tableRow, "matchDate", dateStr);
-	/*
+	
 	var matchId = match._id;
 	var key = "match/"+matchId;
+	tableRow.id = key;
 	var commentLink = getCommentCountNodeString(key);
 	commentLink = "<a href=\"javascript:matchesView.toggleMatchBox('"+matchId+"')\" >"+commentLink+"</a>";
 	
 	setContentsOfTag(tableRow, "commentToggle", commentLink);
 	var commentToggle = getChildByTag(tableRow, "commentToggle");
 	FB.XFBML.parse(commentToggle);
-	
-	
+	/*
 	var commentHolder = getChildByTag(tableRow, "commentHolder");
 	commentHolder = commentHolder.parentNode;
 	commentHolder.id = key;
@@ -109,9 +110,27 @@ function fillRowWithMatch(tableRow, match)
 
 this.toggleMatchBox = function(matchId)
 {
-	
-	var key = "match/"+matchId;
-	var holder = document.getElementById(key);
+	var fbkey = "match/"+matchId;
+	var rowid = "matchcomment/"+matchId;
+	var holder = document.getElementById(rowid);
+	if(holder)
+	{
+		holder.parentNode.removeChild(holder);
+	}
+	else
+	{
+		holder = sampleComment.cloneNode(true);
+		holder.id = rowid;
+		var matchRow = document.getElementById(fbkey);
+		
+		var td = getChildByTag(holder, "td");
+		var div = document.createElement("div");
+		td.appendChild(div);
+		showCommentBox(div, fbkey);
+		
+		$(holder).insertAfter($(matchRow));
+	}
+	/*
 	holder.innerHTML = "";
 	if(holder.style.display == 'none')
 	{
@@ -123,7 +142,7 @@ this.toggleMatchBox = function(matchId)
 	else
 	{
 		holder.style.display = 'none';
-	}
+	}*/
 }
 
 function getPlayerNameFromId(playerId)
