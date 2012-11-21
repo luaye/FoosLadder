@@ -1,17 +1,22 @@
-function PlayersView(loadableTable)
+function PlayerInspectView(loadableTable)
 {
 
-var players;
+var players, inspectPlayer;
 var table = loadableTable;
 var self = this;
+
+this.setPlayer = function(playerName)
+{
+	inspectPlayer = playerName;
+	players = null;
+	self.loadPlayers();
+}
 
 var sortKey = "mixedStats.score";
 var sortReversed;
 
 table.clear();
 table.setLoading(true);
-
-var commentsInited;
 
 this.show = function()
 {
@@ -20,17 +25,6 @@ this.show = function()
 	{
 		self.loadPlayers();
 	}
-	
-	if(!commentsInited)
-	{
-		commentsInited = true;
-		var element = $(table.element);
-		var commentArea = element.find(".commentArea");
-		var width = element.innerWidth() - 15;
-		commentArea.replaceWith('<div class="fb-comments" data-href="http://foos.apelabs.net#players" data-num-posts="4" data-width="'+width+'" mobile="false"></div>');
-		FB.XFBML.parse(commentArea[0]);
-	}
-	
 }
 
 this.hide = function()
@@ -65,33 +59,45 @@ function updateRows()
 	table.setLoading(false);
 	table.clear();
 	
-	var X;
+	var X, Y;
 	var userRow;
 	for(X in players)
 	{
-		userRow = table.createRow();
-		fillRowWithUser(userRow, players[X]);
+		if (players[X].name == inspectPlayer)
+		{
+			fillRowsWithVersus(players[X]);			
+		}
 	}
 }
 
-function fillRowWithUser(tableRow, user)
+function fillRowsWithVersus(user)
 {
-	var soloStats = user.soloStats ? user.soloStats : {};
-	var duoStats = user.duoStats ? user.duoStats : {};
-	var mixedStats = user.mixedStats ? user.mixedStats : {};
+
+	var X, userRow;
 	var versus = user.versus ? user.versus : {};
+	for (X in versus)
+	{
+		if (X.charAt(0) != '_')
+		{
+			userRow = table.createRow();
+			fillRowWithUser(userRow, X, versus[X]);	
+		}
+	}
 	
-	var userLink = "<a href='javascript:inspect(\""+user.name+"\")'>"+user.name+"</a>";
+	setContentsOfTag(table.table, "inspectedPlayer", user.name);
+	setContentsOfTag(table.table, "heads", versus._heads);
+	setContentsOfTag(table.table, "total", versus._total);
+}
+
+function fillRowWithUser(tableRow, opponent, versusData)
+{
+	var userLink = "<a href='javascript:inspect(\""+opponent+"\")'>"+opponent+"</a>";
 	
-	var image = getPlayerImageElement(user, 30);
-	$(tableRow).find("playerImage").replaceWith(image);
+//	var image = getPlayerImageElement(user, 30);
+//	$(tableRow).find("playerImage").replaceWith(image);
 	setContentsOfTag(tableRow, "playerName", userLink);
-	setContentsOfTag(tableRow, "heads", safeSlashNum(versus._heads, versus._total));
-	setContentsOfTag(tableRow, "mixedScore", safeStr(mixedStats.score));
-	setContentsOfTag(tableRow, "duoScore", safeStr(duoStats.score));
-	setContentsOfTag(tableRow, "duoWins", safeSlashNum(duoStats.wins, duoStats.games));
-	setContentsOfTag(tableRow, "soloScore", safeStr(soloStats.score));
-	setContentsOfTag(tableRow, "soloWins", safeSlashNum(soloStats.wins, soloStats.games));
+	setContentsOfTag(tableRow, "wins", safeStr(versusData.wins));
+	setContentsOfTag(tableRow, "losses", safeStr(versusData.losses));
 }
 
 function safeStr(obj)

@@ -355,13 +355,21 @@ function updateStatsOfPlayersByIdForMatch(playersById, matchData)
 		losers = matchData.rightPlayers.concat(matchData.leftPlayers);
 	}
 	
-	var X;
+	var X, Y;
 	for (X in winners)
 	{
 		player = playersById[winners[X]];
 		stats = getStatsFunction(player);
 		addToProperty(stats, "wins", 1);
 		addToProperty(stats, "games", 1);
+		versus = getVersusStats(player);
+		for (Y in losers)
+		{
+			var other = playersById[losers[Y]];
+			addVersusResult(versus, other, 1);
+		}
+		
+		tallyVersusHeads(versus);
 	}
 	
 	for (X in losers)
@@ -369,6 +377,14 @@ function updateStatsOfPlayersByIdForMatch(playersById, matchData)
 		player = playersById[losers[X]];
 		stats = getStatsFunction(player);
 		addToProperty(stats, "games", 1);
+		versus = getVersusStats(player);
+		for (Y in winners)
+		{
+			var other = playersById[winners[Y]];
+			addVersusResult(versus, other, -1);
+		}
+		
+		tallyVersusHeads(versus);
 	}
 	return true;
 }
@@ -495,6 +511,46 @@ function getDuoStats(player)
 	return player.duoStats;
 }
 
+function getVersusStats(player)
+{
+	if(!player.versus)
+	{
+		return player.versus = {};
+	}
+	return player.versus;
+}
+
+function addVersusResult(stats, otherPlayer, win)
+{
+	var otherName = otherPlayer.name;
+
+	if (!stats[otherName])
+		stats[otherName] = {wins:0, losses:0};
+		
+	if (win >= 0)
+		stats[otherName].wins++;
+	if (win <= 0)
+		stats[otherName].losses++;			
+//	console.log(otherName+" w "+stats[otherName].wins+" l "+stats[otherName].losses);
+}
+
+function tallyVersusHeads(versus)
+{
+	var heads = 0;
+	var total = 0;
+	for(var X in versus)
+	{
+		if (X.charAt(0) == '_') continue;
+		var other = versus[X];
+		total++;
+		if(other.wins > other.losses)
+			heads++;
+	}
+	
+	versus._heads = heads;
+	versus._total = total;
+}
+
 function getSoloStats(player)
 {
 	if(!player.soloStats)
@@ -509,6 +565,7 @@ function clearPlayerStats(player)
 	player.soloStats = null;
 	player.duoStats = null;
 	player.mixedStats = null;
+	player.versus = null;
 }
 
 exports.isAsscessTokenValidForAdding = function(accessToken, callback)

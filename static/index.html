@@ -22,6 +22,7 @@
 <script type="text/javascript" src="js/matchesView.js"></script>
 <script type="text/javascript" src="js/addMatchView.js"></script>
 <script type="text/javascript" src="js/playersView.js"></script>
+<script type="text/javascript" src="js/playerInspect.js"></script>
 <script type="text/javascript" src="js/graphView.js"></script>
 
 <script src="//connect.facebook.net/en_US/all.js"></script>
@@ -47,6 +48,11 @@ function onLoad()
 	playersView = new PlayersView(playersTable);
 	playersView.loadPlayers = loadPlayers;
 	playersView.hide();
+	
+	var playerInspectTable = new LoadableTable(document.getElementById("playerInspectTable"));
+	playerInspectView = new PlayerInspectView(playerInspectTable);
+	playersView.loadPlayers = loadPlayers;
+	playerInspectView.hide();
 	
 	var addMatchTable = document.getElementById("addMatchTable");
 	addMatchView = new AddMatchView(addMatchTable);
@@ -157,6 +163,13 @@ function showPlayers()
 	setCurrentView(playersView);
 }
 
+function inspect(userName)
+{
+	playerInspectView.setPlayer(userName);
+	setCurrentView(playerInspectView);
+}
+
+
 function showGraph()
 {
 	setActiveMenu($("#graphMenu"));
@@ -230,7 +243,7 @@ function setCurrentView(view)
 
 <table width="100%" class="table table-bordered table-condensed table-hover table-striped" id="playersTable" >
   <tr>
-    <td colspan="6" align="center">
+    <td colspan="7" align="center">
     <div class="btn-group tiny">
       <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
         <i class="icon-edit"></i>
@@ -249,6 +262,7 @@ function setCurrentView(view)
   </tr>
   <tr id="headerRow">
     <th align="center" ><a href="javascript:playersView.toggleSortBy('name')">Name</a></th>
+    <th align="center" ><a href="javascript:playersView.toggleSortBy('versus._heads')">Heads</a></th>
     <th align="center" ><a href="javascript:playersView.toggleSortBy('mixedStats.score')">mixed<br />
     rating</a></th>
     <th align="center" ><a href="javascript:playersView.toggleSortBy('duoStats.score')">duo<br />
@@ -262,6 +276,7 @@ function setCurrentView(view)
   </tr>
   <tr id="sampleRow">
     <td  style="text-align:left"><playerImage></playerImage> <playerName>NAME</playerName></td>
+    <td ><heads>3/10</heads></td>
     <td ><mixedScore>3</mixedScore></td>
     <td ><duoScore>1</duoScore></td>
     <td ><duoWins>2/3</duoWins></td>
@@ -269,12 +284,37 @@ function setCurrentView(view)
     <td ><soloWins>2/2</soloWins></td>
   </tr>
   <tr id="loadingRow">
-    <td colspan="6" align="center" bgcolor="#FFCC00">Getting players...</td>
+    <td colspan="7" align="center" bgcolor="#FFCC00">Getting players...</td>
   </tr>
   <tr>
-    <td colspan="6">
-		<div class="commentArea"></div>
+    <td colspan="7">
+	<div class="commentArea"></div>
     </td>
+  </tr>
+</table>
+
+<table id="playerInspectTable" class="table table-bordered table-condensed table-hover table-striped" >
+
+  <tr>
+    <td colspan="3" align="center">
+ 	Player: <inspectedPlayer>NAME</inspectedPlayer>
+    
+    Heads: <heads>3</heads> out of <total>10</total>
+
+    </td>
+  </tr>
+  <tr id="headerRow">
+    <th width="160" align="center" ><a href="javascript:playersView.toggleSortBy('name')">Name</a></th>
+    <th width="100" align="center" ><a href="javascript:playersView.toggleSortBy('wins')">Wins</a></th>
+    <th width="100" align="center" ><a href="javascript:playersView.toggleSortBy('losses')">Losses</a></th>
+  </tr>
+  <tr id="sampleRow">
+    <td  style="text-align:left"><playerImage></playerImage> <playerName>NAME</playerName></td>
+    <td ><wins>3</wins></td>
+    <td ><losses>1</losses></td>
+  </tr>
+  <tr id="loadingRow">
+    <td colspan="3" align="center" bgcolor="#FFCC00">Getting players...</td>
   </tr>
 </table>
 
