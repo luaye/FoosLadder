@@ -11,6 +11,8 @@ var sortReversed;
 table.clear();
 table.setLoading(true);
 
+var commentsInited;
+
 this.show = function()
 {
 	table.element.show();
@@ -18,6 +20,17 @@ this.show = function()
 	{
 		self.loadPlayers();
 	}
+	
+	if(!commentsInited)
+	{
+		commentsInited = true;
+		var element = $(table.element);
+		var commentArea = element.find(".commentArea");
+		var width = element.innerWidth() - 20;
+		commentArea.replaceWith('<div class="fb-comments" data-href="http://foos.apelabs.net#players" data-num-posts="4" data-width="'+width+'" mobile="false"></div>');
+		FB.XFBML.parse(commentArea[0]);
+	}
+	
 }
 
 this.hide = function()

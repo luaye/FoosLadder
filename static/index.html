@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-	<meta name="viewport" id="viewport" content="width=700;"/>
+	<meta name="viewport" id="viewport" content="width=520"/>
 	<meta name="apple-mobile-web-app-capable" content="yes">
     
 	<title>Foos Ladder</title>
@@ -215,7 +215,7 @@ function setCurrentView(view)
     <td><rightAttacker>Right Attacker</rightAttacker><br />
     <rightDefender>Right Defender</rightDefender></td>
     <td style="width:60px"><rightScoreChange>-11</rightScoreChange></td>
-    <td class="rightCell" style="width:80px"><commentToggle><span class=\"fb-comments-count\" data-href=\""+makeCommentURL(key)+"\"?</span> <i class="icon-comment"></i></commentToggle></td>
+    <td class="rightCell" style="width:80px"><commentToggle>? <i class="icon-comment"></i></commentToggle></td>
   </tr>
   <tr id="loadingRow">
     <td colspan="7">Getting matches...</td>
@@ -228,7 +228,7 @@ function setCurrentView(view)
 </table>
 
 
-<table id="playersTable" class="table table-bordered table-condensed table-hover table-striped" >
+<table width="100%" class="table table-bordered table-condensed table-hover table-striped" id="playersTable" >
   <tr>
     <td colspan="6" align="center">
     <div class="btn-group tiny">
@@ -248,16 +248,16 @@ function setCurrentView(view)
     </td>
   </tr>
   <tr id="headerRow">
-    <th width="160" align="center" ><a href="javascript:playersView.toggleSortBy('name')">Name</a></th>
-    <th width="100" align="center" ><a href="javascript:playersView.toggleSortBy('mixedStats.score')">mixed<br />
+    <th align="center" ><a href="javascript:playersView.toggleSortBy('name')">Name</a></th>
+    <th align="center" ><a href="javascript:playersView.toggleSortBy('mixedStats.score')">mixed<br />
     rating</a></th>
-    <th width="100" align="center" ><a href="javascript:playersView.toggleSortBy('duoStats.score')">duo<br />
+    <th align="center" ><a href="javascript:playersView.toggleSortBy('duoStats.score')">duo<br />
     rating</a></th>
-    <th width="100" align="center" >duo<br />
+    <th align="center" >duo<br />
     <a href="javascript:playersView.toggleSortBy('duoStats.wins')">wins</a>/<a href="javascript:playersView.toggleSortBy('duoStats.games')">games</a></th>
-    <th width="100" align="center" ><a href="javascript:playersView.toggleSortBy('soloStats.score')">solo<br />
+    <th align="center" ><a href="javascript:playersView.toggleSortBy('soloStats.score')">solo<br />
     rating</a></th>
-    <th width="100" align="center" >solo<br />
+    <th align="center" >solo<br />
     <a href="javascript:playersView.toggleSortBy('soloStats.wins')">win</a>/<a href="javascript:playersView.toggleSortBy('soloStats.games')">games</a></th>
   </tr>
   <tr id="sampleRow">
@@ -273,7 +273,7 @@ function setCurrentView(view)
   </tr>
   <tr>
     <td colspan="6">
-	<div class="fb-comments" data-href="http://foos.apelabs.net#players" data-num-posts="4" data-width="660" mobile="false"></div>
+		<div class="commentArea"></div>
     </td>
   </tr>
 </table>
