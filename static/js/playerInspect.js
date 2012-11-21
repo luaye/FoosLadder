@@ -1,9 +1,16 @@
-function PlayersView(loadableTable)
+function PlayerInspectView(loadableTable)
 {
 
-var players;
+var players, inspectPlayer;
 var table = loadableTable;
 var self = this;
+
+this.setPlayer = function(playerName)
+{
+	inspectPlayer = playerName;
+	players = null;
+	self.loadPlayers();
+}
 
 var sortKey = "mixedStats.score";
 var sortReversed;
@@ -52,31 +59,39 @@ function updateRows()
 	table.setLoading(false);
 	table.clear();
 	
-	var X;
+	var X, Y;
 	var userRow;
 	for(X in players)
 	{
-		userRow = table.createRow();
-		fillRowWithUser(userRow, players[X]);
+		if (players[X].name == inspectPlayer)
+		{
+			fillRowsWithVersus(players[X]);			
+		}
 	}
 }
 
-function fillRowWithUser(tableRow, user)
+function fillRowsWithVersus(user)
 {
-	var soloStats = user.soloStats ? user.soloStats : {};
-	var duoStats = user.duoStats ? user.duoStats : {};
-	var mixedStats = user.mixedStats ? user.mixedStats : {};
+	setContentsOfTag(table, "inspectedPlayer", user.name);
 	
-	var userLink = "<a href='javascript:inspect(\""+user.name+"\")'>"+user.name+"</a>";
+	var X, userRow;
+	var versus = user.versus ? user.versus : {};
+	for (X in versus)
+	{
+		userRow = table.createRow();
+		fillRowWithUser(userRow, X, versus[X]);	
+	}
+}
+
+function fillRowWithUser(tableRow, opponent, versusData)
+{
+	var userLink = "<a href='javascript:inspect(\""+opponent+"\")'>"+opponent+"</a>";
 	
-	var image = getPlayerImageElement(user, 30);
-	$(tableRow).find("playerImage").replaceWith(image);
+//	var image = getPlayerImageElement(user, 30);
+//	$(tableRow).find("playerImage").replaceWith(image);
 	setContentsOfTag(tableRow, "playerName", userLink);
-	setContentsOfTag(tableRow, "mixedScore", safeStr(mixedStats.score));
-	setContentsOfTag(tableRow, "duoScore", safeStr(duoStats.score));
-	setContentsOfTag(tableRow, "duoWins", safeSlashNum(duoStats.wins, duoStats.games));
-	setContentsOfTag(tableRow, "soloScore", safeStr(soloStats.score));
-	setContentsOfTag(tableRow, "soloWins", safeSlashNum(soloStats.wins, soloStats.games));
+	setContentsOfTag(tableRow, "wins", safeStr(versusData.wins));
+	setContentsOfTag(tableRow, "losses", safeStr(versusData.losses));
 }
 
 function safeStr(obj)

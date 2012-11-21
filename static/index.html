@@ -22,6 +22,7 @@
 <script type="text/javascript" src="js/matchesView.js"></script>
 <script type="text/javascript" src="js/addMatchView.js"></script>
 <script type="text/javascript" src="js/playersView.js"></script>
+<script type="text/javascript" src="js/playerInspect.js"></script>
 <script type="text/javascript" src="js/graphView.js"></script>
 
 <script src="//connect.facebook.net/en_US/all.js"></script>
@@ -47,6 +48,11 @@ function onLoad()
 	playersView = new PlayersView(playersTable);
 	playersView.loadPlayers = loadPlayers;
 	playersView.hide();
+	
+	var playerInspectTable = new LoadableTable(document.getElementById("playerInspectTable"));
+	playerInspectView = new PlayerInspectView(playerInspectTable);
+	playersView.loadPlayers = loadPlayers;
+	playerInspectView.hide();
 	
 	var addMatchTable = document.getElementById("addMatchTable");
 	addMatchView = new AddMatchView(addMatchTable);
@@ -156,6 +162,13 @@ function showPlayers()
 	setActiveMenu($("#playersMenu"));
 	setCurrentView(playersView);
 }
+
+function inspect(userName)
+{
+	playerInspectView.setPlayer(userName);
+	setCurrentView(playerInspectView);
+}
+
 
 function showGraph()
 {
@@ -275,6 +288,29 @@ function setCurrentView(view)
     <td colspan="6">
 	<div class="fb-comments" data-href="http://foos.apelabs.net#players" data-num-posts="4" data-width="660" mobile="false"></div>
     </td>
+  </tr>
+</table>
+
+<table id="playerInspectTable" class="table table-bordered table-condensed table-hover table-striped" >
+
+    	Player: <inspectedPlayer>NAME</inspectedPlayer>
+
+  <tr>
+    <td colspan="3" align="center">
+    </td>
+  </tr>
+  <tr id="headerRow">
+    <th width="160" align="center" ><a href="javascript:playersView.toggleSortBy('name')">Name</a></th>
+    <th width="100" align="center" ><a href="javascript:playersView.toggleSortBy('wins')">Wins</a></th>
+    <th width="100" align="center" ><a href="javascript:playersView.toggleSortBy('losses')">Losses</a></th>
+  </tr>
+  <tr id="sampleRow">
+    <td  style="text-align:left"><playerImage></playerImage> <playerName>NAME</playerName></td>
+    <td ><wins>3</wins></td>
+    <td ><losses>1</losses></td>
+  </tr>
+  <tr id="loadingRow">
+    <td colspan="3" align="center" bgcolor="#FFCC00">Getting players...</td>
   </tr>
 </table>
 
