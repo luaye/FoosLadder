@@ -7,8 +7,8 @@ body {
 }
 .container-narrow {
 	margin: 0 auto;
-	max-width: 720px;
 	min-width:480px;
+	max-width:720px;
 }
 
 .container-narrow > hr {
