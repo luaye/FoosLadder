@@ -243,7 +243,7 @@ function setCurrentView(view)
 
 <table id="playersTable" class="table table-bordered table-condensed table-hover table-striped" >
   <tr>
-    <td colspan="6" align="center">
+    <td colspan="7" align="center">
     <div class="btn-group tiny">
       <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
         <i class="icon-edit"></i>
@@ -262,6 +262,7 @@ function setCurrentView(view)
   </tr>
   <tr id="headerRow">
     <th width="160" align="center" ><a href="javascript:playersView.toggleSortBy('name')">Name</a></th>
+    <th width="100" align="center" ><a href="javascript:playersView.toggleSortBy('versus._heads')">Heads</a></th>
     <th width="100" align="center" ><a href="javascript:playersView.toggleSortBy('mixedStats.score')">mixed<br />
     rating</a></th>
     <th width="100" align="center" ><a href="javascript:playersView.toggleSortBy('duoStats.score')">duo<br />
@@ -275,6 +276,7 @@ function setCurrentView(view)
   </tr>
   <tr id="sampleRow">
     <td  style="text-align:left"><playerImage></playerImage> <playerName>NAME</playerName></td>
+    <td ><heads>3/10</heads></td>
     <td ><mixedScore>3</mixedScore></td>
     <td ><duoScore>1</duoScore></td>
     <td ><duoWins>2/3</duoWins></td>
@@ -282,10 +284,10 @@ function setCurrentView(view)
     <td ><soloWins>2/2</soloWins></td>
   </tr>
   <tr id="loadingRow">
-    <td colspan="6" align="center" bgcolor="#FFCC00">Getting players...</td>
+    <td colspan="7" align="center" bgcolor="#FFCC00">Getting players...</td>
   </tr>
   <tr>
-    <td colspan="6">
+    <td colspan="7">
 	<div class="fb-comments" data-href="http://foos.apelabs.net#players" data-num-posts="4" data-width="660" mobile="false"></div>
     </td>
   </tr>
@@ -293,10 +295,12 @@ function setCurrentView(view)
 
 <table id="playerInspectTable" class="table table-bordered table-condensed table-hover table-striped" >
 
-    	Player: <inspectedPlayer>NAME</inspectedPlayer>
-
   <tr>
     <td colspan="3" align="center">
+ 	Player: <inspectedPlayer>NAME</inspectedPlayer>
+    
+    Heads: <heads>3</heads> out of <total>10</total>
+
     </td>
   </tr>
   <tr id="headerRow">

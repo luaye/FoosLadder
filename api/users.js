@@ -368,6 +368,8 @@ function updateStatsOfPlayersByIdForMatch(playersById, matchData)
 			var other = playersById[losers[Y]];
 			addVersusResult(versus, other, 1);
 		}
+		
+		tallyVersusHeads(versus);
 	}
 	
 	for (X in losers)
@@ -381,6 +383,8 @@ function updateStatsOfPlayersByIdForMatch(playersById, matchData)
 			var other = playersById[winners[Y]];
 			addVersusResult(versus, other, -1);
 		}
+		
+		tallyVersusHeads(versus);
 	}
 	return true;
 }
@@ -526,9 +530,25 @@ function addVersusResult(stats, otherPlayer, win)
 	if (win >= 0)
 		stats[otherName].wins++;
 	if (win <= 0)
-		stats[otherName].losses++;
-		
-	console.log(otherName+" w "+stats[otherName].wins+" l "+stats[otherName].losses);
+		stats[otherName].losses++;			
+//	console.log(otherName+" w "+stats[otherName].wins+" l "+stats[otherName].losses);
+}
+
+function tallyVersusHeads(versus)
+{
+	var heads = 0;
+	var total = 0;
+	for(var X in versus)
+	{
+		if (X.charAt(0) == '_') continue;
+		var other = versus[X];
+		total++;
+		if(other.wins > other.losses)
+			heads++;
+	}
+	
+	versus._heads = heads;
+	versus._total = total;
 }
 
 function getSoloStats(player)

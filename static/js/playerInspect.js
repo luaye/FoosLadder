@@ -72,15 +72,21 @@ function updateRows()
 
 function fillRowsWithVersus(user)
 {
-	setContentsOfTag(table, "inspectedPlayer", user.name);
-	
+
 	var X, userRow;
 	var versus = user.versus ? user.versus : {};
 	for (X in versus)
 	{
-		userRow = table.createRow();
-		fillRowWithUser(userRow, X, versus[X]);	
+		if (X.charAt(0) != '_')
+		{
+			userRow = table.createRow();
+			fillRowWithUser(userRow, X, versus[X]);	
+		}
 	}
+	
+	setContentsOfTag(table.table, "inspectedPlayer", user.name);
+	setContentsOfTag(table.table, "heads", versus._heads);
+	setContentsOfTag(table.table, "total", versus._total);
 }
 
 function fillRowWithUser(tableRow, opponent, versusData)

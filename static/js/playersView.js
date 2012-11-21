@@ -66,12 +66,14 @@ function fillRowWithUser(tableRow, user)
 	var soloStats = user.soloStats ? user.soloStats : {};
 	var duoStats = user.duoStats ? user.duoStats : {};
 	var mixedStats = user.mixedStats ? user.mixedStats : {};
+	var versus = user.versus ? user.versus : {};
 	
 	var userLink = "<a href='javascript:inspect(\""+user.name+"\")'>"+user.name+"</a>";
 	
 	var image = getPlayerImageElement(user, 30);
 	$(tableRow).find("playerImage").replaceWith(image);
 	setContentsOfTag(tableRow, "playerName", userLink);
+	setContentsOfTag(tableRow, "heads", safeSlashNum(versus._heads, versus._total));
 	setContentsOfTag(tableRow, "mixedScore", safeStr(mixedStats.score));
 	setContentsOfTag(tableRow, "duoScore", safeStr(duoStats.score));
 	setContentsOfTag(tableRow, "duoWins", safeSlashNum(duoStats.wins, duoStats.games));
