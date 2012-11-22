@@ -70,6 +70,13 @@ function fillRowWithUser(tableRow, user)
 	
 	var userLink = "<a href='javascript:inspect(\""+user.name+"\")'>"+user.name+"</a>";
 	
+	var goalsFor = Number(duoStats.goalsFor);
+	var goalsAgainst = Number(duoStats.goalsAgainst);
+	var goalAvg = goalsFor * 10.0 / (goalsFor + goalsAgainst);
+	goalAvg = Math.round(goalAvg*100) / 100;
+	
+	if (duoStats.goalsAgainst == undefined) goalAvg = "-";
+	
 	var image = getPlayerImageElement(user, 30);
 	$(tableRow).find("playerImage").replaceWith(image);
 	setContentsOfTag(tableRow, "playerName", userLink);
@@ -79,6 +86,7 @@ function fillRowWithUser(tableRow, user)
 	setContentsOfTag(tableRow, "duoWins", safeSlashNum(duoStats.wins, duoStats.games));
 	setContentsOfTag(tableRow, "soloScore", safeStr(soloStats.score));
 	setContentsOfTag(tableRow, "soloWins", safeSlashNum(soloStats.wins, soloStats.games));
+	setContentsOfTag(tableRow, "goalAvg", (goalAvg));
 }
 
 function safeStr(obj)

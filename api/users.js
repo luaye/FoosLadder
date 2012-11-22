@@ -362,11 +362,14 @@ function updateStatsOfPlayersByIdForMatch(playersById, matchData)
 		stats = getStatsFunction(player);
 		addToProperty(stats, "wins", 1);
 		addToProperty(stats, "games", 1);
+		addToProperty(stats, "goalsFor", Math.max(matchData.leftScore, matchData.rightScore));
+		addToProperty(stats, "goalsAgainst", Math.min(matchData.leftScore, matchData.rightScore));
 		versus = getVersusStats(player);
 		for (Y in losers)
 		{
 			var other = playersById[losers[Y]];
-			addVersusResult(versus, other, 1);
+			if (!isDuoGame)
+				addVersusResult(versus, other, 1);
 		}
 		
 		tallyVersusHeads(versus);
@@ -377,11 +380,14 @@ function updateStatsOfPlayersByIdForMatch(playersById, matchData)
 		player = playersById[losers[X]];
 		stats = getStatsFunction(player);
 		addToProperty(stats, "games", 1);
+		addToProperty(stats, "goalsFor", Math.min(matchData.leftScore, matchData.rightScore));
+		addToProperty(stats, "goalsAgainst", Math.max(matchData.leftScore, matchData.rightScore));
 		versus = getVersusStats(player);
 		for (Y in winners)
 		{
 			var other = playersById[winners[Y]];
-			addVersusResult(versus, other, -1);
+			if (!isDuoGame)
+				addVersusResult(versus, other, -1);
 		}
 		
 		tallyVersusHeads(versus);

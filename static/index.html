@@ -273,6 +273,8 @@ function setCurrentView(view)
     rating</a></th>
     <th width="100" align="center" >solo<br />
     <a href="javascript:playersView.toggleSortBy('soloStats.wins')">win</a>/<a href="javascript:playersView.toggleSortBy('soloStats.games')">games</a></th>
+    <th width="100" align="center" >goal<br />
+    <a href="javascript:playersView.toggleSortBy('mixedStats.goalAvg')">avg</a></th>
   </tr>
   <tr id="sampleRow">
     <td  style="text-align:left"><playerImage></playerImage> <playerName>NAME</playerName></td>
@@ -282,6 +284,7 @@ function setCurrentView(view)
     <td ><duoWins>2/3</duoWins></td>
     <td ><soloScore>2</soloScore></td>
     <td ><soloWins>2/2</soloWins></td>
+    <td ><goalAvg>5.5</goalAvg></td>
   </tr>
   <tr id="loadingRow">
     <td colspan="7" align="center" bgcolor="#FFCC00">Getting players...</td>
