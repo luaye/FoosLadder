@@ -135,7 +135,7 @@ this.toggleMatchBox = function(matchId)
 		
 		var commentArea = holder.find(".commentArea");
 		
-		var width = matchRow.innerWidth() - 10;
+		var width = matchRow.innerWidth() - 15;
 		
 		commentArea.replaceWith('<div class="fb-comments" data-href="'+makeCommentURL(fbkey)+'" data-num-posts="4" data-width="'+width+'" mobile="false"></div>');
 		FB.XFBML.parse(holder[0]);

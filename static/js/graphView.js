@@ -157,7 +157,7 @@ function draw()
 			chartRangeMax:1900,
 			chartRangeClip:true,
 			height:600,
-			width:640,
+			width:view.innerWidth()-10,
 			composite:composite
 		});
 		
