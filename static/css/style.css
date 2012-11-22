@@ -37,6 +37,22 @@ body {
 	text-align:center;
 }
 
+.table th.loadingCell,
+.table td.loadingCell
+{
+	font-weight:bold;
+	text-align:center;
+	background-color:#FC0  !important;
+}
+
+.table th.commentCell,
+.table td.commentCell
+{
+	font-weight:bold;
+	text-align:center;
+	background-color:inherit !important;
+}
+
 .tiny
 {
 	font-size:10px;

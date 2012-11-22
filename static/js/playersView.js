@@ -27,8 +27,8 @@ this.show = function()
 		var element = $(table.element);
 		var commentArea = element.find(".commentArea");
 		var width = element.innerWidth() - 15;
-		commentArea.replaceWith('<div class="fb-comments" data-href="http://foos.apelabs.net#players" data-num-posts="4" data-width="'+width+'" mobile="false"></div>');
-		FB.XFBML.parse(commentArea[0]);
+		commentArea.replaceWith('<div class="fb-comments" data-href="http://foos.apelabs.net#players" data-width="'+width+'" mobile="false"></div>');
+		FB.XFBML.parse(element[0]);
 	}
 	
 }

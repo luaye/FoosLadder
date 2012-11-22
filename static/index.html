@@ -197,17 +197,14 @@ function setCurrentView(view)
 <div id="fb-root"></div>
     <div class="container-narrow">
     
-    
       <div class="navbar navbar-inner">
         <a class="brand" style="font-weight:bold">Foos Ladder</a>
-      	<div >
         <ul class="nav">
           <li id="matchesMenu"><a href="javascript:showMatches()" >Matches</a></li>
           <li id="addMatchesMenu"><a href="javascript:showAddMatch()">Add Match</a></li>
           <li id="playersMenu"><a href="javascript:showPlayers()">Players</a></li>
           <li id="graphMenu"><a href="javascript:showGraph()">Graph</a></li>
         </ul>
-        </div>
       </div>
 
 <div class="body">
@@ -231,10 +228,10 @@ function setCurrentView(view)
     <td class="rightCell" style="width:80px"><commentToggle>? <i class="icon-comment"></i></commentToggle></td>
   </tr>
   <tr id="loadingRow">
-    <td colspan="7">Getting matches...</td>
+    <td colspan="7" class="loadingCell">Getting matches...</td>
   </tr>
   <tr id="sampleComment">
-    <td colspan="7">
+    <td colspan="7" class="commentCell">
 		<div class="commentArea"></div>
     </td>
   </tr>
@@ -284,11 +281,11 @@ function setCurrentView(view)
     <td ><soloWins>2/2</soloWins></td>
   </tr>
   <tr id="loadingRow">
-    <td colspan="7" align="center" bgcolor="#FFCC00">Getting players...</td>
+    <td colspan="7" class="loadingCell">Getting players...</td>
   </tr>
   <tr>
-    <td colspan="7">
-	<div class="commentArea"></div>
+    <td colspan="7" class="commentCell">
+    <div class="commentArea"></div>
     </td>
   </tr>
 </table>
@@ -314,7 +311,7 @@ function setCurrentView(view)
     <td ><losses>1</losses></td>
   </tr>
   <tr id="loadingRow">
-    <td colspan="3" align="center" bgcolor="#FFCC00">Getting players...</td>
+    <td colspan="3" class="loadingCell">Getting players...</td>
   </tr>
 </table>
 
@@ -415,8 +412,6 @@ $(".body").hide();
 </script>
 </div>
 
-
-
 <div id="playerSelectionModal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="dialogLabel" aria-hidden="true">
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -425,5 +420,6 @@ $(".body").hide();
   <div class="modal-body">
   </div>
 </div>
+
 </body> 
 </html>

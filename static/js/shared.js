@@ -345,6 +345,10 @@ function ensureAuthorisedAndCall(callback)
 					facebookAccessToken = response.authResponse.accessToken;
 					callback();
 				}
+				else
+				{
+					alert("Not authorised.");
+				}
 			});
 		  }
 		 });
