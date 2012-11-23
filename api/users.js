@@ -1,5 +1,6 @@
 var utils = require("./../utils.js");
 var config = require("./../config.json");
+var ratingAlgo = require("./elo.js");
 
 exports.getUsers = function(body, callback)
 {
@@ -127,8 +128,8 @@ exports.getExpectedScores = function(body, callback)
 	var playerIds = leftPlayers.concat(rightPlayers);
 	getPlayersByIdUsingIds(playerIds, function(playersById)
 	{
-		var Rleft = getAverageRatingOfPlayers(playersById, getMixedStats, leftPlayers);
-		var Rright = getAverageRatingOfPlayers(playersById, getMixedStats, rightPlayers);
+		var Rleft = getCombinedRatingOfPlayers(playersById, getMixedStats, leftPlayers);
+		var Rright = getCombinedRatingOfPlayers(playersById, getMixedStats, rightPlayers);
 	
 		var Es = expectedScoreForRating(Rleft, Rright);
 		
@@ -218,7 +219,7 @@ function getPlayersByIdUsingIds(playerIds, callback)
 	});
 }
 
-function getAverageRatingOfPlayers(playersById, getStatsFunction, players)
+function getCombinedRatingOfPlayers(playersById, getStatsFunction, players)
 {
 	var ratings = 0;
 	var player;
@@ -228,7 +229,6 @@ function getAverageRatingOfPlayers(playersById, getStatsFunction, players)
 	{
 		player = playersById[players[index]];
 		stats = getStatsFunction(player);
-// 		console.log([index, player, stats]); 
 		ratings += getProperty(stats, "score", defaultScoreForPlayer(player));
 	}
 	
@@ -315,8 +315,8 @@ function updateRatingForMatch(playersById, getStatsFunction, o)
 
 function getLeftRatingChange(playersById, getStatsFunction, leftPlayerIds, leftScore, rightPlayerIds, rightScore)
 {
-	var Rleft = getAverageRatingOfPlayers(playersById, getStatsFunction, leftPlayerIds);
-	var Rright = getAverageRatingOfPlayers(playersById, getStatsFunction, rightPlayerIds);
+	var Rleft = getCombinedRatingOfPlayers(playersById, getStatsFunction, leftPlayerIds);
+	var Rright = getCombinedRatingOfPlayers(playersById, getStatsFunction, rightPlayerIds);
 	var Eleft = expectedScoreForRating(Rleft, Rright);
 	
 	var Gleft = leftScore;
