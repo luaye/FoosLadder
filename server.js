@@ -14,7 +14,6 @@ server.listen(SERVER_PORT);
 if (process.argv.length > 2) {
 	if (process.argv[2] == 'contest') {
 		runAlgorithmContest();
-		process.exit();
 	}
 }
 
@@ -22,7 +21,11 @@ function runAlgorithmContest()
 {
 	console.log("Running contest");
 	var contest = require('./contest.js');
-	contest.run();
+	console.log("Waiting for DBs...");
+	
+	apimap.afterReady(function() {
+		contest.run();
+	});
 }
 
 console.log("Listening on port "+SERVER_PORT);

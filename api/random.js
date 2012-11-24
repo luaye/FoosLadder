@@ -38,10 +38,7 @@ exports.getLeftRatingChange = function(playersById, getStatsFunction, leftPlayer
 
 exports.expectedScoreForRating = function(rating, opponent)
 {
-	var Qa = Math.pow(10, (rating / 400));
-	var Qb = Math.pow(10, (opponent / 400));
-	var Es = Qa / (Qa + Qb);
-	return Es;
+	return Math.random();
 }
 
 exports.getCombinedRatingOfPlayers = function(playersById, getStatsFunction, players)
@@ -74,11 +71,6 @@ exports.getCombinedRatingOfPlayers = function(playersById, getStatsFunction, pla
 	}
 	
 	var average = ratings / players.length;
-	if (average < 0)
-	{
-		console.log("below 0! "+[ratings, players.length]);
-	   return 0;
-	}
 	return average;
 }
 
