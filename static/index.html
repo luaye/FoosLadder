@@ -24,6 +24,7 @@
 <script type="text/javascript" src="js/playersView.js"></script>
 <script type="text/javascript" src="js/playerInspect.js"></script>
 <script type="text/javascript" src="js/graphView.js"></script>
+<script type="text/javascript" src="js/liveView.js"></script>
 
 <script src="//connect.facebook.net/en_US/all.js"></script>
 
@@ -31,6 +32,8 @@
 var matchesView;
 var playersView;
 var addMatchView;
+var graphView;
+var liveView;
 
 var currentView;
 var self = this;
@@ -66,6 +69,9 @@ function onLoad()
 	graphView.loadMatches = loadMatches;
 	graphView.hide();
 	
+	liveView = new LiveView($("#liveView"));
+	liveView.loadPlayers = loadPlayers;
+	liveView.hide();
 	
 	var location = String(window.location);
 	var hashPath = "";
@@ -176,6 +182,11 @@ function showGraph()
 	setCurrentView(graphView);
 }
 
+function showLive()
+{
+	setActiveMenu($("#liveMenu"));
+	setCurrentView(liveView);
+}
 
 function setCurrentView(view)
 {
@@ -204,6 +215,7 @@ function setCurrentView(view)
           <li id="addMatchesMenu"><a href="javascript:showAddMatch()">Add Match</a></li>
           <li id="playersMenu"><a href="javascript:showPlayers()">Players</a></li>
           <li id="graphMenu"><a href="javascript:showGraph()">Graph</a></li>
+          <li id="liveMenu"><a href="javascript:showLive()">Live</a></li>
         </ul>
       </div>
 
@@ -402,6 +414,42 @@ function setCurrentView(view)
 <br>
 <br>
 <div id="graphLoading">Loading...</div>
+</div>
+
+
+<div id="liveView" >
+  <p>&nbsp;</p>
+  <table class="table table-bordered" border="0" align="center" cellpadding="4" cellspacing="0">
+  <tr>
+    <td colspan="5" class="centerCell"><strong>No games in progress / Game in progress</strong><br>
+      Last game ended 2 hours ago / started 1 mins ago</td>
+  </tr>
+  <tr>
+    <th colspan="2" bgcolor="#EE3" class="rightCell">Yellow</th>
+    <th width="10" rowspan="2" class="centerCell">
+      <br><br><br></th>
+    <th colspan="2" bgcolor="#CCC">White</th>
+    </tr>
+  <tr>
+  	<td width="150" height="80" id='leftRating' class="rightCell">
+  	  <span class="leftAttacker">Left offence</span>
+  	  <br /><br/>
+  	  <span class="leftDefender">Left defender</span>
+      </td>
+    <td width="40" class="rightCell">
+      <h2>10</h2><span id='leftExpectedScore'>x</span><br>
++10</td>
+    <td width="40">
+    <h2>10</h2>
+<span id='rightExpectedScore'>x</span><br>
+-10</td>
+    <td width="150">
+      <span class="rightAttacker">Right offence</span></a>
+      <br /><br/>
+      <span class="rightDefender">Right defender</span>
+    </td>
+  </tr>
+</table>
 </div>
 
 </div>
