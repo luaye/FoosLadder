@@ -19,22 +19,26 @@ function runContest() {
 		users.getPlayersByIds({}, function(playersById)
 		{
 			var best = { err : 1 };
-			var algo = elo;
-			
-// 			for (var setup = 0.5; setup < 0.95; setup += 0.05) 
-			{
-// 				RATIO_OF_SETUP_MATCHES = setup;
-				for (var k = 30; k < 240; k+= 5) {
-					algo.setMaxK(k);
-					for (var ratio = 0.05; ratio < 0.95; ratio += 0.05) {
-						algo.setWeakPlayerRatio(ratio);
-						var error = runAlgo(algo, matchDatas, playersById);
-	//					console.log("K = "+k+" Weak Ratio = "+ratio+", error = "+error);
-						if (error < best.err) {
-							best.err = error;
-							best.k = k;
-							best.ratio = ratio;
-// 							best.setup = setup;
+			var algos = { elo: elo, random: random };
+			var algo, x;
+			for (name in algos) {
+				algo = algos[name];
+	// 			for (var setup = 0.5; setup < 0.95; setup += 0.05) 
+				{
+	// 				RATIO_OF_SETUP_MATCHES = setup;
+					for (var k = 30; k < 240; k+= 5) {
+						algo.setMaxK(k);
+						for (var ratio = 0.05; ratio < 0.95; ratio += 0.05) {
+							algo.setWeakPlayerRatio(ratio);
+							var error = runAlgo(algo, matchDatas, playersById);
+		//					console.log("K = "+k+" Weak Ratio = "+ratio+", error = "+error);
+							if (error < best.err) {
+								best.err = error;
+								best.k = k;
+								best.ratio = ratio;
+								best.name = name;
+	// 							best.setup = setup;
+							}
 						}
 					}
 				}
