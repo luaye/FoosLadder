@@ -263,7 +263,7 @@ function setCurrentView(view)
           <li><a href="javascript:playersView.loadPlayers()"><i class="icon-refresh"></i> Reload</a></li>
           <li class="divider"></li>
           
-          <li><a href="javascript:playersView.rebuiltStats()"><i class="icon-repeat"></i> Rebuilt stats</a></li>
+          <li><a href="javascript:playersView.rebuiltStats()"><i class="icon-repeat"></i> Rebuild stats</a></li>
           <li><a href="javascript:playersView.repeatMatches()"><i class="icon-fast-forward"></i> Repeat matches</a></li>
       </ul>
     </div>
@@ -282,6 +282,8 @@ function setCurrentView(view)
     rating</a></th>
     <th align="center" >solo<br />
     <a href="javascript:playersView.toggleSortBy('soloStats.wins')">win</a>/<a href="javascript:playersView.toggleSortBy('soloStats.games')">games</a></th>
+    <th width="100" align="center" >goal<br />
+    <a href="javascript:playersView.toggleSortBy('mixedStats.goalAvg')">avg</a></th>
   </tr>
   <tr id="sampleRow">
     <td  style="text-align:left"><playerImage></playerImage> <playerName>NAME</playerName></td>
@@ -291,6 +293,7 @@ function setCurrentView(view)
     <td ><duoWins>2/3</duoWins></td>
     <td ><soloScore>2</soloScore></td>
     <td ><soloWins>2/2</soloWins></td>
+    <td ><goalAvg>5.5</goalAvg></td>
   </tr>
   <tr id="loadingRow">
     <td colspan="7" class="loadingCell">Getting players...</td>

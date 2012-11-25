@@ -1,8 +1,13 @@
 var config = require("./../config.json");
 var nano = require('nano')('http://'+config.couch.host+':'+config.couch.port);
+var dbsReady = 0;
+var queuedCallbacks = [];
 
-exports.init = function()
+exports.init = function(callback)
 {
+	if (callback)
+		exports.afterReady(callback);
+		
 	initDatabaseIfRequired(config.couch.usersDB, function()
 	{
 		GLOBAL.usersDB = nano.use(config.couch.usersDB);
@@ -13,6 +18,27 @@ exports.init = function()
 		GLOBAL.matchesDB = nano.use(config.couch.matchesDB);
 		registerMatchesDesignDoc();
 	});
+}
+
+exports.ready = function()
+{
+	return dbsReady == 2;
+}
+
+exports.afterReady = function(callback)
+{
+	if (exports.ready())
+		callback();
+	else
+		queuedCallbacks.push(callback);
+}
+
+function runCallbacksIfReady()
+{
+	console.log("running callbacks");
+	var callback;
+	while (callback = queuedCallbacks.pop())
+		callback();
 }
 
 function initDatabaseIfRequired(databaseName, callback)
@@ -65,6 +91,8 @@ function registerUserDesignDoc()
 		{
     		console.log("Register user design doc.");
 		}
+		dbsReady++;
+		runCallbacksIfReady();
 	});
 }
 
@@ -89,5 +117,7 @@ function registerMatchesDesignDoc()
 		{
     		console.log("Register match design doc.");
 		}
+		dbsReady++;
+		runCallbacksIfReady();
 	});
 }

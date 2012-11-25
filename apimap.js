@@ -5,6 +5,8 @@ var init = require("./api/init.js");
 
 init.init();
 
+exports.afterReady = function(callback) { init.afterReady(callback); }
+
 var map = {
 	getPlayers:users.getUsers,
 	addPlayer:users.addUser,
