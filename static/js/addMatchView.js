@@ -59,64 +59,34 @@ function onPlayersLoaded(data)
 	updateViewNames();
 }
 
-function averagePlayerRatings(field1, field2)
-{
-	var rating = 0;
-	var nPlayers = 0;
-	
-	var player = playersById[field1];
-	if (player) {
-		rating += player.mixedStats.score;
-		nPlayers++;
-	}
-	player = playersById[field2];
-	if (player) {
-		rating += player.mixedStats.score;
-		nPlayers++;
-	}
-	
-	if (nPlayers == 0) return 0;
-	
-	return rating / nPlayers;
-}
-
-function expectedScoreForRating(rating, opponent)
-{
-	var Qa = Math.pow(10, (rating / 400));
-	var Qb = Math.pow(10, (opponent / 400));
-	var Es = Qa / (Qa + Qb);
-	return Es;
-}
 
 function updateRatings()
 {
-	var rightRating = averagePlayerRatings(rightPlayer1, rightPlayer2);
-	
-	rightRating.innerHTML = Math.round(rightRating);
-	
-	var leftRating = averagePlayerRatings(leftPlayer1, leftPlayer2);
-	
-	leftRating.innerHTML = Math.round(leftRating);
-	
-	var Es = expectedScoreForRating(leftRating, rightRating);
-	var leftWins = Es > 0.5;
-	var minExpected = leftWins ? (1-Es) : Es;
-	var loserGoals = 10 * minExpected / (1-minExpected);
-	var leftGoals, rightGoals;
-	if (leftWins)
+	resetExpectedScore();
+	var request = {};
+	request.request = "getExpectedScores";
+	request.leftPlayer1 = leftPlayer1;
+	request.leftPlayer2 = leftPlayer2;
+	request.rightPlayer1 = rightPlayer1;
+	request.rightPlayer2 = rightPlayer2;
+	callAPI(request, function(result)
 	{
-		leftGoals = 10;
-		rightGoals = Math.round(loserGoals*10)/10;
-	}
-	else
-	{
-		leftGoals = Math.round(loserGoals*10)/10;
-		rightGoals = 10;
-	}
-	
-	leftExpectedScore.innerHTML = leftGoals;
-	rightExpectedScore.innerHTML = rightGoals;
+		$(".leftExpectedScore").text(isNaN(result.leftScore) ? "?" : scoreRound(result.leftScore));
+		$(".rightExpectedScore").text(isNaN(result.rightScore) ? "?" : scoreRound(result.rightScore));
+	});
 }
+
+function scoreRound(num)
+{
+	return Math.round(num*10)/10;
+}
+
+function resetExpectedScore()
+{
+	$(".leftExpectedScore").text("?");
+	$(".rightExpectedScore").text("?");
+}
+
 this.dateNowChanged = function()
 {
 	updateDateSelectorVisibility();
@@ -298,6 +268,7 @@ this.reset = function()
 	rightPlayer2 = null;
 	dateNowCheckbox.checked = true;
 	updateDateSelectorVisibility();
+	resetExpectedScore();
 	updateViewNames();
 	submitButton.disabled = false;
 }

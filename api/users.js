@@ -1,6 +1,6 @@
 var utils = require("./../utils.js");
 var config = require("./../config.json");
-var ratingAlgo = require("./elo.js");
+var stats = require("./stats.js");
 
 exports.getUsers = function(body, callback)
 {
@@ -100,7 +100,7 @@ exports.updatePlayerStatsForMatch = function(matchData, callback)
 			return;
 		}
 		
-		var OK = updateStatsOfPlayersByIdForMatch(playersById, matchData);
+		var OK = stats.updateStatsOfPlayersByIdForMatch(playersById, matchData);
 		if(!OK)
 		{
 			console.log("FAILED TO CALCULATE PLAYER STATS FOR MATCH.");
@@ -128,12 +128,7 @@ exports.getExpectedScores = function(body, callback)
 	var playerIds = leftPlayers.concat(rightPlayers);
 	getPlayersByIdUsingIds(playerIds, function(playersById)
 	{
-		var Rleft = getCombinedRatingOfPlayers(playersById, getMixedStats, leftPlayers);
-		var Rright = getCombinedRatingOfPlayers(playersById, getMixedStats, rightPlayers);
-	
-		var Es = expectedScoreForRating(Rleft, Rright);
-		
-		callback({leftScore:getLeftGoalsGivenExpectedScore(Es), rightScore:getRightGoalsGivenExpectedScore(Es)});
+		callback(stats.getExpectedScores(playersById, leftPlayers, rightPlayers));
 	});
 }
 
@@ -151,42 +146,10 @@ exports.getRatingChange = function(body, callback)
 	var playerIds = leftPlayers.concat(rightPlayers);
 	getPlayersByIdUsingIds(playerIds, function(playersById)
 	{
-		var KDleft = ratingAlgo.getLeftRatingChange(playersById, getMixedStats, leftPlayers, Number(body.leftScore), rightPlayers, Number(body.rightScore));
-	
-		callback({leftRating:KDleft, rightRating:-KDleft});
+		var obj = stats.getRatingChange(playersById, leftPlayers, rightPlayers, Number(body.leftScore), Number(body.rightScore));
+		callback(obj);
 	});
 	
-}
-
-function getLeftGoalsGivenExpectedScore(Es)
-{
-	if(Es > 0.5)
-	{
-		return 10;
-	}
-	else
-	{
-		return getLoserGoalsGivenExpectedScore(Es);
-	}
-}
-
-function getRightGoalsGivenExpectedScore(Es)
-{
-	if(Es < 0.5)
-	{
-		return 10;
-	}
-	else
-	{
-		return getLoserGoalsGivenExpectedScore(Es);
-	}
-}
-
-function getLoserGoalsGivenExpectedScore(Es)
-{
-	var minExpected = Es > 0.5 ? (1-Es) : Es;
-	var goals = 10 * minExpected / (1-minExpected);
-	return 10 * minExpected / (1-minExpected);
 }
 
 function getPlayersByIdUsingIds(playerIds, callback)
@@ -219,104 +182,6 @@ function getPlayersByIdUsingIds(playerIds, callback)
 	});
 }
 
-function getCombinedRatingOfPlayers(playersById, getStatsFunction, players)
-{
-	ratingAlgo.getCombinedRatingOfPlayers(playersById, getStatsFunction, players);
-}
-
-function expectedScoreForRating(rating, opponent)
-{
-	return ratingAlgo.expectedScoreForRating(rating, opponent);
-
-}
-
-function getPlayerMixedRatingListByPlayerIds(playerIds, playersById)
-{
-	var result = [];
-	var player, stats, score;
-	for (var index in playerIds)
-	{
-		player = playersById[playerIds[index]];
-		stats = getMixedStats(player);
-		score = getProperty(stats, "score", defaultScoreForPlayer(player));
-		result.push(getProperty(stats, "score", defaultScoreForPlayer(player)));
-	}
-	return result;
-}
-
-function defaultScoreForPlayer(player)
-{
-	return ratingAlgo.defaultScoreForPlayer(player);
-}
-
-function updateStatsOfPlayersByIdForMatch(playersById, matchData)
-{
-	var isDuoGame = matchData.leftPlayers.length > 1 || matchData.rightPlayers.length > 1;
-	var getStatsFunction = isDuoGame ? getDuoStats : getSoloStats;
-	
-	matchData.preLeftRatings = getPlayerMixedRatingListByPlayerIds(matchData.leftPlayers, playersById);
-	matchData.preRightRatings = getPlayerMixedRatingListByPlayerIds(matchData.rightPlayers, playersById);
-	
-	ratingAlgo.updateRatingForMatch(playersById, getStatsFunction, matchData);
-	ratingAlgo.updateRatingForMatch(playersById, getMixedStats, matchData);
-
-	var winners = [];
-	var losers;
-	if(matchData.leftScore > matchData.rightScore)
-	{
-		winners = matchData.leftPlayers;
-		losers = matchData.rightPlayers;
-	}
-	else if(matchData.leftScore < matchData.rightScore)
-	{
-		winners = matchData.rightPlayers;
-		losers = matchData.leftPlayers;
-	}
-	else
-	{
-		losers = matchData.rightPlayers.concat(matchData.leftPlayers);
-	}
-	
-	var X, Y;
-	for (X in winners)
-	{
-		player = playersById[winners[X]];
-		stats = getStatsFunction(player);
-		addToProperty(stats, "wins", 1);
-		addToProperty(stats, "games", 1);
-		addToProperty(stats, "goalsFor", Math.max(matchData.leftScore, matchData.rightScore));
-		addToProperty(stats, "goalsAgainst", Math.min(matchData.leftScore, matchData.rightScore));
-		versus = getVersusStats(player);
-		for (Y in losers)
-		{
-			var other = playersById[losers[Y]];
-			if (!isDuoGame)
-				addVersusResult(versus, other, 1);
-		}
-		
-		tallyVersusHeads(versus);
-	}
-	
-	for (X in losers)
-	{
-		player = playersById[losers[X]];
-		stats = getStatsFunction(player);
-		addToProperty(stats, "games", 1);
-		addToProperty(stats, "goalsFor", Math.min(matchData.leftScore, matchData.rightScore));
-		addToProperty(stats, "goalsAgainst", Math.max(matchData.leftScore, matchData.rightScore));
-		versus = getVersusStats(player);
-		for (Y in winners)
-		{
-			var other = playersById[winners[Y]];
-			if (!isDuoGame)
-				addVersusResult(versus, other, -1);
-		}
-		
-		tallyVersusHeads(versus);
-	}
-	return true;
-}
-
 exports.rebuiltPlayerStatsFromMatches = function(matchDatas, callback, keepOldStats)
 {
 	exports.getPlayersByIds({}, function(playersById)
@@ -335,7 +200,7 @@ exports.rebuiltPlayerStatsFromMatches = function(matchDatas, callback, keepOldSt
 		{
 			for(X in matchDatas)
 			{
-				var OK = updateStatsOfPlayersByIdForMatch(playersById, matchDatas[X]);
+				var OK = stats.updateStatsOfPlayersByIdForMatch(playersById, matchDatas[X]);
 				if(!OK)
 				{
 					console.log("FAILED TO CALCULATE PLAYER STATS FOR MATCH.");
@@ -404,96 +269,9 @@ function updatePlayersByIdToDatabase(playersById, callback)
 	});
 }
 
-function addToProperty(obj, property, value)
-{
-	if(!obj[property])
-	{
-		return obj[property] = value;
-	}
-	return obj[property] += value;
-}
-
-function getProperty(obj, property, defaultValue)
-{
-	if(!obj[property])
-		return defaultValue;
-		
-	return obj[property];
-}
-
-function getMixedStats(player)
-{
-	if(!player.mixedStats)
-	{
-		return player.mixedStats = {};
-	}
-	return player.mixedStats;
-}
-
-function getDuoStats(player)
-{
-	if(!player.duoStats)
-	{
-		return player.duoStats = {};
-	}
-	return player.duoStats;
-}
-
-function getVersusStats(player)
-{
-	if(!player.versus)
-	{
-		return player.versus = {};
-	}
-	return player.versus;
-}
-
-function addVersusResult(stats, otherPlayer, win)
-{
-	var otherName = otherPlayer.name;
-
-	if (!stats[otherName])
-		stats[otherName] = {wins:0, losses:0};
-		
-	if (win >= 0)
-		stats[otherName].wins++;
-	if (win <= 0)
-		stats[otherName].losses++;			
-//	console.log(otherName+" w "+stats[otherName].wins+" l "+stats[otherName].losses);
-}
-
-function tallyVersusHeads(versus)
-{
-	var heads = 0;
-	var total = 0;
-	for(var X in versus)
-	{
-		if (X.charAt(0) == '_') continue;
-		var other = versus[X];
-		total++;
-		if(other.wins > other.losses)
-			heads++;
-	}
-	
-	versus._heads = heads;
-	versus._total = total;
-}
-
-function getSoloStats(player)
-{
-	if(!player.soloStats)
-	{
-		return player.soloStats = {};
-	}
-	return player.soloStats;
-}
-
 exports.clearPlayerStats = function(player)
 {
-	player.soloStats = null;
-	player.duoStats = null;
-	player.mixedStats = null;
-	player.versus = null;
+	stats.clearPlayerStats(player);
 }
 
 exports.isAsscessTokenValidForAdding = function(accessToken, callback)
