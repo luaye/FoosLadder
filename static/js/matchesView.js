@@ -133,12 +133,12 @@ this.toggleMatchBox = function(matchId)
 		var fbkey = "match/"+matchId;
 		var matchRow = $("#match-"+matchId);
 		
-		var commentArea = holder.find(".commentArea");
+		var commentArea = holder.find(".commentCell");
 		
 		var width = matchRow.innerWidth() - 15;
 		
-		commentArea.replaceWith('<div class="fb-comments" data-href="'+makeCommentURL(fbkey)+'" data-num-posts="4" data-width="'+width+'" mobile="false"></div>');
-		FB.XFBML.parse(holder[0]);
+		commentArea.html('<div class="fb-comments" data-href="'+makeCommentURL(fbkey)+'" data-num-posts="4" data-width="'+width+'" mobile="false"></div>');
+		FB.XFBML.parse(commentArea[0]);
 		
 		holder.insertAfter(matchRow);
 	}

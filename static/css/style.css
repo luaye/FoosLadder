@@ -2,12 +2,12 @@ body {
 	padding-top: 20px;
     padding-bottom: 40px;
 	padding-left:2px;
-	padding-right:2px;
+	padding-right:3px;
 	
 }
 .container-narrow {
 	margin: 0 auto;
-	min-width:480px;
+	min-width:420px;
 	max-width:720px;
 }
 
@@ -48,8 +48,6 @@ body {
 .table th.commentCell,
 .table td.commentCell
 {
-	font-weight:bold;
-	text-align:center;
 	background-color:inherit !important;
 }
 
