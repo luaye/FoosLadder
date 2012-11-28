@@ -62,6 +62,11 @@ body {
 	text-align:left;
 }
 
+.navbar-inner {
+  padding-left:10px;
+  padding-right:10px;
+}
+
 .modal-backdrop,
 .modal-backdrop.fade.in {
   opacity: 0.25;

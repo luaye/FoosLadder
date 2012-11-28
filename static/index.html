@@ -380,8 +380,7 @@ function setCurrentView(view)
   </tr>
   <tr>
     <td colspan="5">
-    Date: 
-      now?
+    Date: now?
       <input name="dateNow" type="checkbox" id="dateNow" checked="checked" onchange="addMatchView.dateNowChanged();"/>
       <div id="datePicker" style="margin-top:10px;">
           <i class="icon-calendar"></i> 
@@ -401,7 +400,10 @@ function setCurrentView(view)
     </td>
   </tr>
   <tr>
-    <td colspan="5" class="centerCell"><div class="fb-login-button fbLoggedOut" data-show-faces="false" data-width="200" data-max-rows="1">Login to Submit</div> <div class="fbLoggedIn" ><div style="position:absolute; text-align:left;"><input type="submit" name="reset" value="Reset" onClick="addMatchView.reset()" class="btn btn btn-warning"/></div><input type="submit" name="submit" id="submit" value="Submit" onClick="addMatchView.onSubmit()" class="btn btn-primary"/> </div></td>
+    <td colspan="5" class="centerCell">
+    <div class="alert alert-error fbLoggedOut"><button type="button" class="close" data-dismiss="alert">×</button>
+    Login to facebook to submit</div>
+    <div class="fb-login-button fbLoggedOut" data-show-faces="false" data-width="200" data-max-rows="1">Login to Submit</div> <div class="fbLoggedIn" ><div style="position:absolute; text-align:left;"><input type="submit" name="reset" value="Reset" onClick="addMatchView.reset()" class="btn btn btn-warning"/></div><input type="submit" name="submit" id="submit" value="Submit" onClick="addMatchView.onSubmit()" class="btn btn-primary"/> </div></td>
   </tr>
 </table>
 
