@@ -38,6 +38,12 @@ this.hide = function()
 	table.element.hide();
 }
 
+this.onReloading = function()
+{
+	table.clear();
+	table.setLoading(true);
+}
+
 this.loadPlayers = function()
 {
 	callAPI({request:"getPlayers"}, onPlayersLoaded);

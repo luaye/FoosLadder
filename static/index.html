@@ -104,6 +104,7 @@ function onLoad()
 
 function loadPlayers()
 {
+	playersView.onReloading();
 	callAPI({request:"getPlayers"}, self.onPlayersLoaded);
 }
 
@@ -250,23 +251,17 @@ function setCurrentView(view)
 </table>
 
 
-<table width="100%" class="table table-bordered table-condensed table-hover table-striped" id="playersTable" >
+<table class="table table-bordered table-condensed table-hover table-striped" id="playersTable" >
   <tr>
-    <td colspan="8" align="center">
-    <div class="btn-group tiny">
-      <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-        <i class="icon-edit"></i>
-        <span class="caret"></span>
-      </a>
-      <ul class="dropdown-menu">
-          <li><a href="javascript:playersView.addPlayer()"><i class="icon-plus-sign"></i> Add player</a></li>
-          <li><a href="javascript:playersView.loadPlayers()"><i class="icon-refresh"></i> Reload</a></li>
-          <li class="divider"></li>
-          
-          <li><a href="javascript:playersView.rebuiltStats()"><i class="icon-repeat"></i> Rebuild stats</a></li>
-          <li><a href="javascript:playersView.repeatMatches()"><i class="icon-fast-forward"></i> Repeat matches</a></li>
-      </ul>
-    </div>
+    <td colspan="8">
+      <div class="btn-group">
+      	<a class="btn btn-small" href="javascript:playersView.addPlayer()"><i class="icon-plus-sign"></i> Add player</a>
+      	<a class="btn btn-small" href="javascript:loadPlayers()"><i class="icon-refresh"></i> Reload</a>
+      </div>
+      <div class="btn-group fbLoggedIn">
+      	<a class="btn btn-small" href="javascript:playersView.rebuiltStats()"><i class="icon-repeat"></i> Rebuild stats</a>
+        <a class="btn btn-small" href="javascript:playersView.repeatMatches()"><i class="icon-fast-forward"></i> Repeat matches</a>
+      </div>
     </td>
   </tr>
   <tr id="headerRow">
