@@ -1,5 +1,6 @@
 var MAX_RATING_CHANGE = 110;
-var WEAKEST_PLAYER_INFLUENCE_RATIO = 0.7;
+var WEAKEST_PLAYER_INFLUENCE_RATIO = 0.5;
+var DEFENSIVE_PLAYER_INFLUENCE_RATIO = 0.7;
 
 exports.setMaxK = function(maxK)
 {
@@ -8,6 +9,10 @@ exports.setMaxK = function(maxK)
 exports.setWeakPlayerRatio = function(ratio)
 {
 	WEAKEST_PLAYER_INFLUENCE_RATIO = ratio;
+}
+exports.setDefensivePlayerRatio = function(ratio)
+{
+	DEFENSIVE_PLAYER_INFLUENCE_RATIO = ratio;
 }
 
 exports.updateRatingForMatch = function(playersById, getStatsFunction, o)
@@ -50,27 +55,35 @@ exports.getCombinedRatingOfPlayers = function(playersById, getStatsFunction, pla
 	var player;
 	var index;
 	var stats;
-	var weakest, strongest;
+	var first, second;
 	
 	for (index in players)
 	{
 		player = playersById[players[index]];
 		stats = getStatsFunction(player);
 		var score = getProperty(stats, "score", exports.defaultScoreForPlayer(player)); 
-		if (!weakest)
-			weakest = score;
+		if (!first)
+			first = score;
 		else
-			strongest = score;
+			second = score;
 		ratings += score;
 	}
 	
 	if (players.length == 2) {
-		if (weakest > strongest) {
-			var t = weakest; weakest = strongest; strongest = t;
+		if (WEAKEST_PLAYER_INFLUENCE_RATIO > 0) {		
+			var weakest = first;
+			var strongest = second;
+			if (weakest > strongest) {
+				var t = weakest; weakest = strongest; strongest = t;
+			}
+			var combined = weakest * WEAKEST_PLAYER_INFLUENCE_RATIO + strongest * (1-WEAKEST_PLAYER_INFLUENCE_RATIO);
+	//		console.log([ratings, players.length, strongest, weakest, combined]);
+			return combined;
+		} else if (DEFENSIVE_PLAYER_INFLUENCE_RATIO > 0) {
+			var combined = second * DEFENSIVE_PLAYER_INFLUENCE_RATIO + first * (1-DEFENSIVE_PLAYER_INFLUENCE_RATIO);
+//			console.log([ratings, players.length, second, first, combined]);
+			return combined;
 		}
-		var combined = weakest * WEAKEST_PLAYER_INFLUENCE_RATIO + strongest * (1-WEAKEST_PLAYER_INFLUENCE_RATIO);
-//		console.log([ratings, players.length, strongest, weakest, combined]);
-		return combined;
 	}
 	
 	var average = ratings / players.length;

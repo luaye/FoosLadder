@@ -1,11 +1,14 @@
-var RATIO_OF_SETUP_MATCHES = 0.95;
+var RATIO_OF_SETUP_MATCHES = 0.7;
+var CSV_FILENAME = 'algos.csv';
 
 var users = require("./api/users.js");
 var matches = require("./api/matches.js");
 //var init = require("./api/init.js");
 var elo = require("./api/elo.js");
 var random = require("./api/random.js");
+var fs = require("fs");
 
+console.log(process.cwd());
 //init.init();
 
 exports.run = function() {
@@ -13,6 +16,7 @@ exports.run = function() {
 }
 
 function runContest() {
+	fs.writeFileSync(CSV_FILENAME, 'name,k,ratio,err\n', '', function(err){if(err) throw err;});
 	matches.getMatches({}, function(matchDatas)
 	{
 		console.log("got matches: "+matchDatas.length);
@@ -21,7 +25,9 @@ function runContest() {
 			var best = { err : 1 };
 			var algos = { elo: elo, random: random };
 			var algo, x;
-			for (name in algos) {
+			//for (name in algos)
+			{
+				var name = 'elo';
 				algo = algos[name];
 	// 			for (var setup = 0.5; setup < 0.95; setup += 0.05) 
 				{
@@ -29,8 +35,12 @@ function runContest() {
 					for (var k = 30; k < 240; k+= 5) {
 						algo.setMaxK(k);
 						for (var ratio = 0.05; ratio < 0.95; ratio += 0.05) {
-							algo.setWeakPlayerRatio(ratio);
+							algo.setWeakPlayerRatio(0);
+							algo.setDefensivePlayerRatio(ratio);
 							var error = runAlgo(algo, matchDatas, playersById);
+							var logdata = [ name, k, ratio, error ];
+							var line = logdata.join(',')+'\n';
+							fs.appendFileSync(CSV_FILENAME, line, '', function(err){if(err) throw err;});
 		//					console.log("K = "+k+" Weak Ratio = "+ratio+", error = "+error);
 							if (error < best.err) {
 								best.err = error;
