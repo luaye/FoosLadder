@@ -9,19 +9,6 @@ exports.setParameters = function(param)
 	if(param.defensivePlayerRatio != null) DEFENSIVE_PLAYER_INFLUENCE_RATIO = param.defensivePlayerRatio;
 }
 
-exports.setMaxK = function(maxK)
-{
-	MAX_RATING_CHANGE = maxK;
-}
-exports.setWeakPlayerRatio = function(ratio)
-{
-	WEAKEST_PLAYER_INFLUENCE_RATIO = ratio;
-}
-exports.setDefensivePlayerRatio = function(ratio)
-{
-	DEFENSIVE_PLAYER_INFLUENCE_RATIO = ratio;
-}
-
 exports.updateRatingForMatch = function(playersById, getStatsFunction, matchData)
 {
 	var KDleft = exports.getLeftRatingChange(playersById, getStatsFunction, matchData.leftPlayers, matchData.leftScore, matchData.rightPlayers, matchData.rightScore);

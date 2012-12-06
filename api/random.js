@@ -7,15 +7,6 @@ exports.setParameters = function(param)
 	if(param.weakPlayerRatio != null) WEAKEST_PLAYER_INFLUENCE_RATIO = param.weakPlayerRatio;
 }
 
-exports.setMaxK = function(maxK)
-{
-	MAX_RATING_CHANGE = maxK;
-}
-exports.setWeakPlayerRatio = function(ratio)
-{
-	WEAKEST_PLAYER_INFLUENCE_RATIO = ratio;
-}
-
 exports.updateRatingForMatch = function(playersById, getStatsFunction, matchData)
 {
 	var KDleft = exports.getLeftRatingChange(playersById, getStatsFunction, matchData.leftPlayers, matchData.leftScore, matchData.rightPlayers, matchData.rightScore);
