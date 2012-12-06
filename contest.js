@@ -29,13 +29,14 @@ function runContest() {
 			{
 				var name = 'elo';
 				algo = algos[name];
-	// 			for (var setup = 0.5; setup < 0.95; setup += 0.05) 
+				algo.setWeakPlayerRatio(0);
+		// 			for (var setup = 0.5; setup < 0.95; setup += 0.05) 
 				{
 	// 				RATIO_OF_SETUP_MATCHES = setup;
 					for (var k = 30; k < 240; k+= 5) {
 						algo.setMaxK(k);
 						for (var ratio = 0.05; ratio < 0.95; ratio += 0.05) {
-							algo.setWeakPlayerRatio(0);
+							algo.setWeakPlayerRatio(ratio);
 							algo.setDefensivePlayerRatio(ratio);
 							var error = runAlgo(algo, matchDatas, playersById);
 							var logdata = [ name, k, ratio, error ];

@@ -1,6 +1,6 @@
 var MAX_RATING_CHANGE = 110;
 var WEAKEST_PLAYER_INFLUENCE_RATIO = 0.5;
-var DEFENSIVE_PLAYER_INFLUENCE_RATIO = 0.7;
+var DEFENSIVE_PLAYER_INFLUENCE_RATIO = 0.5;
 
 exports.setMaxK = function(maxK)
 {
@@ -15,19 +15,38 @@ exports.setDefensivePlayerRatio = function(ratio)
 	DEFENSIVE_PLAYER_INFLUENCE_RATIO = ratio;
 }
 
-exports.updateRatingForMatch = function(playersById, getStatsFunction, o)
+exports.updateRatingForMatch = function(playersById, getStatsFunction, matchData)
 {
-	var KDleft = exports.getLeftRatingChange(playersById, getStatsFunction, o.leftPlayers, o.leftScore, o.rightPlayers, o.rightScore);
+	var KDleft = exports.getLeftRatingChange(playersById, getStatsFunction, matchData.leftPlayers, matchData.leftScore, matchData.rightPlayers, matchData.rightScore);
 	
-	o.KDleft = KDleft;
+	matchData.KDleft = KDleft;
 	
-	addRatingToPlayers(playersById, getStatsFunction, o.leftPlayers, KDleft);
-	addRatingToPlayers(playersById, getStatsFunction, o.rightPlayers, -KDleft);
+	addRatingToPlayers(playersById, getStatsFunction, matchData.leftPlayers, KDleft);
+	addRatingToPlayers(playersById, getStatsFunction, matchData.rightPlayers, -KDleft);
 	
+
 	return KDleft / MAX_RATING_CHANGE;
 }
 
-exports.getLeftRatingChange = function(playersById, getStatsFunction, leftPlayerIds, leftScore, rightPlayerIds, rightScore)
+/** Returns an object with two arrays with the rating changes to be applied to each player */ 
+exports.getPlayerRatingChanges = function(playersById, getStatsFunction, leftPlayerIds, leftScore, rightPlayerIds, rightScore)
+{
+	var leftChange = calculateLeftRatingChange(playersById, getStatsFunction, leftPlayerIds, leftScore, rightPlayerIds, rightScore);
+	
+	var X;
+	var leftChanges = [];
+	for (X in leftPlayerIds) {
+		leftChanges.push(leftChange);
+	}
+	var rightChanges = [];
+	for (X in rightPlayerIds) {
+		rightChanges.push(-leftChange);
+	}
+	
+	return { leftRating: leftChanges, rightRating: rightChanges };
+}
+
+function calculateLeftRatingChange(playersById, getStatsFunction, leftPlayerIds, leftScore, rightPlayerIds, rightScore)
 {
 	var Rleft = exports.getCombinedRatingOfPlayers(playersById, getStatsFunction, leftPlayerIds);
 	var Rright = exports.getCombinedRatingOfPlayers(playersById, getStatsFunction, rightPlayerIds);
@@ -39,6 +58,13 @@ exports.getLeftRatingChange = function(playersById, getStatsFunction, leftPlayer
 	
 	var K = MAX_RATING_CHANGE;
 	return K * ( Sleft - Eleft );
+}
+
+exports.getLeftRatingChange = function(playersById, getStatsFunction, leftPlayerIds, leftScore, rightPlayerIds, rightScore)
+{
+	// specific in ELO
+	var changes = exports.getPlayerRatingChanges(playersById, getStatsFunction, leftPlayerIds, leftScore, rightPlayerIds, rightScore);
+	return changes.leftRating[0];
 }
 
 exports.expectedScoreForRating = function(rating, opponent)

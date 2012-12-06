@@ -10,14 +10,14 @@ exports.setWeakPlayerRatio = function(ratio)
 	WEAKEST_PLAYER_INFLUENCE_RATIO = ratio;
 }
 
-exports.updateRatingForMatch = function(playersById, getStatsFunction, o)
+exports.updateRatingForMatch = function(playersById, getStatsFunction, matchData)
 {
-	var KDleft = exports.getLeftRatingChange(playersById, getStatsFunction, o.leftPlayers, o.leftScore, o.rightPlayers, o.rightScore);
+	var KDleft = exports.getLeftRatingChange(playersById, getStatsFunction, matchData.leftPlayers, matchData.leftScore, matchData.rightPlayers, matchData.rightScore);
 	
-	o.KDleft = KDleft;
+	matchData.KDleft = KDleft;
 	
-	addRatingToPlayers(playersById, getStatsFunction, o.leftPlayers, KDleft);
-	addRatingToPlayers(playersById, getStatsFunction, o.rightPlayers, -KDleft);
+	addRatingToPlayers(playersById, getStatsFunction, matchData.leftPlayers, KDleft);
+	addRatingToPlayers(playersById, getStatsFunction, matchData.rightPlayers, -KDleft);
 	
 	return KDleft / MAX_RATING_CHANGE;
 }
