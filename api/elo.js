@@ -1,12 +1,15 @@
 var MAX_RATING_CHANGE = 110;
 var WEAKEST_PLAYER_INFLUENCE_RATIO = 0.5;
 var DEFENSIVE_PLAYER_INFLUENCE_RATIO = 0.5;
+var CONTRIBUTION_FEEDBACK = false;
 
 exports.setParameters = function(param)
 {
 	if(param.maxK) MAX_RATING_CHANGE = param.maxK;
 	if(param.weakPlayerRatio != null) WEAKEST_PLAYER_INFLUENCE_RATIO = param.weakPlayerRatio;
 	if(param.defensivePlayerRatio != null) DEFENSIVE_PLAYER_INFLUENCE_RATIO = param.defensivePlayerRatio;
+	//if(param.contributionFeedback != null) 
+	CONTRIBUTION_FEEDBACK = param.contributionFeedback;
 }
 
 exports.updateRatingForMatch = function(playersById, getStatsFunction, matchData)
@@ -18,7 +21,6 @@ exports.updateRatingForMatch = function(playersById, getStatsFunction, matchData
 	addRatingToPlayers(playersById, getStatsFunction, matchData.leftPlayers, KDleft);
 	addRatingToPlayers(playersById, getStatsFunction, matchData.rightPlayers, -KDleft);
 	
-
 	return KDleft / MAX_RATING_CHANGE;
 }
 
@@ -90,20 +92,11 @@ exports.getCombinedRatingOfPlayers = function(playersById, getStatsFunction, pla
 	}
 	
 	if (players.length == 2) {
-		if (WEAKEST_PLAYER_INFLUENCE_RATIO > 0) {		
-			var weakest = first;
-			var strongest = second;
-			if (weakest > strongest) {
-				var t = weakest; weakest = strongest; strongest = t;
-			}
-			var combined = weakest * WEAKEST_PLAYER_INFLUENCE_RATIO + strongest * (1-WEAKEST_PLAYER_INFLUENCE_RATIO);
-	//		console.log([ratings, players.length, strongest, weakest, combined]);
-			return combined;
-		} else if (DEFENSIVE_PLAYER_INFLUENCE_RATIO > 0) {
-			var combined = second * DEFENSIVE_PLAYER_INFLUENCE_RATIO + first * (1-DEFENSIVE_PLAYER_INFLUENCE_RATIO);
-//			console.log([ratings, players.length, second, first, combined]);
-			return combined;
-		}
+		var firstContrib = getFirstPlayerContributionToRating(first, second);
+		
+		var combined = first * firstContrib + second * (1-firstContrib);
+//		console.log([ratings, players.length, first, second, firstContrib, combined]);
+		return combined;
 	}
 	
 	var average = ratings / players.length;
@@ -114,6 +107,17 @@ exports.getCombinedRatingOfPlayers = function(playersById, getStatsFunction, pla
 	}
 	return average;
 }
+
+function getFirstPlayerContributionToRating(first, second)
+{	
+	if (WEAKEST_PLAYER_INFLUENCE_RATIO > 0) {
+		return (first < second) ? WEAKEST_PLAYER_INFLUENCE_RATIO : 1-WEAKEST_PLAYER_INFLUENCE_RATIO;
+	} else if (DEFENSIVE_PLAYER_INFLUENCE_RATIO > 0) {
+		return 1-DEFENSIVE_PLAYER_INFLUENCE_RATIO; // first is offence
+	}
+	
+	return 0.5;
+}		
 
 exports.defaultScoreForPlayer = function(player)
 {
@@ -137,17 +141,44 @@ exports.defaultScoreForPlayer = function(player)
 
 function addRatingToPlayers(playersById, getStatsFunction, players, deltaRating)
 {
-	var player;
-	var index;
-	var stats;
-	for (index in players)
+	var firstPlayer = playersById[players[0]];
+	if (players.length == 1)
 	{
-		player = playersById[players[index]];
-		stats = getStatsFunction(player);
-		score = getProperty(stats, "score", exports.defaultScoreForPlayer(player));
-		stats["score"] = score + deltaRating;
-// 		console.log(player.name+" "+Math.round(score)+" -> "+Math.round(score+deltaRating));
+		addRatingToPlayer(firstPlayer, getStatsFunction, deltaRating);
 	}
+	else if (players.length == 2 && CONTRIBUTION_FEEDBACK)
+	{
+		var stats;
+		var secondPlayer = playersById[players[1]];
+		var firstScore = getProperty(getStatsFunction(firstPlayer), "score", exports.defaultScoreForPlayer(player)); 
+		var secondScore = getProperty(getStatsFunction(secondPlayer), "score", exports.defaultScoreForPlayer(player)); 
+		var firstContrib = getFirstPlayerContributionToRating(firstScore, secondScore);
+	
+//		console.log(firstPlayer.name+" contrib "+firstContrib+" delta "+deltaRating);
+
+
+		addRatingToPlayer(firstPlayer, getStatsFunction, 2 * deltaRating * firstContrib);
+		addRatingToPlayer(secondPlayer, getStatsFunction, 2 * deltaRating * (1-firstContrib));
+	}
+	else
+	{
+		var player;
+		var index;
+		for (index in players)
+		{
+			player = playersById[players[index]];
+			addRatingToPlayer(player, getStatsFunction, deltaRating);
+	// 		console.log(player.name+" "+Math.round(score)+" -> "+Math.round(score+deltaRating));
+		}
+	}
+}
+
+function addRatingToPlayer(player, getStatsFunction, deltaRating)
+{
+	var stats = getStatsFunction(player);
+	score = getProperty(stats, "score", exports.defaultScoreForPlayer(player));
+//	console.log(player.name+" "+Math.round(score)+" -> "+Math.round(score+deltaRating));
+	stats["score"] = score + deltaRating;
 }
 
 
