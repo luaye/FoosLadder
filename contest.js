@@ -3,19 +3,16 @@ var CSV_FILENAME = 'algos.csv';
 
 var users = require("./api/users.js");
 var matches = require("./api/matches.js");
-//var init = require("./api/init.js");
 var elo = require("./api/elo.js");
 var random = require("./api/random.js");
 var fs = require("fs");
-
-console.log(process.cwd());
-//init.init();
 
 exports.run = function() {
 	runContest();
 }
 
 function runContest() {
+	console.log("Saving CSV results to "+process.cwd()+"/"+CSV_FILENAME);
 	fs.writeFileSync(CSV_FILENAME, 'name,k,ratio,err\n', '', function(err){if(err) throw err;});
 	matches.getMatches({}, function(matchDatas)
 	{
@@ -29,27 +26,23 @@ function runContest() {
 			{
 				var name = 'elo';
 				algo = algos[name];
-				algo.setWeakPlayerRatio(0);
-		// 			for (var setup = 0.5; setup < 0.95; setup += 0.05) 
-				{
-	// 				RATIO_OF_SETUP_MATCHES = setup;
-					for (var k = 30; k < 240; k+= 5) {
-						algo.setMaxK(k);
-						for (var ratio = 0.05; ratio < 0.95; ratio += 0.05) {
-							algo.setWeakPlayerRatio(ratio);
-							algo.setDefensivePlayerRatio(ratio);
-							var error = runAlgo(algo, matchDatas, playersById);
-							var logdata = [ name, k, ratio, error ];
-							var line = logdata.join(',')+'\n';
-							fs.appendFileSync(CSV_FILENAME, line, '', function(err){if(err) throw err;});
-		//					console.log("K = "+k+" Weak Ratio = "+ratio+", error = "+error);
-							if (error < best.err) {
-								best.err = error;
-								best.k = k;
-								best.ratio = ratio;
-								best.name = name;
-	// 							best.setup = setup;
-							}
+				var params = { weakPlayerRatio: 0 };
+				for (var k = 30; k < 240; k+= 5) {
+					params.maxK = k;
+					for (var ratio = 0.05; ratio < 0.95; ratio += 0.05) {
+						params.defensivePlayerRatio = ratio;
+						
+						algo.setParameters(params);
+						
+						var error = runAlgo(algo, matchDatas, playersById);
+						var logdata = [ name, k, ratio, error ];
+						var line = logdata.join(',')+'\n';
+						fs.appendFileSync(CSV_FILENAME, line, '', function(err){if(err) throw err;});
+						if (error < best.err) {
+							best.err = error;
+							best.k = k;
+							best.ratio = ratio;
+							best.name = name;
 						}
 					}
 				}

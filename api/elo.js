@@ -2,6 +2,13 @@ var MAX_RATING_CHANGE = 110;
 var WEAKEST_PLAYER_INFLUENCE_RATIO = 0.5;
 var DEFENSIVE_PLAYER_INFLUENCE_RATIO = 0.5;
 
+exports.setParameters = function(param)
+{
+	if(param.maxK) MAX_RATING_CHANGE = param.maxK;
+	if(param.weakPlayerRatio != null) WEAKEST_PLAYER_INFLUENCE_RATIO = param.weakPlayerRatio;
+	if(param.defensivePlayerRatio != null) DEFENSIVE_PLAYER_INFLUENCE_RATIO = param.defensivePlayerRatio;
+}
+
 exports.setMaxK = function(maxK)
 {
 	MAX_RATING_CHANGE = maxK;

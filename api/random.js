@@ -1,6 +1,12 @@
 var MAX_RATING_CHANGE = 120;
 var WEAKEST_PLAYER_INFLUENCE_RATIO = 0.3;
 
+exports.setParameters = function(param)
+{
+	if(param.maxK) MAX_RATING_CHANGE = param.maxK;
+	if(param.weakPlayerRatio != null) WEAKEST_PLAYER_INFLUENCE_RATIO = param.weakPlayerRatio;
+}
+
 exports.setMaxK = function(maxK)
 {
 	MAX_RATING_CHANGE = maxK;
