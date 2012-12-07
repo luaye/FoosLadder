@@ -1,36 +1,60 @@
-var ratingAlgo = require("./elo.js");
+var kdr = require("./rating/kdr.js");
+var elo = require("./rating/elo.js");
 
-exports.clearPlayerStats = function(player)
-{
-	player.soloStats = null;
-	player.duoStats = null;
-	player.mixedStats = null;
-	player.versus = null;
-}
+/*
+Methods required for all rating systems:
+resetPlayerStats(player): void
+updateStatsOfPlayersByIdForMatch(playersById, matchData): void
 
-exports.getExpectedScores = function (playersById, leftPlayers, rightPlayers)
-{
-	var Rleft = ratingAlgo.getCombinedRatingOfPlayers(playersById, getMixedStats, leftPlayers);
-	var Rright = ratingAlgo.getCombinedRatingOfPlayers(playersById, getMixedStats, rightPlayers);
+Methods required for main rating system:
+getRatingOfPlayer(player): Number
+getExpectedScores(playersById, leftPlayerIds, rightPlayerIds): {leftScore:Number, rightScore:Number}
+getRatingChange(playersById, leftPlayerIds, rightPlayerIds, leftScore, rightScore): {leftRating:Number, rightRating:Number}
+*/
+
+var mainRatingSystem = elo.getSystem(elo.MODE_MIXED);
+
+var ratingSystems = [
+	kdr.getSystem(),
+	mainRatingSystem, 
+	elo.getSystem(elo.MODE_SOLO), 
+	elo.getSystem(elo.MODE_DUO)
 	
-	var Es = ratingAlgo.expectedScoreForRating(Rleft, Rright);
-		
-	return {leftScore:getLeftGoalsGivenExpectedScore(Es), rightScore:getRightGoalsGivenExpectedScore(Es)};
+	];
+
+
+exports.resetPlayerStats = function(player)
+{
+	ensureStatsObject(player);
+	for(var X in ratingSystems)
+	{
+		ratingSystems[X].resetPlayerStats(player);
+	}
 }
 
-exports.getRatingChange = function(playersById, leftPlayers, rightPlayers, leftScore, rightScore)
+exports.getExpectedScores = function (playersById, leftPlayerIds, rightPlayerIds)
 {
-	var KDleft = ratingAlgo.getLeftRatingChange(playersById, getMixedStats, leftPlayers, Number(leftScore), rightPlayers, Number(rightScore));
-	return {leftRating:KDleft, rightRating:-KDleft};
+	return mainRatingSystem.getExpectedScores(playersById, leftPlayerIds, rightPlayerIds);
+}
+
+exports.getRatingChange = function(playersById, leftPlayerIds, rightPlayerIds, leftScore, rightScore)
+{
+	return mainRatingSystem.getRatingChange(playersById, leftPlayerIds, rightPlayerIds, leftScore, rightScore)
 }
 
 exports.updateStatsOfPlayersByIdForMatch = function(playersById, matchData)
 {
+	matchData.preLeftRatings = getPlayerRatingListByPlayerIds(matchData.leftPlayers, playersById);
+	matchData.preRightRatings = getPlayerRatingListByPlayerIds(matchData.rightPlayers, playersById);
+	for(var X in ratingSystems)
+	{
+		ratingSystems[X].updateStatsOfPlayersByIdForMatch(playersById, matchData);
+	}
+	return true;
+	
 	var isDuoGame = matchData.leftPlayers.length > 1 || matchData.rightPlayers.length > 1;
 	var getStatsFunction = isDuoGame ? getDuoStats : getSoloStats;
 	
-	matchData.preLeftRatings = getPlayerMixedRatingListByPlayerIds(matchData.leftPlayers, playersById);
-	matchData.preRightRatings = getPlayerMixedRatingListByPlayerIds(matchData.rightPlayers, playersById);
 	
 	ratingAlgo.updateRatingForMatch(playersById, getStatsFunction, matchData);
 	ratingAlgo.updateRatingForMatch(playersById, getMixedStats, matchData);
@@ -93,58 +117,18 @@ exports.updateStatsOfPlayersByIdForMatch = function(playersById, matchData)
 }
 
 
-
-function getLeftGoalsGivenExpectedScore(Es)
-{
-	if(Es > 0.5)
-	{
-		return 10;
-	}
-	else
-	{
-		return getLoserGoalsGivenExpectedScore(Es);
-	}
-}
-
-function getRightGoalsGivenExpectedScore(Es)
-{
-	if(Es < 0.5)
-	{
-		return 10;
-	}
-	else
-	{
-		return getLoserGoalsGivenExpectedScore(Es);
-	}
-}
-
-function getLoserGoalsGivenExpectedScore(Es)
-{
-	var minExpected = Es > 0.5 ? (1-Es) : Es;
-	var goals = 10 * minExpected / (1-minExpected);
-	return 10 * minExpected / (1-minExpected);
-}
-
-
-function getPlayerMixedRatingListByPlayerIds(playerIds, playersById)
+function getPlayerRatingListByPlayerIds(playerIds, playersById)
 {
 	var result = [];
-	var player, stats, score;
+	var player, rating;
 	for (var index in playerIds)
 	{
 		player = playersById[playerIds[index]];
-		stats = getMixedStats(player);
-		score = getProperty(stats, "score", defaultScoreForPlayer(player));
-		result.push(getProperty(stats, "score", defaultScoreForPlayer(player)));
+		rating = mainRatingSystem.getRatingOfPlayer(player);
+		result.push(rating);
 	}
 	return result;
 }
-
-function defaultScoreForPlayer(player)
-{
-	return ratingAlgo.defaultScoreForPlayer(player);
-}
-
 
 function addToProperty(obj, property, value)
 {
@@ -230,3 +214,8 @@ function getSoloStats(player)
 	return player.soloStats;
 }
 
+
+function ensureStatsObject(player)
+{
+	if(!player.stats) player.stats = {};
+}

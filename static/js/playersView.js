@@ -95,16 +95,17 @@ function fillRowWithUser(tableRow, user)
 	goalAvg = Math.round(goalAvg*100) / 100;
 	
 	if (duoStats.goalsAgainst == undefined) goalAvg = "-";
+	var stats = user.stats;
 	
 	var image = getPlayerImageElement(user, 30);
 	$(tableRow).find("playerImage").replaceWith(image);
 	setContentsOfTag(tableRow, "playerName", userLink);
 	setContentsOfTag(tableRow, "heads", safeSlashNum(versus._heads, versus._total));
-	setContentsOfTag(tableRow, "mixedScore", safeStr(mixedStats.score));
-	setContentsOfTag(tableRow, "duoScore", safeStr(duoStats.score));
-	setContentsOfTag(tableRow, "duoWins", safeSlashNum(duoStats.wins, duoStats.games));
-	setContentsOfTag(tableRow, "soloScore", safeStr(soloStats.score));
-	setContentsOfTag(tableRow, "soloWins", safeSlashNum(soloStats.wins, soloStats.games));
+	setContentsOfTag(tableRow, "mixedScore", safeStr(stats.elo.mixed.score));
+	setContentsOfTag(tableRow, "duoScore", safeStr(stats.elo.duo.score));
+	setContentsOfTag(tableRow, "duoWins", safeSlashNum(stats.kdr.duo.wins, stats.kdr.duo.games));
+	setContentsOfTag(tableRow, "soloScore", safeStr(user.stats.elo.solo.score));
+	setContentsOfTag(tableRow, "soloWins", safeSlashNum(stats.kdr.solo.wins, stats.kdr.solo.games));
 	setContentsOfTag(tableRow, "goalAvg", (goalAvg));
 }
 

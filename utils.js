@@ -51,6 +51,30 @@ exports.getRightPlayersOfObject = function(body)
 	return players;
 }
 
+exports.isDuoMatch = function(matchData)
+{
+	return matchData.leftPlayers.length > 1 || matchData.rightPlayers.length > 1;
+}
+
+exports.getPlayerIds = function(matchData)
+{
+	return matchData.rightPlayers.concat(matchData.leftPlayers);
+}
+
+exports.getWinnerIds = function(matchData)
+{
+	if(matchData.leftScore > matchData.rightScore) return matchData.leftPlayers;
+	else if(matchData.leftScore < matchData.rightScore) return matchData.rightPlayers;
+	else return [];
+}
+
+exports.getLoserIds = function(matchData)
+{
+	if(matchData.leftScore < matchData.rightScore) return matchData.leftPlayers;
+	else if(matchData.leftScore > matchData.rightScore) return matchData.rightPlayers;
+	else return matchData.rightPlayers.concat(matchData.leftPlayers);
+}
+
 function addToListIfExists(list, value)
 {
 	if(value)
@@ -58,3 +82,4 @@ function addToListIfExists(list, value)
 		list.push(value);
 	}
 }
+

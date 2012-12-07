@@ -72,7 +72,9 @@ exports.addUser = function(body, callback)
 
 function addUserToDB(name, callback)
 {
-	GLOBAL.usersDB.insert({name: name}, null, function (error, body, headers)
+	var player = {name: name};
+	exports.resetPlayerStats(player);
+	GLOBAL.usersDB.insert(player, null, function (error, body, headers)
 	{
 		if(error || !body)
 		{
@@ -99,7 +101,6 @@ exports.updatePlayerStatsForMatch = function(matchData, callback)
 			callback(false);
 			return;
 		}
-		
 		var OK = stats.updateStatsOfPlayersByIdForMatch(playersById, matchData);
 		if(!OK)
 		{
@@ -128,7 +129,11 @@ exports.getExpectedScores = function(body, callback)
 	var playerIds = leftPlayers.concat(rightPlayers);
 	getPlayersByIdUsingIds(playerIds, function(playersById)
 	{
-		callback(stats.getExpectedScores(playersById, leftPlayers, rightPlayers));
+		if(playersById)
+		{
+			callback(stats.getExpectedScores(playersById, leftPlayers, rightPlayers));
+		}
+		else callback({});
 	});
 }
 
@@ -146,8 +151,12 @@ exports.getRatingChange = function(body, callback)
 	var playerIds = leftPlayers.concat(rightPlayers);
 	getPlayersByIdUsingIds(playerIds, function(playersById)
 	{
-		var obj = stats.getRatingChange(playersById, leftPlayers, rightPlayers, Number(body.leftScore), Number(body.rightScore));
-		callback(obj);
+		if(playersById)
+		{
+			var obj = stats.getRatingChange(playersById, leftPlayers, rightPlayers, Number(body.leftScore), Number(body.rightScore));
+			callback(obj);
+		}
+		else callback({});
 	});
 	
 }
@@ -173,7 +182,8 @@ function getPlayersByIdUsingIds(playerIds, callback)
 				var playerid = playerIds[X];
 				if(playersById[playerid] == null)
 				{
-					playersById[playerid] = {};
+					callback(null);
+					return;
 				}
 			}
 			
@@ -192,7 +202,7 @@ exports.rebuiltPlayerStatsFromMatches = function(matchDatas, callback, keepOldSt
 			console.log("Erasing stats for players...");
 			for(X in playersById)
 			{
-				exports.clearPlayerStats(playersById[X]);
+				exports.resetPlayerStats(playersById[X]);
 			}
 		}
 		var iterations = keepOldStats ? 100 : 1;
@@ -269,9 +279,9 @@ function updatePlayersByIdToDatabase(playersById, callback)
 	});
 }
 
-exports.clearPlayerStats = function(player)
+exports.resetPlayerStats = function(player)
 {
-	stats.clearPlayerStats(player);
+	stats.resetPlayerStats(player);
 }
 
 exports.isAsscessTokenValidForAdding = function(accessToken, callback)

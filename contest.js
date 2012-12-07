@@ -72,7 +72,7 @@ function runAlgo(ratingAlgo, matchDatas, playersById)
 	var X;
 	for(X in playersById)
 	{
-		users.clearPlayerStats(playersById[X]);
+		users.resetPlayerStats(playersById[X]);
 	}
 	
 	var totalError = 0;
