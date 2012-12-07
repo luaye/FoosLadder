@@ -216,7 +216,9 @@ function setCurrentView(view)
           <li id="addMatchesMenu"><a href="javascript:showAddMatch()">Add Match</a></li>
           <li id="playersMenu"><a href="javascript:showPlayers()">Players</a></li>
           <li id="graphMenu"><a href="javascript:showGraph()">Graph</a></li>
+          <!--
           <li id="liveMenu"><a href="javascript:showLive()">Live</a></li>
+          -->
         </ul>
       </div>
 
@@ -253,7 +255,7 @@ function setCurrentView(view)
 
 <table class="table table-bordered table-condensed table-hover table-striped" id="playersTable" >
   <tr>
-    <td colspan="8">
+    <td colspan="7">
       <div class="btn-group">
       	<a class="btn btn-small" href="javascript:playersView.addPlayer()"><i class="icon-plus-sign"></i> Add player</a>
       	<a class="btn btn-small" href="javascript:loadPlayers()"><i class="icon-refresh"></i> Reload</a>
@@ -266,7 +268,6 @@ function setCurrentView(view)
   </tr>
   <tr id="headerRow">
     <th ><a href="javascript:playersView.toggleSortBy('name')">Name</a></th>
-    <th ><a href="javascript:playersView.toggleSortBy('versus._heads')">Heads</a></th>
     <th ><a href="javascript:playersView.toggleSortBy('mixedStats.score')">mixed<br />
     rating</a></th>
     <th ><a href="javascript:playersView.toggleSortBy('duoStats.score')">duo<br />
@@ -282,7 +283,6 @@ function setCurrentView(view)
   </tr>
   <tr id="sampleRow">
     <td  style="text-align:left"><playerImage></playerImage> <playerName>NAME</playerName></td>
-    <td ><heads>3/10</heads></td>
     <td ><mixedScore>3</mixedScore></td>
     <td ><duoScore>1</duoScore></td>
     <td ><duoWins>2/3</duoWins></td>
@@ -291,10 +291,11 @@ function setCurrentView(view)
     <td ><goalAvg>5.5</goalAvg></td>
   </tr>
   <tr id="loadingRow">
-    <td colspan="8" class="loadingCell">Getting players...</td>
+    <td colspan="7" class="loadingCell">Getting players...</td>
   </tr>
   <tr>
-    <td colspan="8" class="commentCell">
+    <td colspan="7" class="commentCell">
+    
     </td>
   </tr>
 </table>

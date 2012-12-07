@@ -7,6 +7,7 @@ var self = this;
 
 var sortKey = "mixedStats.score";
 var sortReversed;
+var commentsInitialised;
 
 table.clear();
 table.setLoading(true);
@@ -16,6 +17,7 @@ var commentsInited;
 this.show = function()
 {
 	table.element.show();
+	addFBCommentsIfRequired();
 	if(players == null)
 	{
 		self.loadPlayers();
@@ -262,4 +264,17 @@ function onRebuiltMatchStats(ok)
 		alert("Failed");
 	}
 }
+
+function addFBCommentsIfRequired()
+{
+	if(commentsInitialised) return;
+	commentsInitialised = true;
+	
+	var commentArea = table.element.find(".commentCell");
+	var width = table.element.innerWidth() - 15;
+		
+	commentArea.html('<div class="fb-comments" data-href="'+makeCommentURL("players")+'" data-num-posts="6" data-width="'+width+'" mobile="false"></div>');
+	FB.XFBML.parse(commentArea[0]);
+}
+
 }
