@@ -45,6 +45,7 @@ exports.getPlayersByIds = function(body, callback)
 			for (var X in body.rows)
 			{
 				var user = body.rows[X].value;
+				user.id = user._id;
 				result[user._id] = user;
 			}
 			//console.log("users.getUsersById OK: " + JSON.stringify(result));
@@ -261,7 +262,9 @@ function updatePlayersByIdToDatabase(playersById, callback)
 	bulk.docs = [];
 	for (X in playersById)
 	{
-		bulk.docs.push(playersById[X]);
+		var player = playersById[X];
+		delete player.id;
+		bulk.docs.push(player);
 	}
 		
 	GLOBAL.usersDB.bulk(bulk, function (error, body, headers)
