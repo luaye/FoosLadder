@@ -269,18 +269,20 @@ function setCurrentView(view)
   </tr>
   <tr id="headerRow">
     <th ><a href="javascript:playersView.toggleSortBy('name')">Name</a></th>
-    <th ><a href="javascript:playersView.toggleSortBy('mixedStats.score')">mixed<br />
+    <th ><a href="javascript:playersView.toggleSortBy('stats.elo.mixed.score')">mixed<br />
     rating</a></th>
-    <th ><a href="javascript:playersView.toggleSortBy('duoStats.score')">duo<br />
+    <th ><a href="javascript:playersView.toggleSortBy('stats.elo.duo.score')">duo<br />
     rating</a></th>
     <th >duo<br />
-    <a href="javascript:playersView.toggleSortBy('duoStats.wins')">wins </a>/<a href="javascript:playersView.toggleSortBy('duoStats.games')"> games</a></th>
-    <th ><a href="javascript:playersView.toggleSortBy('soloStats.score')">solo<br />
+    <a href="javascript:playersView.toggleSortBy('stats.kdr.duo.wins')">wins </a>
+    /
+    <a href="javascript:playersView.toggleSortBy('stats.kdr.duo.games')"> games</a></th>
+    <th ><a href="javascript:playersView.toggleSortBy('stats.elo.solo.score')">solo<br />
     rating</a></th>
     <th >solo<br />
-    <a href="javascript:playersView.toggleSortBy('soloStats.wins')">win</a> /<a href="javascript:playersView.toggleSortBy('soloStats.games')"> games</a></th>
+    <a href="javascript:playersView.toggleSortBy('stats.kdr.solo.wins')">win</a> /<a href="javascript:playersView.toggleSortBy('stats.kdr.solo.games')"> games</a></th>
     <th >goal<br />
-    <a href="javascript:playersView.toggleSortBy('mixedStats.goalAvg')">avg</a></th>
+    <a href="javascript:playersView.toggleSortBy('stats.kdr.mixed.goalAvg')">avg</a></th>
   </tr>
   <tr id="sampleRow">
     <td  style="text-align:left"><playerImage></playerImage> <playerName>NAME</playerName></td>
