@@ -2,7 +2,7 @@ var utils = require("./../../utils.js");
 
 exports.resetPlayerStats = function(player)
 {
-	player.stats.versus = {};
+	player.stats.versus = {"_heads":0, "_total":0};
 }
 	
 exports.updateStatsOfPlayersByIdForMatch = function(playersById, matchData)
