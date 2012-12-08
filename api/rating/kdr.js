@@ -30,12 +30,14 @@ function KDR(mode)
 		obj.wins = 0;
 		obj.games = 0;
 		obj.kdr = 0;
+		obj.goalsFor = 0;
+		obj.goalsAgainst = 0;
 		return obj;
 	}
 	
 	this.updateStatsOfPlayersByIdForMatch = function(playersById, matchData)
 	{
-		var player, playerId, X, teamPlayerIds, iswinner;
+		var player, playerId, X, teamPlayerIds, didWin;
 		var winnerIds = utils.getWinnerIds(matchData);
 		var loserIds = utils.getLoserIds(matchData);
 		
@@ -46,39 +48,44 @@ function KDR(mode)
 			player = playersById[playerId];
 			didWin = winnerIds.indexOf(playerId) >= 0;
 			teamPlayerIds = didWin ? winnerIds : loserIds;
-			add(player, playerId, teamPlayerIds, didWin);
+			
+			var kdr = player.stats.kdr;
+			addToObj(kdr.mixed, didWin, matchData);
+			
+			if(teamPlayerIds.length == 1)
+			{
+				addToObj(kdr.solo, didWin, matchData);
+			}
+			else
+			{
+				addToObj(kdr.duo, didWin, matchData);
+				
+				if(teamPlayerIds[0] == playerId)
+				{
+					addToObj(kdr.offence, didWin, matchData);
+				}
+				else
+				{
+					addToObj(kdr.defence, didWin, matchData);
+				}
+			}
 		}
 	}
 	
-	function add(player, playerId, teamPlayerIds, didWin)
+	function addToObj(obj, didWin, matchData)
 	{
-		var kdr = player.stats.kdr;
-		
-		if(didWin) kdr.mixed.wins++;
-		kdr.mixed.games++;
-		kdr.mixed.kdr = kdr.mixed.wins / kdr.mixed.games;
-		
-		if(teamPlayerIds.length == 1)
+		if(didWin)
 		{
-			if(didWin) kdr.solo.wins++;
-			kdr.solo.games++;
-			kdr.solo.kdr = kdr.solo.wins / kdr.solo.games;
+			obj.wins++;
+			obj.goalsFor += Math.max(matchData.leftScore, matchData.rightScore);
+			obj.goalsAgainst += Math.min(matchData.leftScore, matchData.rightScore);
 		}
 		else
 		{
-			if(didWin) kdr.duo.wins++;
-			kdr.duo.games++;
-			kdr.duo.kdr = kdr.duo.wins / kdr.duo.games;
-			
-			var side = kdr.defence;
-			if(teamPlayerIds[0] == playerId)
-			{
-				side = kdr.offence;
-			}
-			
-			if(didWin) side.wins++;
-			side.games++;
-			side.kdr = side.wins / side.games;
+			obj.goalsFor += Math.min(matchData.leftScore, matchData.rightScore);
+			obj.goalsAgainst += Math.max(matchData.leftScore, matchData.rightScore);
 		}
+		obj.games++;
+		obj.kdr = obj.wins / obj.games;
 	}
 }
