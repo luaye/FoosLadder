@@ -53,7 +53,6 @@ function onPlayersLoaded(data)
 	for (var X in players)
 	{
 		var player = players[X];
-		console.log(player);
 		playersById[player.id] = player;
 	}
 	updateViewNames();
