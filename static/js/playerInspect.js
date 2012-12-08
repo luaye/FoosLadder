@@ -1,15 +1,14 @@
 function PlayerInspectView(loadableTable)
 {
 
-var players, inspectPlayer;
+var players, playersById, inspectPlayerId;
 var table = loadableTable;
 var self = this;
 
 this.setPlayer = function(playerName)
 {
-	inspectPlayer = playerName;
-	players = null;
-	self.loadPlayers();
+	inspectPlayerId = playerName;
+	updateSort();
 }
 
 var sortKey = "mixedStats.score";
@@ -21,20 +20,11 @@ table.setLoading(true);
 this.show = function()
 {
 	table.element.show();
-	if(players == null)
-	{
-		self.loadPlayers();
-	}
 }
 
 this.hide = function()
 {
 	table.element.hide();
-}
-
-this.loadPlayers = function()
-{
-	callAPI({request:"getPlayers"}, onPlayersLoaded);
 }
 
 this.setPlayers = function(data)
@@ -50,8 +40,13 @@ this.updateRows = function()
 
 function onPlayersLoaded(data)
 {
-	players = data.concat();
-	updateSort();
+	players = data;
+	playersById = {};
+	for (var X in players)
+	{
+		var player = players[X];
+		playersById[player.id] = player;
+	}
 }
 
 function updateRows()
@@ -63,7 +58,7 @@ function updateRows()
 	var userRow;
 	for(X in players)
 	{
-		if (players[X].name == inspectPlayer)
+		if (players[X].id == inspectPlayerId)
 		{
 			fillRowsWithVersus(players[X]);			
 		}
@@ -74,7 +69,7 @@ function fillRowsWithVersus(user)
 {
 
 	var X, userRow;
-	var versus = user.versus ? user.versus : {};
+	var versus = user.stats.versus;
 	for (X in versus)
 	{
 		if (X.charAt(0) != '_')
@@ -91,10 +86,8 @@ function fillRowsWithVersus(user)
 
 function fillRowWithUser(tableRow, opponent, versusData)
 {
-	var userLink = "<a href='javascript:inspect(\""+opponent+"\")'>"+opponent+"</a>";
+	var userLink = "<a href='javascript:inspect(\""+opponent+"\")'>"+playersById[opponent].name+"</a>";
 	
-//	var image = getPlayerImageElement(user, 30);
-//	$(tableRow).find("playerImage").replaceWith(image);
 	setContentsOfTag(tableRow, "playerName", userLink);
 	setContentsOfTag(tableRow, "wins", safeStr(versusData.wins));
 	setContentsOfTag(tableRow, "losses", safeStr(versusData.losses));
@@ -109,73 +102,9 @@ function safeStr(obj)
 	return "";
 }
 
-function safeSlashNum(num1, num2)
-{
-	if(num1 == undefined) num1 = 0;
-	if(num2 == undefined) num2 = 0;
-	if(num1 == 0 && num2 == 0)
-	{
-		return "";
-	}
-	return num1 + " / " + num2;
-}
-
-this.addPlayer = function()
-{
-	if(players == null)
-	{
-		alert("User loading in progress.");
-		return;
-	}
-	
-	ensureAuthorisedAndCall(addPlayerAfterAuth);
-}
-
-function addPlayerAfterAuth()
-{
-	var username = prompt("Enter your name to add : ", "");
-	if(username == null)
-	{
-		return;
-	}
-	if(findUserByName(players, username))
-	{
-		alert("User already exists : " +  username );
-	}
-	else
-	{
-		var yes = confirm("Do you really want to add new user '" + username+ "'?");
-	   if( yes )
-	   {
-			callAPI({request:"addPlayer", name:username, fbAccessToken:facebookAccessToken}, onPlayerAdded);
-	   }
-	}
-}
-
-function onPlayerAdded(response)
-{
-	if(response.status == "error")
-	{
-		alert(response.message ? response.message : "Error adding player.")
-	}
-	else
-	{
-		self.loadPlayers();
-	}
-}
-
 this.toggleSortBy = function(key)
 {
-	if(sortKey == key)
-	{
-		sortReversed = !sortReversed;
-	}
-	else
-	{
-		sortReversed = false;
-		sortKey = key;
-	}
-	updateSort();
+	
 }
 
 function updateSort()
@@ -225,32 +154,5 @@ function readPropertyChain(obj, properties)
 	return obj;
 }
 
-this.rebuiltStats = function()
-{
-	ensureAuthorisedAndCall(function()
-	{
-		table.clear();
-		table.setLoading(true);
-		callAPI({request:"rebuiltMatchStats"}, onRebuiltMatchStats);
-	});
-}
 
-this.repeatMatches = function()
-{
-	ensureAuthorisedAndCall(function()
-	{
-		table.clear();
-		table.setLoading(true);
-		callAPI({request:"repeatMatchStats"}, onRebuiltMatchStats);
-	});
-}
-
-function onRebuiltMatchStats(ok)
-{
-	self.loadPlayers();
-	if(!ok)
-	{
-		alert("Failed");
-	}
-}
 }
