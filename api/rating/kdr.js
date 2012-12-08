@@ -32,6 +32,7 @@ function KDR(mode)
 		obj.kdr = 0;
 		obj.goalsFor = 0;
 		obj.goalsAgainst = 0;
+		obj.goalAvg = 0;
 		return obj;
 	}
 	
@@ -85,6 +86,7 @@ function KDR(mode)
 			obj.goalsFor += Math.min(matchData.leftScore, matchData.rightScore);
 			obj.goalsAgainst += Math.max(matchData.leftScore, matchData.rightScore);
 		}
+		obj.goalAvg = obj.goalsFor * 10.0 / (obj.goalsFor + obj.goalsAgainst);
 		obj.games++;
 		obj.kdr = obj.wins / obj.games;
 	}

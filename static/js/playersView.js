@@ -5,7 +5,7 @@ var players;
 var table = loadableTable;
 var self = this;
 
-var sortKey = "mixedStats.score";
+var sortKey = "elo.mixed.score";
 var sortReversed;
 var commentsInitialised;
 
@@ -79,8 +79,7 @@ function fillRowWithUser(tableRow, user)
 	
 	var goalsFor = Number(kdr.mixed.goalsFor);
 	var goalsAgainst = Number(kdr.mixed.goalsAgainst);
-	var goalAvg = goalsFor * 10.0 / (goalsFor + goalsAgainst);
-	goalAvg = Math.round(goalAvg*100) / 100;
+	var goalAvg = Math.round(kdr.mixed.goalAvg*100) / 100;
 	if (isNaN(goalAvg)) goalAvg = "-";
 	
 	var stats = user.stats;
