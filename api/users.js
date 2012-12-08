@@ -298,7 +298,7 @@ exports.isAsscessTokenValidForAdding = function(accessToken, callback)
 		callback(false);
 		return;
 	}
-	if(accessToken == config.secretAuthKey)
+	if(config.secretAuthKey && accessToken == config.secretAuthKey)
 	{
 		callback(true);
 		return;
