@@ -51,12 +51,19 @@ function runAPIBody(body, response)
 	var apifunction = map[requestkey];
 	if(apifunction)
 	{
-		apifunction(body, function(data)
+		try
 		{
-			response.writeHeader(200, {"Content-Type": "text/plain", "Cache-control": "no-cache"});
-			response.write(JSON.stringify(data)); 
-			response.end();
-		});
+			apifunction(body, function(data)
+			{
+				response.writeHeader(200, {"Content-Type": "text/plain", "Cache-control": "no-cache"});
+				response.write(JSON.stringify(data)); 
+				response.end();
+			});
+		}
+		catch (err)
+		{
+			console.log("Error:", err)
+		}
 	}
 	else
 	{

@@ -1,5 +1,4 @@
 var config = require("./config.json");
-var SERVER_PORT = config.port;
 
 var apimap = require('./apimap.js');
 
@@ -9,7 +8,8 @@ var url = require("url");
 var filesys = require("fs"); 
 var http = require("http");
 var server = http.createServer(onServerConnection);
-server.listen(SERVER_PORT);
+server.listen(config.port);
+console.log("Listening on port "+config.port);
 
 if (process.argv.length > 2) {
 	if (process.argv[2] == 'contest') {
@@ -27,8 +27,6 @@ function runAlgorithmContest()
 		contest.run();
 	});
 }
-
-console.log("Listening on port "+SERVER_PORT);
 
 function onServerConnection(request, response)
 {
