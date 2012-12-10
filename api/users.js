@@ -309,6 +309,10 @@ exports.isAsscessTokenValidForAdding = function(accessToken, callback)
 		{
 			var id = response.body.id;
 			var username = response.body.username;
+			if(!id)
+			{
+				callback(false);
+			}
 			if(config.allowedFacebookIds.indexOf(id) >= 0 || config.allowedFacebookIds.indexOf(username) >= 0)
 			{
 				callback(true);
