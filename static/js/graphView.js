@@ -141,11 +141,8 @@ function draw()
 			ratings.push(Math.round(rating));
 		}
 		
-		if(player.mixedStats)
-		{
-			var num = Number(player.mixedStats.score);
-			if(!isNaN(num)) ratings.push(num);
-		}
+		var num = Number(player.stats.elo.mixed.score);
+		if(!isNaN(num)) ratings.push(num);
 		
 		color = colors[selindex % colors.length];
 		
