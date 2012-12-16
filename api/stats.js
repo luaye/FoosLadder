@@ -55,12 +55,21 @@ exports.updateStatsOfPlayersByIdForMatch = function(playersById, matchData)
 		var player = playersById[playerIdsInMatch[X]];
 		if(player.isGuest == true)
 		{
+			matchData.KDleft = 0;
+			matchData.KDright = 0;
 			return true;
 		}
 	}
 	for(var X in ratingSystems)
 	{
-		ratingSystems[X].updateStatsOfPlayersByIdForMatch(playersById, matchData);
+		var ratingSystem = ratingSystems[X];
+		if(ratingSystem == mainRatingSystem)
+		{
+			var ratingChange = ratingSystem.getRatingChange(playersById, matchData.leftPlayers, matchData.rightPlayers, matchData.leftScore, matchData.rightScore);
+			matchData.KDleft = ratingChange.leftRating;
+			matchData.KDright = ratingChange.rightRating;
+		}
+		ratingSystem.updateStatsOfPlayersByIdForMatch(playersById, matchData);
 	}
 	return true;
 }

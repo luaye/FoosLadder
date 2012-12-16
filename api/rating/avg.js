@@ -23,12 +23,11 @@ function Avg()
 	this.updateStatsOfPlayersByIdForMatch = function(playersById, matchData)
 	{
 		var KDleft = getLeftRatingChange(playersById, matchData.leftPlayers, matchData.leftScore, matchData.rightPlayers, matchData.rightScore);
-		matchData.KDleft = KDleft;
 		
 		addRatingToPlayers(playersById, matchData.leftPlayers, KDleft);
 		addRatingToPlayers(playersById, matchData.rightPlayers, -KDleft);
 		
-		return KDleft / MAX_RATING_CHANGE;
+		return KDleft;
 	}
 	
 	function addRatingToPlayers(playersById, playerIds, deltaRating)
