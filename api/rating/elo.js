@@ -29,7 +29,7 @@ this.resetPlayerStats = function(player)
 		player.stats.elo = {};
 	}
 	var obj = {};
-	obj.score = 1600;
+	obj.score = defaultScoreForPlayer(player);
 	player.stats.elo[mode] = obj;
 }
 
@@ -215,21 +215,15 @@ function getFirstPlayerContributionToRating(first, second)
 
 function defaultScoreForPlayer (player)
 {
-   /**		
-	var defaults = {
-		"Lu Aye Oo": 1800, 
-		"John E": 1700, 
-		"Pedro R": 1600, 
-		"Stephen C": 1600,
-		"Simon H": 1500,
-		"Adam S": 1500,
-		"Naree S": 1400,
-		"Joe R": 1400,
-		"Andy S": 1400,
-		"Toby M": 1500,
-	};
-	if (defaults[player.name]) return defaults[player.name];
-/**/	 
+	var initialExperience = player.initialExperience;
+	if(initialExperience == 1)
+	{
+		return 1500;
+	}
+	else if(initialExperience == 3)
+	{
+		return 1750;
+	}
 	return 1600;
 }
 

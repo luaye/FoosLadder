@@ -129,23 +129,53 @@ this.addPlayer = function()
 
 function addPlayerAfterAuth()
 {
-	var username = prompt("Enter your name to add : ", "");
-	if(username == null)
+	var dialog = $('#addPlayerModal');
+	dialog.modal('show');
+}
+
+this.onAddSubmit = function()
+{
+	var name = $("#addPlayerName").val();
+	var facebookId = $("#addPlayerFBId").val();
+	var experience = $("#addPlayerExp").val();
+	
+	var request = {request:"addPlayer", 
+		fbAccessToken:facebookAccessToken, 
+		name:name, 
+		facebookId:facebookId, 
+		initialExperience:experience
+	};
+	
+	if(facebookId && facebookId.length > 1)
 	{
-		return;
-	}
-	if(findUserByName(players, username))
-	{
-		alert("User already exists : " +  username );
+		$.get("http://graph.facebook.com/"+facebookId,
+		{},
+		function(data)
+		{
+			if(data.name)
+			{
+				callAPI(request, onPlayerAdded);
+			}
+			else
+			{
+				alert("Error validating facebook ID\n" + JSON.stringify(data));
+			}
+		},
+		"json").error(function() {
+				alert("Error validating facebook ID");
+		});
 	}
 	else
 	{
-		var yes = confirm("Do you really want to add new user '" + username+ "'?");
-	   if( yes )
-	   {
-			callAPI({request:"addPlayer", name:username, fbAccessToken:facebookAccessToken}, onPlayerAdded);
-	   }
+		callAPI(request, onPlayerAdded);
 	}
+}
+
+function resetAddPlayer()
+{
+	$("#addPlayerName").val("");
+	$("#addPlayerFBId").val("");
+	$("#addPlayerExp").val("");
 }
 
 function onPlayerAdded(response)
@@ -156,6 +186,9 @@ function onPlayerAdded(response)
 	}
 	else
 	{
+		resetAddPlayer();
+		var dialog = $('#addPlayerModal');
+		dialog.modal('hide');
 		self.loadPlayers();
 	}
 }

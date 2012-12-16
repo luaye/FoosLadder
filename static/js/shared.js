@@ -149,7 +149,7 @@ function showPlayerSelectionDialog(callback, title, players, options)
 function hideActivePlayerSelectDialog()
 {
 	var dialog = $('#playerSelectionModal');
-	dialog.hide();
+	dialog.modal('hide');
 }
 
 function getPlayerImageElement(player, size)

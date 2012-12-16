@@ -61,7 +61,7 @@ exports.addUser = function(body, callback)
 	exports.isAsscessTokenValidForAdding(body.fbAccessToken, function(ok) {
 		if(ok)
 		{
-			addUserToDB(body.name, callback);
+			addUserToDB(body, callback);
 		}
 		else
 		{
@@ -71,9 +71,17 @@ exports.addUser = function(body, callback)
 	});	
 }
 
-function addUserToDB(name, callback)
+function addUserToDB(body, callback)
 {
-	var player = {name: name};
+	if(!body.name)
+	{
+		callback({status:"error", message:"Invalid name"});
+		return;
+	}
+	var player = {name: body.name};
+	if(body.facebookId) player.facebookId = body.facebookId;
+	if(body.initialExperience) player.initialExperience = body.initialExperience;
+	
 	exports.resetPlayerStats(player);
 	GLOBAL.usersDB.insert(player, null, function (error, body, headers)
 	{
