@@ -256,7 +256,7 @@ function setCurrentView(view)
 
 <table class="table table-bordered table-condensed table-hover table-striped" id="playersTable" >
   <tr>
-    <td colspan="7">
+    <td colspan="8">
       <div class="btn-group">
       	<a class="btn btn-small" href="javascript:playersView.addPlayer()"><i class="icon-plus-sign"></i> Add player</a>
       	<a class="btn btn-small" href="javascript:loadPlayers()"><i class="icon-refresh"></i> Reload</a>
@@ -270,30 +270,29 @@ function setCurrentView(view)
   <tr id="headerRow">
     <th ><a href="javascript:playersView.toggleSortBy('name')">Name</a></th>
     <th ><a href="javascript:playersView.toggleSortBy('stats.avg.rating')">rating</a></th>
-    <th ><a href="javascript:playersView.toggleSortBy('stats.elo.mixed.score')">mixed<br />
+    <th ><a href="javascript:playersView.toggleSortBy('stats.avg.offence')">offence<br />
     rating</a></th>
-    <th ><a href="javascript:playersView.toggleSortBy('stats.elo.duo.score')">duo<br />
+    <th ><a href="javascript:playersView.toggleSortBy('stats.avg.defence')">defence<br />
     rating</a></th>
+    <th ><a href="javascript:playersView.toggleSortBy('stats.avg.solo')">solo<br />
+    rating</a></th>
+    <th ><a href="javascript:playersView.toggleSortBy('stats.elo.mixed.score')">(old) rating</a></th>
     <th >duo<br />
     <a href="javascript:playersView.toggleSortBy('stats.kdr.duo.wins')">wins </a>
     /
     <a href="javascript:playersView.toggleSortBy('stats.kdr.duo.games')"> games</a></th>
-    <th ><a href="javascript:playersView.toggleSortBy('stats.elo.solo.score')">solo<br />
-    rating</a></th>
     <th >solo<br />
     <a href="javascript:playersView.toggleSortBy('stats.kdr.solo.wins')">win</a> /<a href="javascript:playersView.toggleSortBy('stats.kdr.solo.games')"> games</a></th>
-    <th >goal<br />
-    <a href="javascript:playersView.toggleSortBy('stats.kdr.mixed.goalAvg')">avg</a></th>
   </tr>
   <tr id="sampleRow">
     <td  style="text-align:left"><playerImage></playerImage> <playerName>NAME</playerName></td>
     <td ><rating path="stats.avg.rating">3</rating></td>
+    <td ><rating path="stats.avg.offence">3</rating></td>
+    <td ><rating path="stats.avg.defence">3</rating></td>
+    <td ><rating path="stats.avg.solo">3</rating></td>
     <td ><mixedScore>3</mixedScore></td>
-    <td ><duoScore>1</duoScore></td>
     <td ><duoWins>2/3</duoWins></td>
-    <td ><soloScore>2</soloScore></td>
     <td ><soloWins>2/2</soloWins></td>
-    <td ><goalAvg>5.5</goalAvg></td>
   </tr>
   <tr id="loadingRow">
     <td colspan="8" class="loadingCell">Getting players...</td>
