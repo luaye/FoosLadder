@@ -269,6 +269,7 @@ function setCurrentView(view)
   </tr>
   <tr id="headerRow">
     <th ><a href="javascript:playersView.toggleSortBy('name')">Name</a></th>
+    <th ><a href="javascript:playersView.toggleSortBy('stats.avg.rating')">rating</a></th>
     <th ><a href="javascript:playersView.toggleSortBy('stats.elo.mixed.score')">mixed<br />
     rating</a></th>
     <th ><a href="javascript:playersView.toggleSortBy('stats.elo.duo.score')">duo<br />
@@ -286,6 +287,7 @@ function setCurrentView(view)
   </tr>
   <tr id="sampleRow">
     <td  style="text-align:left"><playerImage></playerImage> <playerName>NAME</playerName></td>
+    <td ><rating path="stats.avg.rating">3</rating></td>
     <td ><mixedScore>3</mixedScore></td>
     <td ><duoScore>1</duoScore></td>
     <td ><duoWins>2/3</duoWins></td>
@@ -294,10 +296,10 @@ function setCurrentView(view)
     <td ><goalAvg>5.5</goalAvg></td>
   </tr>
   <tr id="loadingRow">
-    <td colspan="7" class="loadingCell">Getting players...</td>
+    <td colspan="8" class="loadingCell">Getting players...</td>
   </tr>
   <tr>
-    <td colspan="7" class="commentCell">
+    <td colspan="8" class="commentCell">
     
     </td>
   </tr>

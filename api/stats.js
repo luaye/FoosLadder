@@ -1,5 +1,6 @@
 var kdr = require("./rating/kdr.js");
 var elo = require("./rating/elo.js");
+var avg = require("./rating/avg.js");
 var versus = require("./rating/versus.js");
 
 /*
@@ -13,11 +14,12 @@ getExpectedScores(playersById, leftPlayerIds, rightPlayerIds): {leftScore:Number
 getRatingChange(playersById, leftPlayerIds, rightPlayerIds, leftScore, rightScore): {leftRating:Number, rightRating:Number}
 */
 
-var mainRatingSystem = elo.getSystem(elo.MODE_MIXED);
+var mainRatingSystem = new avg.Avg();
 
 var ratingSystems = [
 	kdr.getSystem(),
 	mainRatingSystem, 
+	elo.getSystem(elo.MODE_MIXED),
 	elo.getSystem(elo.MODE_SOLO), 
 	elo.getSystem(elo.MODE_DUO),
 	versus

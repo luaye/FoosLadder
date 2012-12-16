@@ -85,7 +85,8 @@ function fillRowWithUser(tableRow, user)
 	var stats = user.stats;
 	
 	var image = getPlayerImageElement(user, 30);
-	$(tableRow).find("playerImage").replaceWith(image);
+	var row = $(tableRow);
+	row.find("playerImage").replaceWith(image);
 	setContentsOfTag(tableRow, "playerName", userLink);
 	setContentsOfTag(tableRow, "heads", safeSlashNum(versus._heads, versus._total));
 	setContentsOfTag(tableRow, "mixedScore", safeStr(stats.elo.mixed.score));
@@ -94,6 +95,14 @@ function fillRowWithUser(tableRow, user)
 	setContentsOfTag(tableRow, "soloScore", safeStr(user.stats.elo.solo.score));
 	setContentsOfTag(tableRow, "soloWins", safeSlashNum(stats.kdr.solo.wins, stats.kdr.solo.games));
 	setContentsOfTag(tableRow, "goalAvg", goalAvg);
+	
+	var ratingtags = row.find("rating");
+	ratingtags.each(function(index)
+	{
+		var ratingtag = $(this);
+		var str = safeStr(readPropertyChainStr(user, String(ratingtag.attr("path"))));
+		ratingtag.text(str);
+	});
 }
 
 function safeStr(obj)
@@ -239,6 +248,12 @@ function updateSort()
 		return value;
 	});
 	updateRows();
+}
+
+function readPropertyChainStr(obj, dotString)
+{
+	var properties = dotString.split(".");
+	return readPropertyChain(obj, properties);
 }
 
 function readPropertyChain(obj, properties)
