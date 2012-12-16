@@ -64,8 +64,12 @@ function updateRows()
 	var userRow;
 	for(X in players)
 	{
-		userRow = table.createRow();
-		fillRowWithUser(userRow, players[X]);
+		var player = players[X];
+		if(player.isGuest != true)
+		{
+			userRow = table.createRow();
+			fillRowWithUser(userRow, player);
+		}
 	}
 }
 

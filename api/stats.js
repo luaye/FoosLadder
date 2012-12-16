@@ -49,6 +49,15 @@ exports.updateStatsOfPlayersByIdForMatch = function(playersById, matchData)
 {
 	matchData.preLeftRatings = getPlayerRatingListByPlayerIds(matchData.leftPlayers, playersById);
 	matchData.preRightRatings = getPlayerRatingListByPlayerIds(matchData.rightPlayers, playersById);
+	var playerIdsInMatch = matchData.leftPlayers.concat(matchData.rightPlayers);
+	for(var X in playerIdsInMatch)
+	{
+		var player = playersById[playerIdsInMatch[X]];
+		if(player.isGuest == true)
+		{
+			return true;
+		}
+	}
 	for(var X in ratingSystems)
 	{
 		ratingSystems[X].updateStatsOfPlayersByIdForMatch(playersById, matchData);
