@@ -5,7 +5,7 @@ var players;
 var table = loadableTable;
 var self = this;
 
-var sortKey = "stats.elo.mixed.score";
+var sortKey = "stats.avg.rating";
 var sortReversed;
 var commentsInitialised;
 
