@@ -110,7 +110,7 @@ function Avg()
 		}
 		else if(initialExperience == 3)
 		{
-			return 1750;
+			return 1700;
 		}
 		return 1600;
 	}
