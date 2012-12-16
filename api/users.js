@@ -258,7 +258,7 @@ function updateMatchesToDatabase(matchDatas, callback)
 		}
 		else
 		{
-			console.log("Updated match stats.");
+			//console.log("Updated match stats.");
 			callback(true);
 		}
 	});
@@ -284,7 +284,7 @@ function updatePlayersByIdToDatabase(playersById, callback)
 		}
 		else
 		{
-			console.log("Updated player stats for match.");
+			//console.log("Updated player stats for match.");
 			callback(true);
 		}
 	});
