@@ -7,6 +7,8 @@ exports.Avg = Avg;
 
 function Avg()
 {
+	var self = this;
+	
 	this.resetPlayerStats = function(player)
 	{
 		var obj = {};
@@ -22,12 +24,11 @@ function Avg()
 
 	this.updateStatsOfPlayersByIdForMatch = function(playersById, matchData)
 	{
-		var KDleft = getLeftRatingChange(playersById, matchData.leftPlayers, matchData.leftScore, matchData.rightPlayers, matchData.rightScore);
+		var changes = self.getRatingChange(playersById, matchData.leftPlayers, matchData.rightPlayers, matchData.leftScore, matchData.rightScore);
 		
-		addRatingToPlayers(playersById, matchData.leftPlayers, KDleft);
-		addRatingToPlayers(playersById, matchData.rightPlayers, -KDleft);
 		
-		return KDleft;
+		addRatingToPlayers(playersById, matchData.leftPlayers, changes.leftRating);
+		addRatingToPlayers(playersById, matchData.rightPlayers, changes.rightRating);
 	}
 	
 	function addRatingToPlayers(playersById, playerIds, deltaRating)
