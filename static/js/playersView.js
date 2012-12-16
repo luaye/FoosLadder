@@ -95,9 +95,9 @@ function fillRowWithUser(tableRow, user)
 	setContentsOfTag(tableRow, "heads", safeSlashNum(versus._heads, versus._total));
 	setContentsOfTag(tableRow, "mixedScore", safeStr(stats.elo.mixed.score));
 	setContentsOfTag(tableRow, "duoScore", safeStr(stats.elo.duo.score));
-	setContentsOfTag(tableRow, "duoWins", safeSlashNum(stats.kdr.duo.wins, stats.kdr.duo.games));
+	setContentsOfTag(tableRow, "duoWins", safeSlashNum(stats.kdr.duo.wins, stats.kdr.duo.games, stats.kdr.duo.kdr));
 	setContentsOfTag(tableRow, "soloScore", safeStr(user.stats.elo.solo.score));
-	setContentsOfTag(tableRow, "soloWins", safeSlashNum(stats.kdr.solo.wins, stats.kdr.solo.games));
+	setContentsOfTag(tableRow, "soloWins", safeSlashNum(stats.kdr.solo.wins, stats.kdr.solo.games, stats.kdr.solo.kdr));
 	setContentsOfTag(tableRow, "goalAvg", goalAvg);
 	
 	var ratingtags = row.find("rating");
@@ -109,24 +109,26 @@ function fillRowWithUser(tableRow, user)
 	});
 }
 
-function safeStr(obj)
+function safeStr(obj, decimals)
 {
+	if(!decimals) decimals = 1;
 	if(obj != undefined)
 	{
-		return Math.round(Number(obj));
+		return Math.round(Number(obj) * decimals) / decimals;
 	}
 	return "";
 }
 
-function safeSlashNum(num1, num2)
+function safeSlashNum()
 {
-	if(num1 == undefined) num1 = 0;
-	if(num2 == undefined) num2 = 0;
-	if(num1 == 0 && num2 == 0)
+	var arr = [];
+	for(var X in arguments)
 	{
-		return "";
+		var num = arguments[X];
+		if(isNaN(num)) num = 0;
+		arr.push(safeStr(num, 100));
 	}
-	return num1 + " / " + num2;
+	return arr.join(" / ");
 }
 
 this.addPlayer = function()

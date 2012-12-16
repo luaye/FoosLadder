@@ -280,9 +280,15 @@ function setCurrentView(view)
     <th >duo<br />
     <a href="javascript:playersView.toggleSortBy('stats.kdr.duo.wins')">wins </a>
     /
-    <a href="javascript:playersView.toggleSortBy('stats.kdr.duo.games')"> games</a></th>
+    <a href="javascript:playersView.toggleSortBy('stats.kdr.duo.games')">games</a>
+    /
+    <a href="javascript:playersView.toggleSortBy('stats.kdr.duo.kdr')">kdr</a></th>
     <th >solo<br />
-    <a href="javascript:playersView.toggleSortBy('stats.kdr.solo.wins')">win</a> /<a href="javascript:playersView.toggleSortBy('stats.kdr.solo.games')"> games</a></th>
+    <a href="javascript:playersView.toggleSortBy('stats.kdr.solo.wins')">win</a>
+    /
+    <a href="javascript:playersView.toggleSortBy('stats.kdr.solo.games')"> games</a>
+    /
+    <a href="javascript:playersView.toggleSortBy('stats.kdr.solo.kdr')">kdr</a></th>
   </tr>
   <tr id="sampleRow">
     <td  style="text-align:left"><playerImage></playerImage> <playerName>NAME</playerName></td>
@@ -291,8 +297,8 @@ function setCurrentView(view)
     <td ><rating path="stats.avg.defence">3</rating></td>
     <td ><rating path="stats.avg.solo">3</rating></td>
     <td ><mixedScore>3</mixedScore></td>
-    <td ><duoWins>2/3</duoWins></td>
-    <td ><soloWins>2/2</soloWins></td>
+    <td ><duoWins>2/3/0.5</duoWins></td>
+    <td ><soloWins>2/2/0.5</soloWins></td>
   </tr>
   <tr id="loadingRow">
     <td colspan="8" class="loadingCell">Getting players...</td>
