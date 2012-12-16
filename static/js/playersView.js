@@ -92,13 +92,8 @@ function fillRowWithUser(tableRow, user)
 	var row = $(tableRow);
 	row.find("playerImage").replaceWith(image);
 	setContentsOfTag(tableRow, "playerName", userLink);
-	setContentsOfTag(tableRow, "heads", safeSlashNum(versus._heads, versus._total));
-	setContentsOfTag(tableRow, "mixedScore", safeStr(stats.elo.mixed.score));
-	setContentsOfTag(tableRow, "duoScore", safeStr(stats.elo.duo.score));
 	setContentsOfTag(tableRow, "duoWins", safeSlashNum(stats.kdr.duo.wins, stats.kdr.duo.games, stats.kdr.duo.kdr));
-	setContentsOfTag(tableRow, "soloScore", safeStr(user.stats.elo.solo.score));
 	setContentsOfTag(tableRow, "soloWins", safeSlashNum(stats.kdr.solo.wins, stats.kdr.solo.games, stats.kdr.solo.kdr));
-	setContentsOfTag(tableRow, "goalAvg", goalAvg);
 	
 	var ratingtags = row.find("rating");
 	ratingtags.each(function(index)
