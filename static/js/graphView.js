@@ -50,7 +50,10 @@ function selectAllIfEmpty()
 		for (var X in playersById)
 		{
 			var player = playersById[X];
-			selectedPlayers.push(player);
+			if(player.isGuest != true)
+			{
+				selectedPlayers.push(player);
+			}
 		}
 		draw();
 	}
