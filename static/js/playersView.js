@@ -251,25 +251,6 @@ function updateSort()
 	updateRows();
 }
 
-function readPropertyChainStr(obj, dotString)
-{
-	var properties = dotString.split(".");
-	return readPropertyChain(obj, properties);
-}
-
-function readPropertyChain(obj, properties)
-{
-	for( var X in properties)
-	{
-		obj = obj[properties[X]];
-		if(obj == null)
-		{
-			return "";
-		}
-	}
-	return obj;
-}
-
 this.rebuiltStats = function()
 {
 	ensureAuthorisedAndCall(function()

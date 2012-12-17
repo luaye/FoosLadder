@@ -29,7 +29,7 @@ function KDR(mode)
 		var obj = {};
 		obj.wins = 0;
 		obj.games = 0;
-		obj.kdr = 0;
+		obj.kdr = NaN;
 		obj.goalsFor = 0;
 		obj.goalsAgainst = 0;
 		obj.goalAvg = 0;

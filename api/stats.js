@@ -1,3 +1,4 @@
+var utils = require("./../utils.js");
 var kdr = require("./rating/kdr.js");
 var elo = require("./rating/elo.js");
 var avg = require("./rating/avg.js");
@@ -9,7 +10,6 @@ resetPlayerStats(player): void
 updateStatsOfPlayersByIdForMatch(playersById, matchData): void
 
 Methods required for main rating system:
-getRatingOfPlayer(player): Number
 getExpectedScores(playersById, leftPlayerIds, rightPlayerIds): {leftScore:Number, rightScore:Number}
 getRatingChange(playersById, leftPlayerIds, rightPlayerIds, leftScore, rightScore): {leftRating:Number, rightRating:Number}
 */
@@ -24,7 +24,16 @@ var ratingSystems = [
 	elo.getSystem(elo.MODE_DUO),
 	versus
 	];
-
+	
+var matchRatingChangePaths =
+	{
+		avg:"stats.avg.rating",
+		avgSolo:"stats.avg.solo",
+		avgOffence:"stats.avg.offence",
+		avgDefence:"stats.avg.defence",
+		kdrSolo:"stats.kdr.solo.kdr",
+		kdrDuo:"stats.kdr.duo.kdr"
+	};
 
 exports.resetPlayerStats = function(player)
 {
@@ -47,8 +56,6 @@ exports.getRatingChange = function(playersById, leftPlayerIds, rightPlayerIds, l
 
 exports.updateStatsOfPlayersByIdForMatch = function(playersById, matchData)
 {
-	matchData.preLeftRatings = getPlayerRatingListByPlayerIds(matchData.leftPlayers, playersById);
-	matchData.preRightRatings = getPlayerRatingListByPlayerIds(matchData.rightPlayers, playersById);
 	var playerIdsInMatch = matchData.leftPlayers.concat(matchData.rightPlayers);
 	for(var X in playerIdsInMatch)
 	{
@@ -60,6 +67,10 @@ exports.updateStatsOfPlayersByIdForMatch = function(playersById, matchData)
 			return true;
 		}
 	}
+	
+	matchData.leftChanges = getPlayerRatingListByPlayerIds(matchData.leftPlayers, playersById);
+	matchData.rightChanges = getPlayerRatingListByPlayerIds(matchData.rightPlayers, playersById);
+	
 	for(var X in ratingSystems)
 	{
 		var ratingSystem = ratingSystems[X];
@@ -71,19 +82,46 @@ exports.updateStatsOfPlayersByIdForMatch = function(playersById, matchData)
 		}
 		ratingSystem.updateStatsOfPlayersByIdForMatch(playersById, matchData);
 	}
+	
 	return true;
 }
 
 
 function getPlayerRatingListByPlayerIds(playerIds, playersById)
 {
-	var result = [];
-	var player, rating;
-	for (var index in playerIds)
+	var result = {};
+	var player, rating, path, group, index;
+	for(var X in matchRatingChangePaths)
 	{
-		player = playersById[playerIds[index]];
-		rating = mainRatingSystem.getRatingOfPlayer(player);
-		result.push(rating);
+		path = matchRatingChangePaths[X];
+		result[X] = group = [];
+		
+		for (index in playerIds)
+		{
+			player = playersById[playerIds[index]];
+			rating = utils.readPropertyChainStr(player, path);
+			group.push(rating);
+		}
+	}
+	return result;
+}
+
+function getPlayerRatingChangesList(playerIds, playersById, srcObject)
+{
+	var result = {};
+	var player, rating, path, group, srcGroup, index;
+	for(var X in matchRatingChangePaths)
+	{
+		path = matchRatingChangePaths[X];
+		srcGroup = srcObject[X];
+		result[X] = group = [];
+		
+		for (index in playerIds)
+		{
+			player = playersById[playerIds[index]];
+			rating = utils.readPropertyChainStr(player, path);
+			group[index] = rating - srcGroup[index];
+		}
 	}
 	return result;
 }

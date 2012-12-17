@@ -49,11 +49,6 @@ this.getRatingChange = function(playersById, leftPlayers, rightPlayers, leftScor
 	return {leftRating:KDleft, rightRating:-KDleft};
 }
 
-this.getRatingOfPlayer = function(player)
-{
-	return getStatsFunction(player).score;
-}
-
 this.updateStatsOfPlayersByIdForMatch = function(playersById, matchData)
 {
 	var isDuoMatch = utils.isDuoMatch(matchData);

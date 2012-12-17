@@ -122,11 +122,6 @@ function Avg()
 	// For primary rating system usage
 	//
 	
-	this.getRatingOfPlayer = function(player)
-	{
-		return getPlayerStatObj(player).rating;
-	}
-	
 	this.getExpectedScores = function (playersById, leftPlayerIds, rightPlayerIds)
 	{
 		var Rleft = getCombinedRatingOfPlayers(playersById, leftPlayerIds);

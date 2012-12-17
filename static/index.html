@@ -422,8 +422,17 @@ function setCurrentView(view)
   <br>
 <graphSelectedPlayers>players...</graphSelectedPlayers>
 <br>
+	<select id="graphType" class="input-medium" onChange="graphView.onTypeChange()">
+      <option value="avg|stats.avg.rating" selected>Rating</option>
+      <option value="avgOffence|stats.avg.offence">Offence</option>
+      <option value="avgDefence|stats.avg.defence">Defence</option>
+      <option value="avgSolo|stats.avg.solo">Solo</option>
+      <option value="kdrSolo|stats.kdr.solo.kdr">kdrSolo</option>
+      <option value="kdrDuo|stats.kdr.duo.kdr">kdrDuo</option>
+    </select>
 <br>
 <div id="graphLoading">Loading...</div>
+    
 </div>
 
 

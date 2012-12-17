@@ -15,6 +15,10 @@ function GraphView(view)
 	var graph = $("<div></div>");
 	view.append(graph);
 	
+
+	var ratingName = "avg";
+	var ratingPath = "stats.avg.rating";
+
 this.show = function()
 {
 	showing = true;
@@ -80,7 +84,7 @@ this.onReloading = function()
 
 this.setMatches = function(data)
 {
-	matches = data;
+	matches = data.reverse();
 	graphLoading.hide();
 	if(showing)
 	{
@@ -92,6 +96,15 @@ this.setMatches = function(data)
 	}
 }
 
+this.onTypeChange = function()
+{
+	var typeValue = $("#graphType").val();
+	var typeValues = typeValue.split("|");
+	ratingName = typeValues[0];
+	ratingPath = typeValues[1];
+	draw();
+}
+
 function draw()
 {
 	if(!selectedPlayers || selectedPlayers.length == 0)
@@ -101,8 +114,14 @@ function draw()
 		return;
 	}
 	
-	var composite, player, playerId, matchi, match, rating, index, color;
+	var ratingsByPlayerId = {};
+	
+	var composite, player, playerId, matchi, match, rating, index, color, change, newrating;
 	var playerNameHTMLs = [];
+	var max = -10000000;
+	var min = 10000000;
+	
+	var ratingPropertyPath = ratingPath.split(".");
 	
 	for(var selindex in selectedPlayers)
 	{
@@ -117,51 +136,67 @@ function draw()
 		
 		var ratings = [];
 		
+		ratingsByPlayerId[playerId] = ratings;
+		rating = readPropertyChain(player, ratingPropertyPath);
+		ratings.push(rating);
+		
 		for(matchi in matches)
 		{
 			match = matches[matchi];
 			
-			index = match.leftPlayers.indexOf(playerId);
-			if(index >= 0)
+			if(match.leftChanges && match.rightChanges)
 			{
-				rating = match.preLeftRatings[index];
-			}
-			else
-			{
-				index = match.rightPlayers.indexOf(playerId);
+				newrating = NaN;
+				index = match.leftPlayers.indexOf(playerId);
 				if(index >= 0)
 				{
-					rating = match.preRightRatings[index];
+					newrating =  match.leftChanges[ratingName][index];
 				}
 				else
 				{
-					rating = ratings.length > 0 ? ratings[ratings.length-1]: 1600;
+					index = match.rightPlayers.indexOf(playerId);
+					if(index >= 0)
+					{
+						newrating = match.rightChanges[ratingName][index];
+					}
 				}
+				if(!isNaN(newrating))
+				{
+					rating = newrating;
+					min = Math.min(min, rating);
+					max = Math.max(max, rating);
+				}
+				ratings.push(rating);
 			}
-			ratings.push(Math.round(rating));
 		}
+	}
+	
+	for(var playerId in ratingsByPlayerId)
+	{
+		player = playersById[playerId];
+		var ratings = ratingsByPlayerId[playerId];
+		ratings = ratings.reverse();
+		var selectionIndex = selectedPlayers.indexOf(player);
 		
-		var num = Number(player.stats.avg.rating);
-		if(!isNaN(num)) ratings.push(num);
-		
-		color = colors[selindex % colors.length];
+		color = colors[selectionIndex % colors.length];
 		
 		graph.sparkline(ratings, {
 			fillColor:false,
 			lineWidth:1,
 			lineColor:color,
-			chartRangeMin:1400,
-			chartRangeMax:1900,
+			chartRangeMin:min,
+			chartRangeMax:max,
 			chartRangeClip:true,
 			height:600,
 			width:view.innerWidth()-10,
 			composite:composite
 		});
+		composite = true;
 		
 		playerNameHTMLs.push(" <a href='javascript:graphView.clearPlayer("+ selectionIndex +");'><span style='color:"+color+"'>" + player.name + "</span></a>");
 		
-		composite = true;
 	}
+	
 	
 	playerNamesEle.html(playerNameHTMLs.join(" | "));
 }
