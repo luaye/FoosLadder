@@ -62,7 +62,8 @@ function runAPIBody(body, response)
 		}
 		catch (err)
 		{
-			console.log("Error:", err)
+			console.log("Error:", err);
+			respondError(response, "Internal error");
 		}
 	}
 	else
