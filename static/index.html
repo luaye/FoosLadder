@@ -37,6 +37,8 @@ var liveView;
 
 var currentView;
 var self = this;
+var shouldLoadAllMatches;
+
 
 function onLoad()
 {
@@ -121,13 +123,37 @@ function loadMatches()
 {
 	matchesView.onReloading();
 	graphView.onReloading();
-	callAPI({request:"getMatches"}, onMatchesLoaded);
+	
+	var request = {request:"getMatches", descending:true};
+	
+	if(!shouldLoadAllMatches)
+	{
+		request.limit = 200;
+	}
+	
+	$(".loadAllMatches").hide();
+	callAPI(request, onMatchesLoaded);
+}
+
+function loadAllMatches()
+{
+	shouldLoadAllMatches = true;
+	loadMatches();
 }
 
 function onMatchesLoaded(data)
 {
+	data = data.reverse();
 	matchesView.setMatches(data);
 	graphView.setMatches(data);
+	if(shouldLoadAllMatches)
+	{
+		$(".loadAllMatches").hide();
+	}
+	else
+	{
+		$(".loadAllMatches").show();	
+	}
 }
 
 function onMatchAdded()
@@ -251,6 +277,11 @@ function setCurrentView(view)
 		<div class="commentArea"></div>
     </td>
   </tr>
+  <tr>
+    <td colspan="7" class="centerCell">
+    <a class="btn btn-link loadAllMatches" href="javascript:loadAllMatches()"><i class="icon-download"></i> Load all matches</a>
+    </td>
+  </tr>
 </table>
 
 
@@ -269,7 +300,8 @@ function setCurrentView(view)
   </tr>
   <tr id="headerRow">
     <th ><a href="javascript:playersView.toggleSortBy('name')">Name</a></th>
-    <th ><a href="javascript:playersView.toggleSortBy('stats.avg.rating')">rating</a></th>
+    <th ><a href="javascript:playersView.toggleSortBy('stats.avg.rating')">overall<br>
+    rating</a></th>
     <th ><a href="javascript:playersView.toggleSortBy('stats.avg.offence')">offence<br />
     rating</a></th>
     <th ><a href="javascript:playersView.toggleSortBy('stats.avg.defence')">defence<br />
@@ -305,7 +337,6 @@ function setCurrentView(view)
   </tr>
   <tr>
     <td colspan="8" class="commentCell">
-    
     </td>
   </tr>
 </table>
@@ -423,7 +454,7 @@ function setCurrentView(view)
 <graphSelectedPlayers>players...</graphSelectedPlayers>
 <br>
 	<select id="graphType" class="input-medium" onChange="graphView.onTypeChange()">
-      <option value="avg|stats.avg.rating" selected>Rating</option>
+      <option value="avg|stats.avg.rating" selected>Overall Rating</option>
       <option value="avgOffence|stats.avg.offence">Offence</option>
       <option value="avgDefence|stats.avg.defence">Defence</option>
       <option value="avgSolo|stats.avg.solo">Solo</option>
@@ -432,7 +463,9 @@ function setCurrentView(view)
     </select>
 <br>
 <div id="graphLoading">Loading...</div>
-    
+<div id="graphArea"></div>
+<br>
+    <a class="btn btn-info loadAllMatches" href="javascript:loadAllMatches()"><i class="icon-download icon-white"></i> Load all matches</a>
 </div>
 
 

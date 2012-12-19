@@ -12,9 +12,7 @@ function GraphView(view)
 	var playerNamesEle = $("graphSelectedPlayers");
 	playerNamesEle.empty();
 	
-	var graph = $("<div></div>");
-	view.append(graph);
-	
+	var graph = $("#graphArea");
 
 	var ratingName = "avg";
 	var ratingPath = "stats.avg.rating";
@@ -50,7 +48,7 @@ function selectAllIfEmpty()
 		for (var X in playersById)
 		{
 			var player = playersById[X];
-			if(player.isGuest != true)
+			if(player.isGuest != true && player.stats.kdr.mixed.games > 10)
 			{
 				selectedPlayers.push(player);
 			}
@@ -83,6 +81,7 @@ this.setPlayers = function(players)
 this.onReloading = function()
 {
 	graphLoading.show();
+	graph.empty();
 }
 
 this.setMatches = function(data)
