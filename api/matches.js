@@ -3,7 +3,7 @@ var utils = require("./../utils.js");
 
 exports.getMatches = function(body, callback)
 {
-    matches = GLOBAL.matchesDB.view('matches', 'by_date',
+    matches = GLOBAL.matchesDB.view('matches', 'by_date', body,
 	function (error, body, headers)
 	{
 		if(error || !body)
