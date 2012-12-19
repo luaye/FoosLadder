@@ -85,7 +85,7 @@ function registerUserDesignDoc()
 	{
 		if(error)
 		{
-    		console.log("Register user design doc FAILED:"+ error);
+    		//console.log("Register user design doc FAILED:"+ error);
 		}
 		else
 		{
@@ -111,7 +111,7 @@ function registerMatchesDesignDoc()
 	{
 		if(error)
 		{
-    		console.log("Register match design doc FAILED:"+ error);
+    		//console.log("Register match design doc FAILED:"+ error);
 		}
 		else
 		{
