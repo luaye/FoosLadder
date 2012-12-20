@@ -5,6 +5,7 @@ exports.getRecentGainers = function(body, callback)
 {
 	var playerLimit = !isNaN(body.limit) ? body.limit : 3;
 	var matchLimit = !isNaN(body.matchLimit) ? body.matchLimit : 10;
+	var rounding = !isNaN(body.rounding) ? body.rounding : 100;
 	
 	matches.getMatches({limit:matchLimit, descending:true}, function(matches)
 	{
@@ -20,9 +21,11 @@ exports.getRecentGainers = function(body, callback)
 		users.getPlayersByIds({}, function(playersById)
 		{
 			var items = [];
+			var value;
 			for(X in playersRatingsById)
 			{
-				items.push({text:playersById[X].name, value:playersRatingsById[X]});
+				value = Math.round(playersRatingsById[X] * rounding) / rounding;
+				items.push({text:playersById[X].name, value:value});
 			}
 			items.sort(function(a,b)
 			{
