@@ -2,6 +2,7 @@ var qs = require('querystring');
 var users = require("./api/users.js");
 var matches = require("./api/matches.js");
 var init = require("./api/init.js");
+var customapi = require("./api/customapi.js");
 
 init.init();
 
@@ -17,7 +18,10 @@ var map = {
 	getMatchesRaw:matches.getMatchesRaw,
 	addMatch:matches.addMatch,
 	rebuiltMatchStats:matches.rebuiltMatchStats,
-	repeatMatchStats:matches.repeatMatchStats
+	repeatMatchStats:matches.repeatMatchStats,
+	
+	
+	getRecentGainers:customapi.getRecentGainers
 	};
 
 exports.runAPI = function(request, response)
