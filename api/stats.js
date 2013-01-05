@@ -57,10 +57,44 @@ exports.getRatingChange = function(playersById, leftPlayerIds, rightPlayerIds, l
 exports.getMatchUpsOfPlayers = function(playerIds, playersById)
 {
 	var playersCount = playerIds.length;
-	if(playersCount < 2)return [];
-	if(playersCount > 4) return [];
+	var idsCombos = [];
+	if(playersCount == 2)
+	{
+		idsCombos.push(mapArrayIndexToIds([1,2]));
+	}
+	else if(playersCount == 3)
+	{
+		idsCombos.push(mapArrayIndexToIds([1,2,3]));
+		idsCombos.push(mapArrayIndexToIds([1,3,2]));
+		idsCombos.push(mapArrayIndexToIds([2,1,3]));
+		idsCombos.push(mapArrayIndexToIds([2,3,1]));
+		idsCombos.push(mapArrayIndexToIds([3,2,1]));
+		idsCombos.push(mapArrayIndexToIds([3,1,2]));
+	}
+	else if(playersCount == 4)
+	{
+		idsCombos.push(mapArrayIndexToIds([1,2,3,4]));
+		idsCombos.push(mapArrayIndexToIds([1,2,4,3]));
+		idsCombos.push(mapArrayIndexToIds([1,3,2,4]));
+		idsCombos.push(mapArrayIndexToIds([1,3,4,2]));
+		idsCombos.push(mapArrayIndexToIds([1,4,2,3]));
+		idsCombos.push(mapArrayIndexToIds([1,4,3,2]));
+		
+		idsCombos.push(mapArrayIndexToIds([2,1,3,4]));
+		idsCombos.push(mapArrayIndexToIds([2,1,4,3]));
+		idsCombos.push(mapArrayIndexToIds([2,3,4,1]));
+		idsCombos.push(mapArrayIndexToIds([2,4,3,1]));
+		
+		idsCombos.push(mapArrayIndexToIds([3,1,4,2]));
+		idsCombos.push(mapArrayIndexToIds([3,2,4,1]));
+	}
 	
-	var idsCombos = getCombosOf(playerIds, [], true);
+	function mapArrayIndexToIds(array)
+	{
+		for(var X in array) array[X] = playerIds[(array[X] - 1)];
+		return array;
+	}
+	
 	var idsCombo, combo, leftPlayerIds, rightPlayerIds;
 	var len = idsCombos.length;
 	var mid = Math.ceil(playersCount * 0.5);
@@ -79,41 +113,7 @@ exports.getMatchUpsOfPlayers = function(playerIds, playersById)
 	return result.sort(function (a, b)
 	{
 		return (b.leftScore + b.rightScore) - (a.leftScore + a.rightScore);
-	});
-	
-}
-
-
-function getCombosOf(array, prefix, halfLen)
-{
-	// this still produce a few duplicate teams such as [11,33, 22,44] vs [22,44, 11,33] and [22,33, 11,44] vs [11,44, 22,33]
-	var combos = new Array();
-	var len = array.length;
-	var combo, first, subcombos, lenj, j;
-	var hasChildren = prefix.length + 1 < len;
-	if(halfLen) len = Math.ceil(len * 0.5);
-	for( var i = 0; i < len; i++)
-	{
-		first = array[i];
-		if(prefix.indexOf(first) < 0)
-		{
-			combo = prefix.concat(first);
-			if(hasChildren)
-			{
-				subcombos = getCombosOf(array, combo);
-				lenj = subcombos.length;
-				for(j = 0; j < lenj; j++)
-				{
-					combos.push(subcombos[j]);
-				}
-			}
-			else
-			{
-				combos.push(combo);
-			}
-		}
-	}
-	return combos;
+	});	
 }
 
 exports.updateStatsOfPlayersByIdForMatch = function(playersById, matchData)
