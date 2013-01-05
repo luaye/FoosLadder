@@ -14,6 +14,7 @@ var map = {
 	getPlayersByIds:users.getPlayersByIds,
 	getExpectedScores:users.getExpectedScores,
 	getRatingChange:users.getRatingChange,
+	getMatchUps:users.getMatchUps,
 	getMatches:matches.getMatches,
 	getMatchesRaw:matches.getMatchesRaw,
 	addMatch:matches.addMatch,
@@ -57,17 +58,27 @@ function runAPIBody(body, response)
 	{
 		try
 		{
-			apifunction(body, function(data)
-			{
-				response.writeHeader(200, {"Content-Type": "text/plain", "Cache-control": "no-cache"});
-				response.write(JSON.stringify(data)); 
-				response.end();
-			});
+			apifunction(body, onApiFunctionCallback);
 		}
 		catch (err)
 		{
 			console.log("Error:", err);
 			respondError(response, "Internal error");
+		}
+		
+		function onApiFunctionCallback(data)
+		{
+			try
+			{
+				response.writeHeader(200, {"Content-Type": "text/plain", "Cache-control": "no-cache"});
+				response.write(JSON.stringify(data)); 
+				response.end();
+			}
+			catch (err)
+			{
+				console.log("Error:", data, err);
+				respondError(response, "Internal error");
+			}
 		}
 	}
 	else

@@ -170,6 +170,26 @@ exports.getRatingChange = function(body, callback)
 	
 }
 
+exports.getMatchUps = function(body, callback)
+{
+	var leftPlayers = utils.getLeftPlayersOfObject(body);
+	var rightPlayers = utils.getRightPlayersOfObject(body);
+	var playerIds = leftPlayers.concat(rightPlayers);
+	if(playerIds.length == 0) {
+		callback([]);
+		return;
+	}
+	getPlayersByIdUsingIds(playerIds, function(playersById)
+	{
+		if(playersById)
+		{
+			callback(stats.getMatchUpsOfPlayers(playerIds, playersById));	
+		}
+		else callback({});
+	});
+	
+}
+
 function getPlayersByIdUsingIds(playerIds, callback)
 {
 	var playersById = {};

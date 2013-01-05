@@ -54,6 +54,68 @@ exports.getRatingChange = function(playersById, leftPlayerIds, rightPlayerIds, l
 	return mainRatingSystem.getRatingChange(playersById, leftPlayerIds, rightPlayerIds, leftScore, rightScore)
 }
 
+exports.getMatchUpsOfPlayers = function(playerIds, playersById)
+{
+	var playersCount = playerIds.length;
+	if(playersCount < 2)return [];
+	if(playersCount > 4) return [];
+	
+	var idsCombos = getCombosOf(playerIds, [], true);
+	var idsCombo, combo, leftPlayerIds, rightPlayerIds;
+	var len = idsCombos.length;
+	var mid = Math.ceil(playersCount * 0.5);
+	var result = [];
+	for(var i = 0 ; i < len; i++)
+	{
+		idsCombo = idsCombos[i];
+		leftPlayerIds = idsCombo.slice(0, mid);
+		rightPlayerIds = idsCombo.slice(mid, playersCount);
+		combo = mainRatingSystem.getExpectedScores(playersById, leftPlayerIds, rightPlayerIds);
+		combo.leftPlayers = leftPlayerIds;
+		combo.rightPlayers = rightPlayerIds;
+		result.push(combo);
+	}
+	
+	return result.sort(function (a, b)
+	{
+		return (b.leftScore + b.rightScore) - (a.leftScore + a.rightScore);
+	});
+	
+}
+
+
+function getCombosOf(array, prefix, halfLen)
+{
+	// this still produce a few duplicate teams such as [11,33, 22,44] vs [22,44, 11,33] and [22,33, 11,44] vs [11,44, 22,33]
+	var combos = new Array();
+	var len = array.length;
+	var combo, first, subcombos, lenj, j;
+	var hasChildren = prefix.length + 1 < len;
+	if(halfLen) len = Math.ceil(len * 0.5);
+	for( var i = 0; i < len; i++)
+	{
+		first = array[i];
+		if(prefix.indexOf(first) < 0)
+		{
+			combo = prefix.concat(first);
+			if(hasChildren)
+			{
+				subcombos = getCombosOf(array, combo);
+				lenj = subcombos.length;
+				for(j = 0; j < lenj; j++)
+				{
+					combos.push(subcombos[j]);
+				}
+			}
+			else
+			{
+				combos.push(combo);
+			}
+		}
+	}
+	return combos;
+}
+
 exports.updateStatsOfPlayersByIdForMatch = function(playersById, matchData)
 {
 	var playerIdsInMatch = matchData.leftPlayers.concat(matchData.rightPlayers);
