@@ -71,6 +71,40 @@ exports.addUser = function(body, callback)
 	});	
 }
 
+exports.assignCardId = function(body, callback)
+{
+	exports.isAsscessTokenValidForAdding(body.fbAccessToken, function(ok) {
+		if(ok)
+		{
+			var playerIds = [body.playerId];
+			getPlayersByIdUsingIds(playerIds, function(playersById)
+			{
+				if(playersById && playersById[body.playerId])
+				{
+					var player = playersById[body.playerId];
+					
+					if(player["cardIds"] == null)
+					{
+						player["cardIds"] = [];
+					}
+					player.cardIds.push(String(body.cardId));
+					
+					updatePlayersByIdToDatabase(playersById, function(ok)
+					{
+						callback({status:"ok"});
+					});
+				}
+				else callback({status:"error", message:"Not found."});
+			});
+		}
+		else
+		{
+			console.log("assignCardId: "+ body.name +" NOT AUTHORIZED");
+			callback({status:"error", message:"Not authorized."});
+		}
+	});	
+}
+
 function addUserToDB(body, callback)
 {
 	if(!body.name)
