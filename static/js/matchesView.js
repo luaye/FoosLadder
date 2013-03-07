@@ -102,6 +102,10 @@ function fillRowWithMatch(tableRow, match)
 	setContentsOfTag(tableRow, "rightScore", match.rightScore);
 	
 	var dateStr = date.getDate() + ", "+ (date.getMonth()+1) + ", " + date.getFullYear() + "<br/>" + doubleDigit(date.getHours()) + ":" + doubleDigit(date.getMinutes());
+	if(match.totalSeconds > 0)
+	{
+		dateStr += " [" + Math.round(match.totalSeconds / 60) + " mins]"
+	}
 	setContentsOfTag(tableRow, "matchDate", dateStr);
 	
 	var matchId = match._id;
