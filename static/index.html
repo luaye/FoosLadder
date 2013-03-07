@@ -287,7 +287,7 @@ function setCurrentView(view)
 
 <table class="table table-bordered table-condensed table-hover table-striped" id="playersTable" >
   <tr>
-    <td colspan="8">
+    <td colspan="7">
       <div class="btn-group">
       	<a class="btn btn-small" href="javascript:playersView.addPlayer()"><i class="icon-plus-sign"></i> Add player</a>
       	<a class="btn btn-small" href="javascript:loadPlayers()"><i class="icon-refresh"></i> Reload</a>
@@ -308,7 +308,6 @@ function setCurrentView(view)
     rating</a></th>
     <th ><a href="javascript:playersView.toggleSortBy('stats.avg.solo')">solo<br />
     rating</a></th>
-    <th ><a href="javascript:playersView.toggleSortBy('stats.elo.mixed.score')">(old) rating</a></th>
     <th >duo<br />
     <a href="javascript:playersView.toggleSortBy('stats.kdr.duo.wins')">wins </a>
     /
@@ -328,15 +327,14 @@ function setCurrentView(view)
     <td ><rating path="stats.avg.offence">3</rating></td>
     <td ><rating path="stats.avg.defence">3</rating></td>
     <td ><rating path="stats.avg.solo">3</rating></td>
-    <td ><rating path="stats.elo.mixed.score">3</rating></td>
     <td ><duoWins>2/3/0.5</duoWins></td>
     <td ><soloWins>2/2/0.5</soloWins></td>
   </tr>
   <tr id="loadingRow">
-    <td colspan="8" class="loadingCell">Getting players...</td>
+    <td colspan="7" class="loadingCell">Getting players...</td>
   </tr>
   <tr>
-    <td colspan="8" class="commentCell">
+    <td colspan="7" class="commentCell">
     </td>
   </tr>
 </table>

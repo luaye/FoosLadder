@@ -1,6 +1,6 @@
 var utils = require("./../utils.js");
 var kdr = require("./rating/kdr.js");
-var elo = require("./rating/elo.js");
+//var elo = require("./rating/elo.js");
 var avg = require("./rating/avg.js");
 var versus = require("./rating/versus.js");
 
@@ -19,9 +19,10 @@ var mainRatingSystem = new avg.Avg();
 var ratingSystems = [
 	kdr.getSystem(),
 	mainRatingSystem, 
-	elo.getSystem(elo.MODE_MIXED),
+	/*elo.getSystem(elo.MODE_MIXED),
 	elo.getSystem(elo.MODE_SOLO), 
 	elo.getSystem(elo.MODE_DUO),
+	*/
 	versus
 	];
 	
