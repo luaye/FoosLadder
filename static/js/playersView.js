@@ -8,6 +8,7 @@ var self = this;
 var sortKey = "stats.avg.rating";
 var sortReversed;
 var commentsInitialised;
+var shouldShowAllPlayers = false;
 
 table.clear();
 table.setLoading(true);
@@ -43,6 +44,13 @@ this.setPlayers = function(data)
 	onPlayersLoaded(data)
 }
 
+this.showAllPlayers = function()
+{
+	$(".showAllPlayers").hide();
+	shouldShowAllPlayers = true;
+	updateRows();
+}
+
 this.updateRows = function()
 {
 	table.clear();
@@ -65,7 +73,7 @@ function updateRows()
 	for(X in players)
 	{
 		var player = players[X];
-		if(player.isGuest != true)
+		if(player.isGuest != true && (shouldShowAllPlayers || !player.inactive))
 		{
 			userRow = table.createRow();
 			fillRowWithUser(userRow, player);
