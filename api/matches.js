@@ -100,6 +100,12 @@ function addMatchToDb(body, callback)
 	matchData.leftScore = Number(body.leftScore);
 	matchData.rightScore = Number(body.rightScore);
 	
+	var totalSeconds = Number(body.totalSeconds);
+	if(!isNaN(totalSeconds) && totalSeconds > 0)
+	{
+		matchData.totalSeconds = totalSeconds;
+	}
+	
 	if(!validateScore(matchData.leftScore) || !validateScore(matchData.rightScore) 
 	|| 
 	(matchData.leftScore < 5 && matchData.rightScore < 5))
