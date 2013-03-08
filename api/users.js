@@ -375,7 +375,7 @@ exports.isAsscessTokenValidForAdding = function(accessToken, callback)
 			{
 				callback(false);
 			}
-			if(config.allowedFacebookIds.indexOf(id) >= 0 || config.allowedFacebookIds.indexOf(username) >= 0)
+			else if(config.allowedFacebookIds.indexOf(id) >= 0 || config.allowedFacebookIds.indexOf(username) >= 0)
 			{
 				callback(true);
 			}
