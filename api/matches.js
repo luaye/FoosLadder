@@ -192,7 +192,8 @@ function addMatchToDatabase(matchData, callback)
 		if(ok)
 		{
 			//console.log("matches.addMatchToDatabase: "+JSON.stringify(matchData));
-			GLOBAL.matchesDB.insert(matchData, null, function (error, body, headers)
+			
+			GLOBAL.matchesDBClone.insert(matchData, null, function (error, body, headers)
 			{
 				if(error || !body)
 				{
@@ -201,8 +202,19 @@ function addMatchToDatabase(matchData, callback)
 				}
 				else
 				{
-					//console.log("matches.addMatch OK: " + JSON.stringify(body));
-					callback({status:"OK"});	
+					GLOBAL.matchesDB.insert(matchData, null, function (error, body, headers)
+					{
+						if(error || !body)
+						{
+							console.log("matches.addMatch error: "+error);
+							callback({status:"error"});
+						}
+						else
+						{
+							//console.log("matches.addMatch OK: " + JSON.stringify(body));
+							callback({status:"OK"});	
+						}
+					});	
 				}
 			});
 		}
