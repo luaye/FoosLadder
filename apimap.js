@@ -1,5 +1,6 @@
 var qs = require('querystring');
 var users = require("./api/users.js");
+var companies = require("./api/companies.js");
 var matches = require("./api/matches.js");
 var init = require("./api/init.js");
 var customapi = require("./api/customapi.js");
@@ -21,9 +22,9 @@ var map = {
 	assignCardId:users.assignCardId,
 	rebuiltMatchStats:matches.rebuiltMatchStats,
 	repeatMatchStats:matches.repeatMatchStats,
-	
-	
-	getRecentGainers:customapi.getRecentGainers
+	getCompanies:companies.getCompanies,
+	getRecentGainers:customapi.getRecentGainers,
+	addCompany:companies.addCompany,
 	};
 
 exports.runAPI = function(request, response)
@@ -37,7 +38,7 @@ exports.runAPI = function(request, response)
         request.on('end', function () {
             var body = qs.parse(bodystring);
 			console.log("body: "+JSON.stringify(body));
-			
+
 			runAPIBody(body, response);
         });
     }
@@ -45,7 +46,7 @@ exports.runAPI = function(request, response)
 	{
 		var body = require('url').parse(request.url, true).query;
 		console.log("body: "+JSON.stringify(body));
-			
+
 		runAPIBody(body, response);
 	}
 };
@@ -66,13 +67,13 @@ function runAPIBody(body, response)
 			console.log("Error:", err);
 			respondError(response, "Internal error");
 		}
-		
+
 		function onApiFunctionCallback(data)
 		{
 			try
 			{
 				response.writeHeader(200, {"Content-Type": "text/plain", "Cache-control": "no-cache"});
-				response.write(JSON.stringify(data)); 
+				response.write(JSON.stringify(data));
 				response.end();
 			}
 			catch (err)
@@ -91,8 +92,8 @@ function runAPIBody(body, response)
 function respondError(response, message)
 {
 	console.log("Erorr with request. "+message);
-	response.writeHeader(500, {"Content-Type": "text/plain"});  
-	response.write('{"status":"error", "message":"'+message+'"}'); 
+	response.writeHeader(500, {"Content-Type": "text/plain"});
+	response.write('{"status":"error", "message":"'+message+'"}');
 	response.end();
 }
 

@@ -56,8 +56,8 @@ exports.getPlayersByIds = function(body, callback)
 
 exports.addUser = function(body, callback)
 {
-	//console.log("users.addUser: "+body.name);
-	
+	console.log("users.addUser: "+body);
+
 	exports.isAsscessTokenValidForAdding(body.fbAccessToken, function(ok) {
 		if(ok)
 		{
@@ -68,7 +68,7 @@ exports.addUser = function(body, callback)
 			console.log("addUser: "+ body.name +" NOT AUTHORIZED");
 			callback({status:"error", message:"Not authorized."});
 		}
-	});	
+	});
 }
 
 exports.assignCardId = function(body, callback)
@@ -82,13 +82,13 @@ exports.assignCardId = function(body, callback)
 				if(playersById && playersById[body.playerId])
 				{
 					var player = playersById[body.playerId];
-					
+
 					if(player["cardIds"] == null)
 					{
 						player["cardIds"] = [];
 					}
 					player.cardIds.push(String(body.cardId));
-					
+
 					updatePlayersByIdToDatabase(playersById, function(ok)
 					{
 						callback({status:"ok"});
@@ -102,7 +102,7 @@ exports.assignCardId = function(body, callback)
 			console.log("assignCardId: "+ body.name +" NOT AUTHORIZED");
 			callback({status:"error", message:"Not authorized."});
 		}
-	});	
+	});
 }
 
 function addUserToDB(body, callback)
@@ -114,8 +114,9 @@ function addUserToDB(body, callback)
 	}
 	var player = {name: body.name};
 	if(body.facebookId) player.facebookId = body.facebookId;
+	if(body.company) player.company = body.company;
 	if(body.initialExperience) player.initialExperience = body.initialExperience;
-	
+	console.log("trying to add: "+body + "body" +player);
 	exports.resetPlayerStats(player);
 	GLOBAL.usersDB.insert(player, null, function (error, body, headers)
 	{
@@ -162,13 +163,13 @@ exports.getExpectedScores = function(body, callback)
 {
 	var leftPlayers = utils.getLeftPlayersOfObject(body);
 	var rightPlayers = utils.getRightPlayersOfObject(body);
-	
+
 	if(leftPlayers.length == 0 || rightPlayers.length == 0)
 	{
 		callback({leftScore:0, rightScore:0});
 		return;
 	}
-	
+
 	var playerIds = leftPlayers.concat(rightPlayers);
 	getPlayersByIdUsingIds(playerIds, function(playersById)
 	{
@@ -184,13 +185,13 @@ exports.getRatingChange = function(body, callback)
 {
 	var leftPlayers = utils.getLeftPlayersOfObject(body);
 	var rightPlayers = utils.getRightPlayersOfObject(body);
-	
+
 	if(leftPlayers.length == 0 || rightPlayers.length == 0)
 	{
 		callback({leftRating:0, rightRating:0});
 		return;
 	}
-	
+
 	var playerIds = leftPlayers.concat(rightPlayers);
 	getPlayersByIdUsingIds(playerIds, function(playersById)
 	{
@@ -201,7 +202,7 @@ exports.getRatingChange = function(body, callback)
 		}
 		else callback({});
 	});
-	
+
 }
 
 exports.getMatchUps = function(body, callback)
@@ -217,11 +218,11 @@ exports.getMatchUps = function(body, callback)
 	{
 		if(playersById)
 		{
-			callback(stats.getMatchUpsOfPlayers(playerIds, playersById));	
+			callback(stats.getMatchUpsOfPlayers(playerIds, playersById));
 		}
 		else callback({});
 	});
-	
+
 }
 
 function getPlayersByIdUsingIds(playerIds, callback)
@@ -249,7 +250,7 @@ function getPlayersByIdUsingIds(playerIds, callback)
 					return;
 				}
 			}
-			
+
 			callback(playersById);
 		}
 	});
@@ -297,7 +298,7 @@ function updateMatchesToDatabase(matchDatas, callback)
 {
 	var bulk = {};
 	bulk.docs = [];
-	
+
 	for (X in matchDatas)
 	{
 		bulk.docs.push(matchDatas[X]);
@@ -328,7 +329,7 @@ function updatePlayersByIdToDatabase(playersById, callback)
 		delete player.id;
 		bulk.docs.push(player);
 	}
-		
+
 	GLOBAL.usersDB.bulk(bulk, function (error, body, headers)
 	{
 		if(error || !body)
@@ -402,5 +403,6 @@ exports.isAsscessTokenValidForAdding = function(accessToken, callback)
 			console.log("isAsscessTokenValidForAdding: FAILED", response.body.message);
 			callback(false);
 		}
-	})	
+	})
 }
+
