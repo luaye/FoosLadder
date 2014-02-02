@@ -4,7 +4,7 @@
     <meta charset="utf-8">
 	<meta name="viewport" id="viewport" content="width=480"/>
 	<meta name="apple-mobile-web-app-capable" content="yes">
-    
+
 	<title>Foos Ladder</title>
 
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -22,6 +22,7 @@
 <script type="text/javascript" src="js/matchesView.js"></script>
 <script type="text/javascript" src="js/addMatchView.js"></script>
 <script type="text/javascript" src="js/playersView.js"></script>
+<script type="text/javascript" src="js/companiesView.js"></script>
 <script type="text/javascript" src="js/playerInspect.js"></script>
 <script type="text/javascript" src="js/graphView.js"></script>
 <script type="text/javascript" src="js/liveView.js"></script>
@@ -31,6 +32,7 @@
 <script type="text/javascript">
 var matchesView;
 var playersView;
+var companiesView;
 var addMatchView;
 var graphView;
 var liveView;
@@ -42,39 +44,45 @@ var shouldLoadAllMatches;
 
 function onLoad()
 {
-	
+
 	var matchesTable = new LoadableTable(document.getElementById("matchesTable"));
 	matchesView = new MatchesView(matchesTable);
 	matchesView.loadPlayers = loadPlayers;
 	matchesView.loadMatches = loadMatches;
 	matchesView.hide();
-	
+
 	var playersTable = new LoadableTable(document.getElementById("playersTable"));
 	playersView = new PlayersView(playersTable);
 	playersView.loadPlayers = loadPlayers;
 	playersView.hide();
-	
+
+	var companiesTable = new LoadableTable(document.getElementById("companiesTable"));
+	companiesView = new CompaniesView(companiesTable);
+	companiesView.loadCompanies = loadCompanies;
+	companiesView.loadCompanies();
+	companiesView.hide();
+
 	var playerInspectTable = new LoadableTable(document.getElementById("playerInspectTable"));
 	playerInspectView = new PlayerInspectView(playerInspectTable);
 	playersView.loadPlayers = loadPlayers;
 	playerInspectView.hide();
-	
+
 	var addMatchTable = document.getElementById("addMatchTable");
 	addMatchView = new AddMatchView(addMatchTable);
 	addMatchView.loadPlayers = loadPlayers;
 	addMatchView.onMatchAdded = onMatchAdded;
 	addMatchView.hide();
-	
+
 	var graphDiv = $("#graphView");
 	graphView = new GraphView(graphDiv);
 	graphView.loadPlayers = loadPlayers;
 	graphView.loadMatches = loadMatches;
 	graphView.hide();
-	
+
 	liveView = new LiveView($("#liveView"));
 	liveView.loadPlayers = loadPlayers;
 	liveView.hide();
-	
+
 	var location = String(window.location);
 	var hashPath = "";
 	var hashIndex = location.indexOf("#");
@@ -83,7 +91,7 @@ function onLoad()
 		hashPath = location.substring(hashIndex + 1);
 	}
 	var urlComponents = hashPath.split("/");
-	
+
 	$(".body").show();
 	switch (urlComponents[0])
 	{
@@ -110,6 +118,12 @@ function loadPlayers()
 	callAPI({request:"getPlayers"}, self.onPlayersLoaded);
 }
 
+function loadCompanies()
+{
+	companiesView.onReloading();
+	callAPI({request:"getCompanies"}, self.onCompaniesLoaded);
+}
+
 function onPlayersLoaded(players)
 {
 	graphView.setPlayers(players);
@@ -123,14 +137,14 @@ function loadMatches()
 {
 	matchesView.onReloading();
 	graphView.onReloading();
-	
+
 	var request = {request:"getMatches", descending:true};
-	
+
 	if(!shouldLoadAllMatches)
 	{
 		request.limit = 200;
 	}
-	
+
 	$(".loadAllMatches").hide();
 	callAPI(request, onMatchesLoaded);
 }
@@ -152,7 +166,7 @@ function onMatchesLoaded(data)
 	}
 	else
 	{
-		$(".loadAllMatches").show();	
+		$(".loadAllMatches").show();
 	}
 }
 
@@ -197,6 +211,19 @@ function showPlayers()
 	setCurrentView(playersView);
 }
 
+
+function onCompaniesLoaded(companies)
+{
+	companiesView.setCompanies(companies);
+	playersView.setCompanies(companies);
+}
+
+function showCompanies()
+{
+	setActiveMenu($("#companiesMenu"));
+	setCurrentView(companiesView);
+}
+
 function inspect(userName)
 {
 	playerInspectView.setPlayer(userName);
@@ -231,17 +258,18 @@ function setCurrentView(view)
 }
 
 </script>
-</head> 
-<body onLoad="onLoad()"> 
+</head>
+<body onLoad="onLoad()">
 <div id="fb-root"></div>
     <div class="container-narrow">
-    
+
       <div class="navbar navbar-inner">
         <a class="brand" style="font-weight:bold">Foos Ladder</a>
         <ul class="nav">
           <li id="matchesMenu"><a href="javascript:showMatches()" >Matches</a></li>
           <li id="addMatchesMenu"><a href="javascript:showAddMatch()">Add Match</a></li>
           <li id="playersMenu"><a href="javascript:showPlayers()">Players</a></li>
+          <li id="companiesMenu"><a href="javascript:showCompanies()">Companies</a></li>
           <li id="graphMenu"><a href="javascript:showGraph()">Graph</a></li>
           <!--
           <li id="liveMenu"><a href="javascript:showLive()">Live</a></li>
@@ -285,10 +313,38 @@ function setCurrentView(view)
   </tr>
 </table>
 
+<table class="table table-bordered table-condensed table-hover table-striped" id="companiesTable" >
+  <tr>
+    <td colspan="8">
+      <div class="btn-group">
+      	<a class="btn btn-small" href="javascript:companiesView.addCompany()"><i class="icon-plus-sign"></i> Add Company</a>
+      	<a class="btn btn-small" href="javascript:loadCompanies()"><i class="icon-refresh"></i> Reload</a>
+      </div>
+    </td>
+  </tr>
+  <tr id="headerRow">
+    <th ><a href="javascript:playersView.toggleSortBy('name')">Name</a></th>
+  </tr>
+  <tr id="sampleRow">
+    <td  style="text-align:left"><companyName>NAME</companyName></td>
+  </tr>
+  <tr id="loadingRow">
+    <td colspan="8" class="loadingCell">Getting companies...</td>
+  </tr>
+  <tr>
+    <td colspan="8" class="centerCell showAllCompanies">
+    <a class="btn btn-link" href="javascript:companiesView.showAllCompanies()"><i class="icon-plus-sign"></i> Show all companies</a>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="8" class="commentCell">
+    </td>
+  </tr>
+</table>
 
 <table class="table table-bordered table-condensed table-hover table-striped" id="playersTable" >
   <tr>
-    <td colspan="7">
+    <td colspan="8">
       <div class="btn-group">
       	<a class="btn btn-small" href="javascript:playersView.addPlayer()"><i class="icon-plus-sign"></i> Add player</a>
       	<a class="btn btn-small" href="javascript:loadPlayers()"><i class="icon-refresh"></i> Reload</a>
@@ -301,6 +357,7 @@ function setCurrentView(view)
   </tr>
   <tr id="headerRow">
     <th ><a href="javascript:playersView.toggleSortBy('name')">Name</a></th>
+    <th ><a href="javascript:playersView.toggleSortBy('company')">Company</a></th>
     <th ><a href="javascript:playersView.toggleSortBy('stats.avg.rating')">overall<br>
     rating</a></th>
     <th ><a href="javascript:playersView.toggleSortBy('stats.avg.offence')">offence<br />
@@ -324,6 +381,7 @@ function setCurrentView(view)
   </tr>
   <tr id="sampleRow">
     <td  style="text-align:left"><playerImage></playerImage> <playerName>NAME</playerName></td>
+    <td  style="text-align:left"><playerCompany>COMPANY</playerCompany></td>
     <td ><rating path="stats.avg.rating">3</rating></td>
     <td ><rating path="stats.avg.offence">3</rating></td>
     <td ><rating path="stats.avg.defence">3</rating></td>
@@ -332,15 +390,15 @@ function setCurrentView(view)
     <td ><soloWins>2/2/0.5</soloWins></td>
   </tr>
   <tr id="loadingRow">
-    <td colspan="7" class="loadingCell">Getting players...</td>
+    <td colspan="8" class="loadingCell">Getting players...</td>
   </tr>
   <tr>
-    <td colspan="7" class="centerCell showAllPlayers">
+    <td colspan="8" class="centerCell showAllPlayers">
     <a class="btn btn-link" href="javascript:playersView.showAllPlayers()"><i class="icon-plus-sign"></i> Show all players</a>
     </td>
   </tr>
   <tr>
-    <td colspan="7" class="commentCell">
+    <td colspan="8" class="commentCell">
     </td>
   </tr>
 </table>
@@ -350,7 +408,7 @@ function setCurrentView(view)
   <tr>
     <td colspan="3" align="center">
  	Player: <inspectedPlayer>NAME</inspectedPlayer>
-    
+
     Heads: <heads>3</heads> out of <total>10</total>
 
     </td>
@@ -429,14 +487,14 @@ function setCurrentView(view)
     Date: now?
       <input name="dateNow" type="checkbox" id="dateNow" checked="checked" onchange="addMatchView.dateNowChanged();"/>
       <div id="datePicker" style="margin-top:10px;">
-          <i class="icon-calendar"></i> 
+          <i class="icon-calendar"></i>
           <select class="input-small date-year">
           </select>
           <select class="input-mini date-month">
           </select>
           <select class="input-mini date-day">
           </select>
-          
+
           <i class="icon-time"></i>
           <select class="input-mini date-hour">
           </select>
@@ -533,10 +591,17 @@ $(".body").hide();
     <h3>Add Player</h3>
   </div>
   <div class="modal-body">
-  
+
   	<div class="row-fluid">
       <div class="span3">Name</div>
       <div class="span5"><input id="addPlayerName" type="text" placeholder=""></div>
+    </div>
+    <div class="row-fluid">
+	  <div class="span3">Company</div>
+	  <div class="span5">
+	  	<select id="addPlayerCompany" class="input-medium">
+	  	</select>
+	  </div>
     </div>
   	<div class="row-fluid">
       <div class="span3">Facebook ID</div>
@@ -556,5 +621,24 @@ $(".body").hide();
   </div>
 </div>
 
-</body> 
+
+<div id="addCompanyModal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="dialogLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3>Add Company</h3>
+  </div>
+  <div class="modal-body">
+
+  	<div class="row-fluid">
+      <div class="span3">Name</div>
+      <div class="span5"><input id="addCompanyName" type="text" placeholder=""></div>
+    </div>
+
+    <div align="center">
+    <input type="submit" name="submit" id="addCompanySubmit" value="Submit" onClick="companiesView.onAddSubmit()" class="btn btn-primary"/>
+    </div>
+  </div>
+</div>
+
+</body>
 </html>

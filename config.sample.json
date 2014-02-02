@@ -5,7 +5,8 @@
 		"port": 5984,
 		"usersDB": "foosplayers",
 		"matchesDB": "foosmatches",
-		"matchesDBClone": "foosmatchesClone"
+		"matchesDBClone": "foosmatchesClone",
+		"companiesDB": "fooscompanies"
 		},
 	"maxRatingChange":64,
 	"useFacebookAuth":true,
