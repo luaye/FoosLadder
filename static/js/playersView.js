@@ -86,9 +86,9 @@ function updateRows()
 	for(X in players)
 	{
 		var player = players[X];
-		if(player.isGuest != true && (shouldShowAllPlayers || (!player.inactive && IsPlayerActiveRecently(player))))
+		if(player.isGuest != true && (shouldShowAllPlayers || (!player.inactive && PlayerShouldBeVisibleByDefault(player))))
 		{
-			filteredPlayers.add(player);
+			filteredPlayers.push(player);
 		}
 	}
 	
@@ -118,6 +118,7 @@ function fillRowWithUser(tableRow, user)
 	var company = user.company;
 	if (company == null)
 		company = "";
+	else company = GetCompanyNameById(user.company);
 
 	var image = getPlayerImageElement(user, 30);
 	var row = $(tableRow);
@@ -134,6 +135,30 @@ function fillRowWithUser(tableRow, user)
 		var str = safeStr(readPropertyChainStr(user, String(ratingtag.attr("path"))));
 		ratingtag.text(str);
 	});
+}
+
+function GetCompanyNameById(id)
+{
+	if(companies)
+	{
+		for(var X in companies)
+		{
+			if(companies[X].id == id) return companies[X].name;
+		}
+	}
+	return "";
+}
+
+function GetCompanyIdByName(name)
+{
+	if(companies)
+	{
+		for(var X in companies)
+		{
+			if(companies[X].name == name) return companies[X].id;
+		}
+	}
+	return "";
 }
 
 function safeStr(obj, decimals)
@@ -185,7 +210,12 @@ this.onAddSubmit = function()
 	var company = $("#addPlayerCompany").val();
 	var facebookId = $("#addPlayerFBId").val();
 	var experience = $("#addPlayerExp").val();
-
+	
+	if(company)
+	{
+		company = GetCompanyIdByName(company);
+	}
+	
 	var request = {request:"addPlayer",
 		fbAccessToken:facebookAccessToken,
 		name:name,

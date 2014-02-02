@@ -379,6 +379,11 @@ function ensureAuthorisedAndCall(callback)
 }
 
 
+function PlayerShouldBeVisibleByDefault(player)
+{
+	return IsPlayerActiveRecently(player) || IsPlayerAddedRecently(player);
+}
+
 function IsPlayerActiveRecently(player)
 {
 	if(player.lastGame)
@@ -386,6 +391,17 @@ function IsPlayerActiveRecently(player)
 		var lastGame = new Date(player.lastGame);
 		var diffms = new Date() - lastGame;
 		return diffms <= PLAYER_INACTIVE_AFTER_DAYS * 24 * 60 * 60 * 1000;
+	}
+	return false;
+}
+
+function IsPlayerAddedRecently(player)
+{
+	if(player.added)
+	{
+		var added = new Date(player.added);
+		var diffms = new Date() - added;
+		return diffms <= PLAYER_RECENT_ADD_DAYS * 24 * 60 * 60 * 1000;
 	}
 	return false;
 }
