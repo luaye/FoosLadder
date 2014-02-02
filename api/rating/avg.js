@@ -1,4 +1,5 @@
 var utils = require("./../../utils.js");
+var config = require("./../../config.json");
 
 var MAX_RATING_CHANGE = 110;
 var MIXED_RATING_MAX_RATIO = 0.5;
@@ -106,13 +107,13 @@ function Avg()
 		var initialExperience = player.initialExperience;
 		if(initialExperience == 1)
 		{
-			return 1500;
+			return config.beginnerRating;
 		}
 		else if(initialExperience == 3)
 		{
-			return 1700;
+			return config.advancedRating;
 		}
-		return 1600;
+		return config.experiencedRating;
 	}
 	
 	
