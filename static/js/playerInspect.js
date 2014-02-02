@@ -17,6 +17,7 @@ var sortReversed;
 table.clear();
 table.setLoading(true);
 
+this.companies = [];
 this.show = function()
 {
 	table.element.show();
@@ -80,8 +81,27 @@ function fillRowsWithVersus(user)
 	}
 	
 	setContentsOfTag(table.table, "inspectedPlayer", user.name);
+	
+	var company = user.company;
+	if(company) company = FindNameById(self.companies, company);
+	setContentsOfTag(table.table, "playerCompany", company);
+	
+	setContentsOfTag(table.table, "playerAdded", MakeDateStr(user.added));
+	setContentsOfTag(table.table, "playerFirst", MakeDateStr(user.firstGame));
+	setContentsOfTag(table.table, "playerLast", MakeDateStr(user.lastGame));
+	
 	setContentsOfTag(table.table, "heads", versus._heads);
 	setContentsOfTag(table.table, "total", versus._total);
+}
+
+function MakeDateStr(datems)
+{
+	if(!datems || datems <= 0)
+	{
+		return " ? ";
+	}
+	var date = new Date(datems);
+ 	return date.getDate() + ", "+ (date.getMonth()+1) + ", " + date.getFullYear();	
 }
 
 function fillRowWithUser(tableRow, opponent, versusData)

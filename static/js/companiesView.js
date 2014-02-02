@@ -129,7 +129,8 @@ this.onAddSubmit = function()
 	var name = $("#addCompanyName").val();
 
 	var request = {request:"addCompany",
-		name:name
+		name:name,
+		fbAccessToken:facebookAccessToken
 	};
 
 	callAPI(request, onCompanyAdded);

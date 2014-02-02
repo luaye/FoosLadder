@@ -216,6 +216,7 @@ function onCompaniesLoaded(companies)
 {
 	companiesView.setCompanies(companies);
 	playersView.setCompanies(companies);
+	playerInspectView.companies = companies;
 }
 
 function showCompanies()
@@ -353,7 +354,6 @@ function setCurrentView(view)
   </tr>
   <tr id="headerRow">
     <th ><a href="javascript:playersView.toggleSortBy('name')">Name</a></th>
-    <th ><a href="javascript:playersView.toggleSortBy('company')">Company</a></th>
     <th ><a href="javascript:playersView.toggleSortBy('stats.avg.rating')">overall<br>
     rating</a></th>
     <th ><a href="javascript:playersView.toggleSortBy('stats.avg.offence')">offence<br />
@@ -377,7 +377,6 @@ function setCurrentView(view)
   </tr>
   <tr id="sampleRow">
     <td  style="text-align:left"><playerImage></playerImage> <playerName>NAME</playerName></td>
-    <td  style="text-align:left"><playerCompany>COMPANY</playerCompany></td>
     <td ><rating path="stats.avg.rating">3</rating></td>
     <td ><rating path="stats.avg.offence">3</rating></td>
     <td ><rating path="stats.avg.defence">3</rating></td>
@@ -386,15 +385,15 @@ function setCurrentView(view)
     <td ><soloWins>2/2/0.5</soloWins></td>
   </tr>
   <tr id="loadingRow">
-    <td colspan="8" class="loadingCell">Getting players...</td>
+    <td colspan="7" class="loadingCell">Getting players...</td>
   </tr>
   <tr>
-    <td colspan="8" class="centerCell showAllPlayers">
+    <td colspan="7" class="centerCell showAllPlayers">
     <a class="btn btn-link" href="javascript:playersView.showAllPlayers()"><i class="icon-plus-sign"></i> Show all players</a>
     </td>
   </tr>
   <tr>
-    <td colspan="8" class="commentCell">
+    <td colspan="7" class="commentCell">
     </td>
   </tr>
 </table>
@@ -403,10 +402,12 @@ function setCurrentView(view)
 
   <tr>
     <td colspan="3" align="center">
- 	Player: <inspectedPlayer>NAME</inspectedPlayer>
-
+ 	Player: <inspectedPlayer>inspectedPlayer</inspectedPlayer><br>
+	Company: <playerCompany>playerCompany</playerCompany><br>
+	Added: <playerAdded>playerAdded</playerAdded><br>
+	First Game: <playerFirst>playerFirst</playerFirst><br>
+	Last Game: <playerLast>playerLast</playerLast><br>
     Heads: <heads>3</heads> out of <total>10</total>
-
     </td>
   </tr>
   <tr id="headerRow">

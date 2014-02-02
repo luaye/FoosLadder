@@ -139,14 +139,7 @@ function fillRowWithUser(tableRow, user)
 
 function GetCompanyNameById(id)
 {
-	if(companies)
-	{
-		for(var X in companies)
-		{
-			if(companies[X].id == id) return companies[X].name;
-		}
-	}
-	return "";
+	return FindNameById(companies, id);
 }
 
 function GetCompanyIdByName(name)

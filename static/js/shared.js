@@ -379,6 +379,18 @@ function ensureAuthorisedAndCall(callback)
 }
 
 
+function FindNameById(list, id)
+{
+	if(list)
+	{
+		for(var X in list)
+		{
+			if(list[X].id == id) return list[X].name;
+		}
+	}
+	return "";
+}
+
 function PlayerShouldBeVisibleByDefault(player)
 {
 	return IsPlayerActiveRecently(player) || IsPlayerAddedRecently(player);
