@@ -58,6 +58,10 @@ function serveStaticFile(request, response)
 	{
 		relativepath = "index.html";
 	}
+	if(relativepath.charAt(relativepath.length -1) == "/")
+	{
+		relativepath += "index.html";
+	}
     var fullpath = path.join(process.cwd(), "static", relativepath);
 	//console.log('serveStaticFile: ' + fullpath );
 	
