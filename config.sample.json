@@ -8,16 +8,15 @@
 		"matchesDBClone": "foosmatchesClone",
 		"companiesDB": "fooscompanies"
 		},
+	
 	"maxRatingChange":64,
 	
 	"useFacebookAuth":false,
-	"allowedFacebookIds": ["luapeoo"], // add your FB ids for initial add player functionality with FB integration
-	"secretAuthKey": "972c6b99b84937c0a0d4df39499036a4" // randomise this number for your site. it is used as a cheap way to bypass security checks from external apps ( foos app, etc)
+	"allowedFacebookIds": ["luapeoo"],
+	"secretAuthKey": "972c6b99b84937c0a0d4df39499036a4",
 	
-	// Initial seeded rating when entering players, you must press 'rebuild stats' when you change these values..
-	// A better way would be to implement 'trial' plays where it decides how good you are based on that before it start rating.
+	
 	"beginnerRating":1400,
 	"experiencedRating":1600,
-	"advancedRating":1800,
-	//
+	"advancedRating":1800
 }

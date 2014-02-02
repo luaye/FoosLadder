@@ -120,32 +120,44 @@ exports.getMatchUpsOfPlayers = function(playerIds, playersById)
 exports.updateStatsOfPlayersByIdForMatch = function(playersById, matchData)
 {
 	var playerIdsInMatch = matchData.leftPlayers.concat(matchData.rightPlayers);
+	var matchDate = matchData.date;
+	var hasGuest = false;
 	for(var X in playerIdsInMatch)
 	{
 		var player = playersById[playerIdsInMatch[X]];
 		if(player.isGuest == true)
 		{
-			matchData.KDleft = 0;
-			matchData.KDright = 0;
-			return true;
+			hasGuest = true;
 		}
-	}
-	
-	matchData.leftChanges = getPlayerRatingListByPlayerIds(matchData.leftPlayers, playersById);
-	matchData.rightChanges = getPlayerRatingListByPlayerIds(matchData.rightPlayers, playersById);
-	
-	for(var X in ratingSystems)
-	{
-		var ratingSystem = ratingSystems[X];
-		if(ratingSystem == mainRatingSystem)
+		if(!player.firstGame)
 		{
-			var ratingChange = ratingSystem.getRatingChange(playersById, matchData.leftPlayers, matchData.rightPlayers, matchData.leftScore, matchData.rightScore);
-			matchData.KDleft = ratingChange.leftRating;
-			matchData.KDright = ratingChange.rightRating;
+			player.firstGame = matchDate;
 		}
-		ratingSystem.updateStatsOfPlayersByIdForMatch(playersById, matchData);
+		player.lastGame = matchDate;
 	}
 	
+	if(hasGuest)
+	{
+		matchData.KDleft = 0;
+		matchData.KDright = 0;
+	}
+	else
+	{
+		matchData.leftChanges = getPlayerRatingListByPlayerIds(matchData.leftPlayers, playersById);
+		matchData.rightChanges = getPlayerRatingListByPlayerIds(matchData.rightPlayers, playersById);
+		
+		for(var X in ratingSystems)
+		{
+			var ratingSystem = ratingSystems[X];
+			if(ratingSystem == mainRatingSystem)
+			{
+				var ratingChange = ratingSystem.getRatingChange(playersById, matchData.leftPlayers, matchData.rightPlayers, matchData.leftScore, matchData.rightScore);
+				matchData.KDleft = ratingChange.leftRating;
+				matchData.KDright = ratingChange.rightRating;
+			}
+			ratingSystem.updateStatsOfPlayersByIdForMatch(playersById, matchData);
+		}
+	}
 	return true;
 }
 
