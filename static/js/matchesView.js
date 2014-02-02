@@ -70,7 +70,7 @@ this.setMatches = function(data)
 		playerRow = table.createRow();
 		fillRowWithMatch(playerRow, data[i]);
 	}
-	if(commentToShowOnLoad)
+	if(FACEBOOK_ENABLED && commentToShowOnLoad)
 	{
 		self.toggleMatchBox(commentToShowOnLoad);
 		$('html, body').animate({
@@ -110,13 +110,21 @@ function fillRowWithMatch(tableRow, match)
 	
 	var matchId = match._id;
 	tableRow.id = "match-"+matchId;
-	var commentCount = getChildByTag(tableRow, "commentToggle");
-	commentCount.innerHTML = getCommentCountNodeString("match/"+matchId);
-	FB.XFBML.parse(commentCount);
 	
-	$(tableRow).click(function() {
-		self.toggleMatchBox(matchId);
-	});
+	var commentCount = getChildByTag(tableRow, "commentToggle");
+	if(FACEBOOK_ENABLED)
+	{
+		commentCount.innerHTML = getCommentCountNodeString("match/"+matchId);
+		FB.XFBML.parse(commentCount);
+		
+		$(tableRow).click(function() {
+			self.toggleMatchBox(matchId);
+		});
+	}
+	else
+	{
+		commentCount.innerHTML = "";
+	}
 }
 
 
@@ -137,12 +145,16 @@ this.toggleMatchBox = function(matchId)
 		var fbkey = "match/"+matchId;
 		var matchRow = $("#match-"+matchId);
 		
-		var commentArea = holder.find(".commentCell");
 		
-		var width = matchRow.innerWidth() - 15;
-		
-		commentArea.html('<div class="fb-comments" data-href="'+makeCommentURL(fbkey)+'" data-num-posts="4" data-width="'+width+'" mobile="false"></div>');
-		FB.XFBML.parse(commentArea[0]);
+		if(FACEBOOK_ENABLED)
+		{
+			var commentArea = holder.find(".commentCell");
+			
+			var width = matchRow.innerWidth() - 15;
+			
+			commentArea.html('<div class="fb-comments" data-href="'+makeCommentURL(fbkey)+'" data-num-posts="4" data-width="'+width+'" mobile="false"></div>');
+			FB.XFBML.parse(commentArea[0]);
+		}
 		
 		holder.insertAfter(matchRow);
 	}
@@ -150,6 +162,7 @@ this.toggleMatchBox = function(matchId)
 
 this.gotoComment = function (matchId)
 {
+	if(!FACEBOOK_ENABLED) return;
 	if(matches)
 	{
 		self.toggleMatchBox(matchId);

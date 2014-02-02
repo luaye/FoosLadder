@@ -314,11 +314,15 @@ function addFBCommentsIfRequired()
 	if(commentsInitialised) return;
 	commentsInitialised = true;
 
+	if(FACEBOOK_ENABLED)
+	{
+		
 	var commentArea = table.element.find(".commentCell");
 	var width = table.element.innerWidth() - 15;
 
 	commentArea.html('<div class="fb-comments" data-href="'+makeCommentURL("players")+'" data-num-posts="6" data-width="'+width+'" mobile="false"></div>');
 	FB.XFBML.parse(commentArea[0]);
 }
+	}
 
 }
