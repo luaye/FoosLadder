@@ -377,3 +377,15 @@ function ensureAuthorisedAndCall(callback)
 		callback();
 	}
 }
+
+
+function IsPlayerActiveRecently(player)
+{
+	if(player.lastGame)
+	{
+		var lastGame = new Date(player.lastGame);
+		var diffms = new Date() - lastGame;
+		return diffms <= PLAYER_INACTIVE_AFTER_DAYS * 24 * 60 * 60 * 1000;
+	}
+	return false;
+}

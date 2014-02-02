@@ -48,7 +48,7 @@ function selectAllIfEmpty()
 		for (var X in playersById)
 		{
 			var player = playersById[X];
-			if(player.isGuest != true && !player.inactive && player.stats.kdr.mixed.games > 10)
+			if(player.isGuest != true && !player.inactive && IsPlayerActiveRecently(player))
 			{
 				selectedPlayers.push(player);
 			}

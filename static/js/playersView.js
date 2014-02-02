@@ -81,14 +81,23 @@ function updateRows()
 
 	var X;
 	var userRow;
+	
+	var filteredPlayers = [];
 	for(X in players)
 	{
 		var player = players[X];
-		if(player.isGuest != true && (shouldShowAllPlayers || !player.inactive))
+		if(player.isGuest != true && (shouldShowAllPlayers || (!player.inactive && IsPlayerActiveRecently(player))))
 		{
-			userRow = table.createRow();
-			fillRowWithUser(userRow, player);
+			filteredPlayers.add(player);
 		}
+	}
+	
+	if(filteredPlayers.length == 0) filteredPlayers = players;
+	
+	for(X in filteredPlayers)
+	{
+		userRow = table.createRow();
+		fillRowWithUser(userRow, filteredPlayers[X]);
 	}
 }
 
