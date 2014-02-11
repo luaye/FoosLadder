@@ -84,6 +84,7 @@ function fillRowsWithVersus(user)
 	
 	var company = user.company;
 	if(company) company = FindNameById(self.companies, company);
+	else company = "";
 	setContentsOfTag(table.table, "playerCompany", company);
 	
 	setContentsOfTag(table.table, "playerAdded", MakeDateStr(user.added));
@@ -98,7 +99,7 @@ function MakeDateStr(datems)
 {
 	if(!datems || datems <= 0)
 	{
-		return " ? ";
+		return " ";
 	}
 	var date = new Date(datems);
  	return date.getDate() + ", "+ (date.getMonth()+1) + ", " + date.getFullYear();	
@@ -106,11 +107,14 @@ function MakeDateStr(datems)
 
 function fillRowWithUser(tableRow, opponent, versusData)
 {
-	var userLink = "<a href='javascript:inspect(\""+opponent+"\")'>"+playersById[opponent].name+"</a>";
-	
-	setContentsOfTag(tableRow, "playerName", userLink);
-	setContentsOfTag(tableRow, "wins", safeStr(versusData.wins));
-	setContentsOfTag(tableRow, "losses", safeStr(versusData.losses));
+	if(playersById[opponent])
+	{
+		var userLink = "<a href='javascript:inspect(\""+opponent+"\")'>"+playersById[opponent].name+"</a>";
+		
+		setContentsOfTag(tableRow, "playerName", userLink);
+		setContentsOfTag(tableRow, "wins", safeStr(versusData.wins));
+		setContentsOfTag(tableRow, "losses", safeStr(versusData.losses));
+	}
 }
 
 function safeStr(obj)
@@ -124,7 +128,8 @@ function safeStr(obj)
 
 this.toggleSortBy = function(key)
 {
-	
+	sortKey = key;
+	updateSort();
 }
 
 function updateSort()
