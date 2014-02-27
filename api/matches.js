@@ -259,6 +259,10 @@ function updateMatchToDb(body, callback)
 		matchData.rightPlayers = utils.getRightPlayersOfObject(body);
 		matchData.leftScore = Number(body.leftScore);
 		matchData.rightScore = Number(body.rightScore);
+		matchData.leftExpectedScore = Number(body.leftExpectedScore);
+		matchData.rightExpectedScore = Number(body.rightExpectedScore);
+		matchData.leftRatingChange = Number(body.leftRatingChange);
+		matchData.rightRatingChange = Number(body.rightRatingChange);
 		
 		var totalSeconds = Number(body.totalSeconds);
 		matchData.totalSeconds = !isNaN(totalSeconds) && totalSeconds > 0 ? totalSeconds : 0;
@@ -283,6 +287,7 @@ function updateMatchToDb(body, callback)
 
 exports.getMatchStatus = function(req, callback)
 {
+	if(!req.id) req.id = "1";
 	GLOBAL.matchStatusDB.fetch({keys:[req.id]}, function (error, body, headers)
 	{
 		if(error || !body)

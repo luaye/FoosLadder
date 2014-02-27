@@ -131,6 +131,7 @@ function onPlayersLoaded(players)
 	playersView.setPlayers(players);
 	playerInspectView.setPlayers(players);
 	addMatchView.setPlayers(players);
+	liveView.setPlayers(players);
 }
 
 function loadMatches()
@@ -272,9 +273,7 @@ function setCurrentView(view)
           <li id="playersMenu"><a href="javascript:showPlayers()">Players</a></li>
           <li id="companiesMenu"><a href="javascript:showCompanies()">Companies</a></li>
           <li id="graphMenu"><a href="javascript:showGraph()">Graph</a></li>
-          <!--
           <li id="liveMenu"><a href="javascript:showLive()">Live</a></li>
-          -->
         </ul>
       </div>
 
@@ -532,8 +531,11 @@ function setCurrentView(view)
   <p>&nbsp;</p>
   <table class="table table-bordered" border="0" align="center" cellpadding="4" cellspacing="0">
   <tr>
-    <td colspan="5" class="centerCell"><strong>No games in progress / Game in progress</strong><br>
-      Last game ended 2 hours ago / started 1 mins ago</td>
+    <td colspan="5" class="centerCell"><strong>No games in progress / Game in progress.</strong><br>
+      Last game ended 2 hours ago / started 1 mins ago<br>
+<br>
+<span class="lastUpdateTime">updated 1 min ago</span>
+</td>
   </tr>
   <tr>
     <th colspan="2" bgcolor="#EE3" class="rightCell">Yellow</th>
@@ -548,12 +550,12 @@ function setCurrentView(view)
   	  <span class="leftDefender">Left defender</span>
       </td>
     <td width="40" class="rightCell">
-      <h2>10</h2><span id='leftExpectedScore'>x</span><br>
-+10</td>
+      <h2 class="leftScore">10</h2><span class='leftExpectedScore'>x</span><br>
+<span class="leftRatingChange">+10</span></td>
     <td width="40">
-    <h2>10</h2>
-<span id='rightExpectedScore'>x</span><br>
--10</td>
+    <h2 class="rightScore">10</h2>
+<span class='rightExpectedScore'>x</span><br>
+<span class="rightRatingChange">-10</span></td>
     <td width="150">
       <span class="rightAttacker">Right offence</span></a>
       <br /><br/>

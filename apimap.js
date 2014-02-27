@@ -20,6 +20,7 @@ var map = {
 	getMatchesRaw:matches.getMatchesRaw,
 	addMatch:matches.addMatch,
 	updateMatch:matches.updateMatch,
+	matchStatus:matches.getMatchStatus,
 	assignCardId:users.assignCardId,
 	rebuiltMatchStats:matches.rebuiltMatchStats,
 	repeatMatchStats:matches.repeatMatchStats,
