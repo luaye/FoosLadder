@@ -254,6 +254,7 @@ function updateMatchToDb(body, callback)
 			matchData = {};
 			matchData._id = body.id;
 		}
+		delete matchData.timeNow;
 		matchData.date = new Date().getTime();
 		matchData.leftPlayers = utils.getLeftPlayersOfObject(body);
 		matchData.rightPlayers = utils.getRightPlayersOfObject(body);
@@ -290,13 +291,15 @@ exports.getMatchStatus = function(req, callback)
 	if(!req.id) req.id = "1";
 	GLOBAL.matchStatusDB.fetch({keys:[req.id]}, function (error, body, headers)
 	{
-		if(error || !body)
+		if(error || !body || body.rows.length == 0)
 		{
 			callback(null);
 		}
 		else
 		{
-			callback(body.rows.length > 0 ? body.rows[0].doc : null);
+			var doc = body.rows[0].doc;
+			doc.timeNow = new Date().getTime();
+			callback(doc);
 		}
 	});
 }
