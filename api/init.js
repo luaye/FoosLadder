@@ -23,6 +23,15 @@ exports.init = function(callback)
 		GLOBAL.matchesDBClone = nano.use(config.couch.matchesDBClone);
 		registerMatchesDesignDoc(GLOBAL.matchesDBClone);
 	});
+	
+	var matchStatusDB = config.couch.matchStatusDB;
+	if(!matchStatusDB) matchStatusDB = "foosstatus";
+	initDatabaseIfRequired(matchStatusDB, function()
+	{
+		GLOBAL.matchStatusDB = nano.use(matchStatusDB);
+		registerMatchStatusDesignDoc(GLOBAL.matchStatusDB);
+	});
+	
 	initDatabaseIfRequired(config.couch.companiesDB, function()
 	{
 		GLOBAL.companiesDB = nano.use(config.couch.companiesDB);
@@ -32,7 +41,7 @@ exports.init = function(callback)
 
 exports.ready = function()
 {
-	return dbsReady == 2;
+	return dbsReady == 3;
 }
 
 exports.afterReady = function(callback)
@@ -132,6 +141,31 @@ function registerMatchesDesignDoc(db)
 	});
 }
 
+function registerMatchStatusDesignDoc(db)
+{
+	db.insert(
+	{"views":
+		{
+			"by_date":{ "map": function(doc) { emit(doc.date, doc); } }
+		}
+	}
+	,
+	"_design/matchStatus"
+	,
+	function(error, body, header)
+	{
+		if(error)
+		{
+    		//console.log("Register match design doc FAILED:"+ error);
+		}
+		else
+		{
+    		console.log("Register matchStatus design doc.");
+		}
+		dbsReady++;
+		runCallbacksIfReady();
+	});
+}
 
 function registerCompaniesDesignDoc()
 {

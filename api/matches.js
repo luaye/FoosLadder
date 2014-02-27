@@ -225,6 +225,78 @@ function addMatchToDatabase(matchData, callback)
 	});
 }
 
+exports.updateMatch = function(body, callback)
+{
+	console.log("matches.updateMatch: "+JSON.stringify(body));
+	
+	users.isAsscessTokenValidForAdding(body.fbAccessToken, function(ok)
+	{
+		if(ok)
+		{
+			updateMatchToDb(body, callback);
+		}
+		else
+		{
+			console.log("addMatch: NOT AUTHORIZED");
+			callback({status:"error", message:"Not authorized."});
+		}
+	})
+}
+
+function updateMatchToDb(body, callback)
+{
+	if(!body.id) body.id = "1";
+	
+	exports.getMatchStatus(body, function(matchData)
+	{
+		if(matchData == null)
+		{
+			matchData = {};
+			matchData._id = body.id;
+		}
+		matchData.date = new Date().getTime();
+		matchData.leftPlayers = utils.getLeftPlayersOfObject(body);
+		matchData.rightPlayers = utils.getRightPlayersOfObject(body);
+		matchData.leftScore = Number(body.leftScore);
+		matchData.rightScore = Number(body.rightScore);
+		
+		var totalSeconds = Number(body.totalSeconds);
+		matchData.totalSeconds = !isNaN(totalSeconds) && totalSeconds > 0 ? totalSeconds : 0;
+			
+		var bulk = {};
+		bulk.docs = [matchData];
+		GLOBAL.matchStatusDB.bulk(bulk, function (error, body, headers)
+		{
+			if(error || !body)
+			{
+				console.log("FAILED TO UPDATE MATCH STATUS.");
+				callback({status:"error", message:error ? error : "unknown"});
+			}
+			else
+			{
+				console.log("Updated match status " + body);
+				callback({status:"OK"});	
+			}
+		});
+	});
+}
+
+exports.getMatchStatus = function(req, callback)
+{
+	GLOBAL.matchStatusDB.fetch({keys:[req.id]}, function (error, body, headers)
+	{
+		if(error || !body)
+		{
+			callback(null);
+		}
+		else
+		{
+			callback(body.rows.length > 0 ? body.rows[0].doc : null);
+		}
+	});
+}
+
+
 exports.repeatMatchStats = function(body, callback)
 {
 	exports.getMatches({}, function(matchDatas)

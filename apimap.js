@@ -19,6 +19,7 @@ var map = {
 	getMatches:matches.getMatches,
 	getMatchesRaw:matches.getMatchesRaw,
 	addMatch:matches.addMatch,
+	updateMatch:matches.updateMatch,
 	assignCardId:users.assignCardId,
 	rebuiltMatchStats:matches.rebuiltMatchStats,
 	repeatMatchStats:matches.repeatMatchStats,
