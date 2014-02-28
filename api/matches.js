@@ -249,12 +249,12 @@ function updateMatchToDb(body, callback)
 	
 	exports.getMatchStatus(body, function(matchData)
 	{
-		if(matchData == null)
+		if(matchData == null || !matchData.date)
 		{
 			matchData = {};
 			matchData._id = body.id;
 		}
-		delete matchData.timeNow;
+		if(matchData.timeNow) delete matchData.timeNow;
 		matchData.date = new Date().getTime();
 		matchData.leftPlayers = utils.getLeftPlayersOfObject(body);
 		matchData.rightPlayers = utils.getRightPlayersOfObject(body);
@@ -293,17 +293,20 @@ exports.getMatchStatus = function(req, callback)
 	{
 		if(error || !body || body.rows.length == 0)
 		{
-			callback(null);
+			callback({});
 		}
 		else
 		{
 			var doc = body.rows[0].doc;
-			doc.timeNow = new Date().getTime();
-			callback(doc);
+			if(doc)
+			{
+				doc.timeNow = new Date().getTime();
+				callback(doc);
+			}
+			else callback({});
 		}
 	});
 }
-
 
 exports.repeatMatchStats = function(body, callback)
 {

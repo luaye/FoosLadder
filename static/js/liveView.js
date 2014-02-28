@@ -3,14 +3,21 @@ function LiveView(view)
 	var self = this;
 	var playersById;
 	
+	var updateInterval;
+	
 this.show = function()
 {
-	view.show();
 	callAPI({request:"matchStatus"}, onMatchStatusLoaded);
+	
+	clearInterval(updateInterval);
+	updateInterval = setInterval(function(){
+		callAPI({request:"matchStatus"}, onMatchStatusLoaded);
+	}, 5000);
 }
 
 this.hide = function()
 {
+	clearInterval(updateInterval);
 	view.hide();
 }
 
@@ -33,9 +40,42 @@ this.setPlayers = function(players)
 function onMatchStatusLoaded(matchData)
 {
 	console.log(matchData);
-	if(matchData)
+	if(matchData && matchData.date)
 	{
-		view.find(".lastUpdateTime").text("Updated bla bla bla ago");
+		view.show();
+		var secondsSinceUpdate = Math.round((matchData.timeNow - matchData.date) / 1000);
+		
+		var status = "No games in progress";
+		if(secondsSinceUpdate < (15 * 60) && (matchData.leftScore > 0 || matchData.rightScore > 0))
+		{
+			if(matchData.leftScore < 10 || matchData.rightScore < 10)
+			{
+				status = "Games in progress";
+			}
+		}
+		
+		var timeSince = "?";
+		if(secondsSinceUpdate > 24 * 60 * 60)
+		{
+			timeSince = "more than a day";
+		}
+		else if(secondsSinceUpdate > 60 * 60)
+		{
+			var hours = Math.round(secondsSinceUpdate / (60 * 60));
+			timeSince = hours + " hour" + (hours > 1 ? "s":"");
+		}
+		else if(secondsSinceUpdate > 60)
+		{
+			var mins = Math.round(secondsSinceUpdate / 60);
+			timeSince = mins + " minute" + (mins > 1 ? "s":"");
+		}
+		else
+		{
+			timeSince = "moments";
+		}
+		
+		view.find(".gameStatus").text(status);
+		view.find(".lastUpdateTime").text("Last activity "+timeSince+" ago");
 		view.find(".leftScore").text(matchData.leftScore.toString());
 		view.find(".rightScore").text(matchData.rightScore.toString());
 		view.find(".leftAttacker").text(getPlayerNameOfIndex(matchData.leftPlayers, 0));
