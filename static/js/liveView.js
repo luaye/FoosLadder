@@ -50,7 +50,7 @@ function onMatchStatusLoaded(matchData)
 		{
 			if(matchData.leftScore < 10 || matchData.rightScore < 10)
 			{
-				status = "Games in progress";
+				status = "Game in progress";
 			}
 		}
 		
