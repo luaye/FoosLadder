@@ -247,9 +247,9 @@ function updateMatchToDb(body, callback)
 {
 	if(!body.id) body.id = "1";
 	
-	exports.getMatchStatus(body, function(matchData)
+	fetchMatchStatus(body.id, function(matchData)
 	{
-		if(matchData == null || !matchData.date)
+		if(matchData == null)
 		{
 			matchData = {};
 			matchData._id = body.id;
@@ -286,24 +286,66 @@ function updateMatchToDb(body, callback)
 	});
 }
 
-exports.getMatchStatus = function(req, callback)
+function fetchMatchStatus(id, callback)
 {
-	if(!req.id) req.id = "1";
-	GLOBAL.matchStatusDB.fetch({keys:[req.id]}, function (error, body, headers)
+	if(!id) id = "1";
+	GLOBAL.matchStatusDB.fetch({keys:[id]}, function (error, body, headers)
 	{
 		if(error || !body || body.rows.length == 0)
 		{
-			callback({});
+			callback(null);
 		}
 		else
 		{
 			var doc = body.rows[0].doc;
-			if(doc)
+			callback(!doc.date ? null : doc);
+		}
+	});
+}
+
+exports.getMatchStatus = function(req, callback)
+{
+	if(!req.id) req.id = "1";
+	fetchMatchStatus(req.id, function(matchData)
+	{
+		if(matchData)
+		{
+			matchData.dateNow = new Date().getTime();
+			delete matchData._rev;
+			if(req.useNames)
 			{
-				doc.timeNow = new Date().getTime();
-				callback(doc);
+				users.getPlayersByIds({}, function(playersById)
+				{
+					var leftPlayers = matchData.leftPlayers;
+					var rightPlayers = matchData.rightPlayers;
+					for(var X in leftPlayers)
+					{
+						var id = leftPlayers[X];
+						if(playersById[id])
+						{
+							leftPlayers[X] = playersById[id].name;
+						}
+					}
+					
+					for(var X in rightPlayers)
+					{
+						var id = rightPlayers[X];
+						if(playersById[id])
+						{
+							rightPlayers[X] = playersById[id].name;
+						}
+					}
+					callback(matchData);
+				});
 			}
-			else callback({});
+			else
+			{
+				callback(matchData);
+			}
+		}
+		else
+		{
+			callback({});
 		}
 	});
 }

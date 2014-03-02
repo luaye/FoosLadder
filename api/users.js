@@ -29,7 +29,7 @@ exports.getUsers = function(body, callback)
 	});
 }
 
-exports.getPlayersByIds = function(body, callback)
+exports.getPlayersByIds = function(req, callback)
 {
     matches = GLOBAL.usersDB.view('users', 'by_name',
 	function (error, body, headers)

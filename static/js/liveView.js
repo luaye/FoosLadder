@@ -43,10 +43,10 @@ function onMatchStatusLoaded(matchData)
 	if(matchData && matchData.date)
 	{
 		view.show();
-		var secondsSinceUpdate = Math.round((matchData.timeNow - matchData.date) / 1000);
+		var secondsSinceUpdate = Math.round((matchData.dateNow - matchData.date) / 1000);
 		
 		var status = "No games in progress";
-		if(secondsSinceUpdate < (15 * 60) && (matchData.leftScore > 0 || matchData.rightScore > 0))
+		if(secondsSinceUpdate < (10 * 60))
 		{
 			if(matchData.leftScore < 10 || matchData.rightScore < 10)
 			{
@@ -75,7 +75,7 @@ function onMatchStatusLoaded(matchData)
 		}
 		
 		view.find(".gameStatus").text(status);
-		view.find(".lastUpdateTime").text("Last activity "+timeSince+" ago");
+		view.find(".lastUpdateTime").text("Last update "+timeSince+" ago");
 		view.find(".leftScore").text(matchData.leftScore.toString());
 		view.find(".rightScore").text(matchData.rightScore.toString());
 		view.find(".leftAttacker").text(getPlayerNameOfIndex(matchData.leftPlayers, 0));
