@@ -53,7 +53,7 @@ exports.getMatchesRaw = function(body, callback)
 exports.addMatch = function(body, callback)
 {
 	console.log("matches.addMatch: "+JSON.stringify(body));
-	
+
 	users.isAsscessTokenValidForAdding(body.fbAccessToken, function(ok)
 	{
 		if(ok)
@@ -71,7 +71,7 @@ exports.addMatch = function(body, callback)
 function addMatchToDb(body, callback)
 {
 	var matchData = {};
-	
+
 	if(!isNaN(body.date))
 	{
 		var dateMs = Number(body.date);
@@ -93,33 +93,33 @@ function addMatchToDb(body, callback)
 	{
 		matchData.date = new Date().getTime();
 	}
-	
+
 	matchData.leftPlayers = utils.getLeftPlayersOfObject(body);
 	matchData.rightPlayers = utils.getRightPlayersOfObject(body);
-	
+
 	matchData.leftScore = Number(body.leftScore);
 	matchData.rightScore = Number(body.rightScore);
-	
+
 	var totalSeconds = Number(body.totalSeconds);
 	if(!isNaN(totalSeconds) && totalSeconds > 0)
 	{
 		matchData.totalSeconds = totalSeconds;
 	}
-	
-	if(!validateScore(matchData.leftScore) || !validateScore(matchData.rightScore) 
-	|| 
+
+	if(!validateScore(matchData.leftScore) || !validateScore(matchData.rightScore)
+	||
 	(matchData.leftScore < 5 && matchData.rightScore < 5))
 	{
 		callback({status:"error", message:"Invalid score."});
 		return;
 	}
-	
+
 	if(!preValidatePlayers(matchData.leftPlayers) || !preValidatePlayers(matchData.rightPlayers))
 	{
 		callback({status:"error", message:"Invalid players."});
 		return;
 	}
-	
+
 	users.getUsers({}, function(users)
 	{
 		if(validatePlayers(users, matchData.leftPlayers, matchData.rightPlayers))
@@ -192,7 +192,7 @@ function addMatchToDatabase(matchData, callback)
 		if(ok)
 		{
 			//console.log("matches.addMatchToDatabase: "+JSON.stringify(matchData));
-			
+
 			GLOBAL.matchesDBClone.insert(matchData, null, function (error, body, headers)
 			{
 				if(error || !body)
@@ -212,9 +212,9 @@ function addMatchToDatabase(matchData, callback)
 						else
 						{
 							//console.log("matches.addMatch OK: " + JSON.stringify(body));
-							callback({status:"OK"});	
+							callback({status:"OK"});
 						}
-					});	
+					});
 				}
 			});
 		}
@@ -228,7 +228,7 @@ function addMatchToDatabase(matchData, callback)
 exports.updateMatch = function(body, callback)
 {
 	console.log("matches.updateMatch: "+JSON.stringify(body));
-	
+
 	users.isAsscessTokenValidForAdding(body.fbAccessToken, function(ok)
 	{
 		if(ok)
@@ -246,7 +246,7 @@ exports.updateMatch = function(body, callback)
 function updateMatchToDb(body, callback)
 {
 	if(!body.id) body.id = "1";
-	
+
 	fetchMatchStatus(body.id, function(matchData)
 	{
 		if(matchData == null)
@@ -264,10 +264,10 @@ function updateMatchToDb(body, callback)
 		matchData.rightExpectedScore = Number(body.rightExpectedScore);
 		matchData.leftRatingChange = Number(body.leftRatingChange);
 		matchData.rightRatingChange = Number(body.rightRatingChange);
-		
+
 		var totalSeconds = Number(body.totalSeconds);
 		matchData.totalSeconds = !isNaN(totalSeconds) && totalSeconds > 0 ? totalSeconds : 0;
-			
+
 		var bulk = {};
 		bulk.docs = [matchData];
 		GLOBAL.matchStatusDB.bulk(bulk, function (error, body, headers)
@@ -280,7 +280,7 @@ function updateMatchToDb(body, callback)
 			else
 			{
 				console.log("Updated match status " + body);
-				callback({status:"OK"});	
+				callback({status:"OK"});
 			}
 		});
 	});
@@ -298,7 +298,7 @@ function fetchMatchStatus(id, callback)
 		else
 		{
 			var doc = body.rows[0].doc;
-			callback(!doc.date ? null : doc);
+			callback((doc && doc.date) ? doc : null);
 		}
 	});
 }
@@ -326,7 +326,7 @@ exports.getMatchStatus = function(req, callback)
 							leftPlayers[X] = playersById[id].name;
 						}
 					}
-					
+
 					for(var X in rightPlayers)
 					{
 						var id = rightPlayers[X];

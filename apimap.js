@@ -2,6 +2,7 @@ var qs = require('querystring');
 var users = require("./api/users.js");
 var companies = require("./api/companies.js");
 var matches = require("./api/matches.js");
+var registrations = require("./api/registrations.js");
 var init = require("./api/init.js");
 var customapi = require("./api/customapi.js");
 
@@ -27,6 +28,9 @@ var map = {
 	getCompanies:companies.getCompanies,
 	getRecentGainers:customapi.getRecentGainers,
 	addCompany:companies.addCompany,
+	addRegistration:registrations.addRegistration,
+	getRegistrations:registrations.getRegistrations,
+	activateRegistration:registrations.activeRegistration
 	};
 
 exports.runAPI = function(request, response)
