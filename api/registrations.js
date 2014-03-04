@@ -45,9 +45,9 @@ function getRegistrationsByIds(registrationIds, callback)
 				var row = body.rows[X];
 				registrationsById[row.id] = row.doc;
 			}
-			for (var X in registrationsIds)
+			for (var X in registrationIds)
 			{
-				var registrationId = registrationsIds[X];
+				var registrationId = registrationIds[X];
 				if(registrationsById[registrationId] == null)
 				{
 					callback(null);
@@ -104,11 +104,12 @@ exports.activeRegistration = function(body, callback)
 		if(ok)
 		{
 			var registrationIds = [body.registrationId];
-			getRegistrationsByIds(playerIds, function(registrationsById)
+			getRegistrationsByIds(registrationIds, function(registrationsById)
 			{
-				if(registrationsById && registrationsById[body.registrationId])
+
+				if(registrationsById && registrationsById[0])
 				{
-					var registration = registrationsById[body.registrationId];
+					var registration = registrationsById[0];
 
 					var initialExperience = registration.recentGameCount - 1;
 					if (initialExperience > 3)
