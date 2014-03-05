@@ -1,10 +1,93 @@
 body {
-	padding-top: 20px;
-    padding-bottom: 40px;
-	padding-left:2px;
-	padding-right:3px;
+
+font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+font-size: 14px;
+line-height: 20px;
+color: #fff;
+background-color: #f4770f;
+	margin:50px 0px; padding:0px;
+	text-align:center;
 	
 }
+
+body,
+	html {
+		margin:0;
+		padding:0;
+		color:#000;
+	}
+	#wrap {
+		width:750px;
+		margin:0 auto;
+	}
+	#header {
+    	padding:5px 10px;
+	}
+	h1 {
+	    margin:0;
+    }
+	#nav {
+		padding:5px 10px;
+	}
+	#nav ul {
+		margin:0;
+		padding:0;
+		list-style:none;
+	}
+	#nav li {
+		display:inline;
+		margin:0;
+		padding:0;
+	}
+	#main {
+float: left;
+width: 480px;
+padding: 10px;
+left: -130px;
+position: relative;
+	}
+	h2 {
+	}
+	#sidebar {
+		float:right;
+		width:230px;
+		padding:10px;
+	}
+	#footer {
+		clear:both;
+		padding:5px 10px;
+	}
+	#footer p {
+		margin:0;
+    }
+	* html #footer {
+		height:1px;
+	}
+	
+h3 {
+font-size: 64.5px;
+padding-top: 25px;
+padding-bottom: 32px;
+/* background-color: white; */
+width: 100%;
+color: white;}
+	
+#timerholder {
+display: block;
+margin: auto;
+/* float: left; */
+width: 272px;
+
+}
+
+
+.span3 {
+font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+font-size: 16px;
+color:white;
+}
+
+
 .container-narrow {
 	margin: 0 auto;
 	min-width:420px;

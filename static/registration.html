@@ -115,19 +115,26 @@ function onRegistrationAdded()
 
 </script>
 
+
+
+
+
+
+
+
+
+
 </head>
 <body onLoad="onLoad()">
-<div id="fb-root"></div>
-<div class="body">
 
 
+<div id="wrap">
 
-<div class="container-narrow" align="center">
-	<img src="img/logo448x92.png"/>
-	<h3>Foos Tournament Registration</h3>
 
-	<div class="row-fluid" align="center">
-	<script type="application/javascript">
+<div id="header"><img src="img/logo448x92.png"/><h3>Foos Tournament</h3>
+<div id="timerholder">
+<h2>Starts in!</h2>
+<script type="application/javascript">
 
 	var myCountdownTest = new Countdown({
 										year	: 2014,
@@ -142,9 +149,12 @@ function onRegistrationAdded()
 
 	</script>
 	</div>
-	<br/>
-	<br/>
-	<div style="max-width: 350px; margin-left:30px" align="center">
+</div>
+
+<div id="main">
+<h2>Registration</h2>
+<div style=" margin-left:30px" align="center">
+
 	<div id="registrationsTable" align="left">
   	<div class="row-fluid">
       <div class="span3">Player Name</div>
@@ -170,17 +180,37 @@ function onRegistrationAdded()
       <option value="4">Weekly</option>
     </select></div>
     </div>
-    </div>
-	<br/>
-	<br/>
-    <div align="center">
-    	<input type="submit" name="submit" id="addRegistrationSubmit" value="Register" onClick="onRegistrationSubmit()" class="btn btn-primary"/>
-    </div>
-	</div>
-	<div id="registrationComplete"><h4>Registration Complete!<h4></div>
+    <input type="submit" name="submit" id="addRegistrationSubmit" value="Register" onclick="onRegistrationSubmit()" class="btn btn-primary">
+</div>
+</div>
 </div>
 
+
+<div id="sidebar">
+<iframe src="http://player.vimeo.com/video/61083738?loop=999999999999" width="900" height="600" frameborder="0" autoplay="1" loop="9999999" webkitallowfullscreen mozallowfullscreen allowfullscreen ></iframe>
+
+
+
+
 </div>
+
+
+
+<div id="footer"></div>
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
 
 
 </body>
