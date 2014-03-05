@@ -43,7 +43,7 @@ body,
 float: left;
 width: 480px;
 padding: 10px;
-left: -130px;
+left: -100px;
 position: relative;
 	}
 	h2 {
@@ -52,6 +52,8 @@ position: relative;
 		float:right;
 		width:230px;
 		padding:10px;
+left: -200px;
+position: relative;
 	}
 	#footer {
 		clear:both;
@@ -102,7 +104,10 @@ color:white;
 {
 	font-weight:bold;
 }
-
+.table
+{
+background-color:#F5F5F5;	
+}
 .table th.centerCell,
 .table td.centerCell {
   text-align: center;
@@ -148,6 +153,12 @@ color:white;
 .navbar-inner {
   padding-left:10px;
   padding-right:10px;
+}
+
+h4
+{
+color:#FFFFFF;
+font-size:20px;	
 }
 
 .modal-backdrop,
