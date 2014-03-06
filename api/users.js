@@ -116,6 +116,10 @@ function addUserToDB(body, callback)
 	if(body.facebookId) player.facebookId = body.facebookId;
 	if(body.company) player.company = body.company;
 	if(body.initialExperience) player.initialExperience = body.initialExperience;
+	player["cardIds"] = [];
+	if (body.cardId)
+		player.cardIds.push(String(body.cardId));
+
 	player.added = new Date().getTime();
 	console.log("trying to add: "+body + "body" +player);
 	exports.resetPlayerStats(player);

@@ -116,11 +116,10 @@ exports.activeRegistration = function(body, callback)
 				{
 					var registration = registrationsById[registrationId];
 
-					var initialExperience = registration.recentGameCount - 1;
-					if (initialExperience > 3)
-					  initialExperience = 3;
-					if (initialExperience < 1)
-					  initialExperience = 1;
+					var initialExperience = 1;
+					if (registration.recentGameCount > 2)
+					  initialExperience = 2;
+
 
 					var cardIds = [];
 
