@@ -117,8 +117,8 @@ function addUserToDB(body, callback)
 	if(body.company) player.company = body.company;
 	if(body.initialExperience) player.initialExperience = body.initialExperience;
 	player["cardIds"] = [];
-	if (body.cardId)
-		player.cardIds.push(String(body.cardId));
+	if (body.cardIds)
+		player.cardIds = body.cardIds;
 
 	player.added = new Date().getTime();
 	console.log("trying to add: "+body + "body" +player);
