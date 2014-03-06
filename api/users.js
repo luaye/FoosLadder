@@ -110,21 +110,27 @@ exports.assignTeam = function(body, callback)
 	exports.isAsscessTokenValidForAdding(body.fbAccessToken, function(ok) {
 		if(ok)
 		{
-			var playerIds = [body.playerId];
+			var playerIds = [body.offenceId,body.defenceId];
 			getPlayersByIdUsingIds(playerIds, function(playersById)
 			{
-				if(playersById && playersById[body.playerId])
+				if(playersById && playersById[body.offenceId] && playersById[body.defenceId])
 				{
-					var player = playersById[body.playerId];
-					player.team = body.team;
-					player.teamPosition = body.teamPosition;
+					var offencePlayer = playersById[body.offenceId];
+					var defencePlayer = playersById[body.defenceId];
+					offencePlayer.team = body.team;
+					defencePlayer.team = body.team;
+					offencePlayer.teamPosition = "offence";
+					defencePlayer.teamPosition = "defence";
 
-					updatePlayersByIdToDatabase(playersById, function(ok)
+					updatePlayersByIdToDatabase([offencePlayer,defencePlayer], function(ok)
 					{
 						callback({status:"ok"});
 					});
 				}
-				else callback({status:"error", message:"Not found."});
+				else {
+					console.log("assignTeam: players not found");
+					callback({status:"error", message:"Not found."});
+				}
 			});
 		}
 		else
@@ -369,7 +375,7 @@ function updatePlayersByIdToDatabase(playersById, callback)
 	{
 		if(error || !body)
 		{
-			console.log("FAILED TO UPDATE PLAYER STATS FOR MATCH.");
+			console.log("FAILED TO UPDATE PLAYERS " + error);
 			callback(false);
 		}
 		else
