@@ -30,7 +30,8 @@ var map = {
 	addCompany:companies.addCompany,
 	addRegistration:registrations.addRegistration,
 	getRegistrations:registrations.getRegistrations,
-	activateRegistration:registrations.activeRegistration
+	activateRegistration:registrations.activeRegistration,
+	assignTeam:users.assignTeam
 	};
 
 exports.runAPI = function(request, response)

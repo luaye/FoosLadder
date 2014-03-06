@@ -105,6 +105,36 @@ exports.assignCardId = function(body, callback)
 	});
 }
 
+exports.assignTeam = function(body, callback)
+{
+	exports.isAsscessTokenValidForAdding(body.fbAccessToken, function(ok) {
+		if(ok)
+		{
+			var playerIds = [body.playerId];
+			getPlayersByIdUsingIds(playerIds, function(playersById)
+			{
+				if(playersById && playersById[body.playerId])
+				{
+					var player = playersById[body.playerId];
+					player.team = body.team;
+					player.teamPosition = body.teamPosition;
+
+					updatePlayersByIdToDatabase(playersById, function(ok)
+					{
+						callback({status:"ok"});
+					});
+				}
+				else callback({status:"error", message:"Not found."});
+			});
+		}
+		else
+		{
+			console.log("assignTeam: "+ body.name +" NOT AUTHORIZED");
+			callback({status:"error", message:"Not authorized."});
+		}
+	});
+}
+
 function addUserToDB(body, callback)
 {
 	if(!body.name)
