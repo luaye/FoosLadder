@@ -36,6 +36,7 @@ function getRegistrationsByIds(registrationIds, callback)
 	{
 		if(error || !body)
 		{
+			console.log("Failed to get registration");
 			callback(null);
 		}
 		else
@@ -96,36 +97,72 @@ exports.activeRegistration = function(body, callback)
 	console.log("registration.activate: "+body);
 	if(!body.registrationId)
 	{
+		console.log("registrationId invalid");
 		callback({status:"error", message:"Invalid id"});
 		return;
 	}
 
-	users.isAsscessTokenValidForAdding(body.fbAccessToken, function(ok) {
+	var fbAccessToken = body.fbAccessToken;
+	users.isAsscessTokenValidForAdding(fbAccessToken, function(ok) {
 		if(ok)
 		{
-			var registrationIds = [body.registrationId];
+			var registrationId = body.registrationId;
+			var cardId = body.cardId;
+			var registrationIds = [registrationId];
+			console.log("reg" + registrationIds);
 			getRegistrationsByIds(registrationIds, function(registrationsById)
 			{
-
-				if(registrationsById && registrationsById[0])
+				if(registrationsById && registrationsById[registrationId])
 				{
-					var registration = registrationsById[0];
+					var registration = registrationsById[registrationId];
 
 					var initialExperience = registration.recentGameCount - 1;
 					if (initialExperience > 3)
 					  initialExperience = 3;
-					if (initialExperince < 1)
+					if (initialExperience < 1)
 					  initialExperience = 1;
+
+					var cardIds = [];
+
+					if (cardId != null)
+					{
+						cardIds.push(String(cardId));
+					}
 					var body = {
 						name:registration.name,
 						company:registration.company,
-						initialExperience:initialExperience
+						initialExperience:initialExperience,
+						fbAccessToken:fbAccessToken,
+						cardIds:cardIds
 					}
-
-					users.addUserToDB(body,function(ok)
+					console.log("acrivating " + body);
+					users.addUser(body,function(ok)
 					{
-						callback({status:"ok"});
+						if (ok){
+							registration.activated = true;
+
+							var bulk = {};
+							bulk.docs = [];
+							bulk.docs.push(registration);
+							GLOBAL.registrationDB.bulk(bulk, function (error, body, headers)
+							{
+									if(error || !body)
+									{
+										console.log("FAILED TO UPDATE REGISTRATION. " + error);
+										callback(false);
+									}
+									else
+									{
+										console.log("acrivated");
+										callback(true);
+									}
+							});
+						}else{
+							callback(false);
+						}
 					});
+
+
 				}
 				else callback({status:"error", message:"Not found."});
 			});

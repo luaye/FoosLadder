@@ -286,7 +286,8 @@ function setCurrentView(view)
 function activateRegistration(registrationId)
 {
 	var request = {request:"activateRegistration",
-		registrationId:registrationId
+		registrationId:registrationId,
+		fbAccessToken:facebookAccessToken
 	};
 
 	callAPI(request, onRegistrationActivated);
