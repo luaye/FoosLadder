@@ -16,6 +16,9 @@
 	"secretAuthKey": "972c6b99b84937c0a0d4df39499036a4",
 	
 	
+	"nbeginnerRating":856,
+	"nexperiencedRating":1070,
+	"nadvancedRating":1324
 	"beginnerRating":1400,
 	"experiencedRating":1600,
 	"advancedRating":1800

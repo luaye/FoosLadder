@@ -4,11 +4,20 @@ var config = require("./../../config.json");
 var MAX_RATING_CHANGE = 110;
 var MIXED_RATING_MAX_RATIO = 0.5;
 
+var SEEDED_RATINGS = [ config.beginnerRating, config.experiencedRating, config.advancedRating ];
+
 exports.Avg = Avg;
 
 function Avg()
 {
 	var self = this;
+	
+	this.setParameters = function(param)
+	{
+		if(param.maxK) MAX_RATING_CHANGE = param.maxK;
+		if(param.weakPlayerRatio != null) WEAKEST_PLAYER_INFLUENCE_RATIO = param.weakPlayerRatio;
+		if(param.seededRatings) SEEDED_RATINGS = param.seededRatings;
+	}
 	
 	this.resetPlayerStats = function(player)
 	{
@@ -27,9 +36,10 @@ function Avg()
 	{
 		var changes = self.getRatingChange(playersById, matchData.leftPlayers, matchData.rightPlayers, matchData.leftScore, matchData.rightScore);
 		
-		
 		addRatingToPlayers(playersById, matchData.leftPlayers, changes.leftRating);
 		addRatingToPlayers(playersById, matchData.rightPlayers, changes.rightRating);
+		
+		return changes.leftRating / MAX_RATING_CHANGE;
 	}
 	
 	function addRatingToPlayers(playersById, playerIds, deltaRating)
@@ -107,13 +117,13 @@ function Avg()
 		var initialExperience = player.initialExperience;
 		if(initialExperience == 1)
 		{
-			return config.beginnerRating;
+			return SEEDED_RATINGS[0];
 		}
 		else if(initialExperience == 3)
 		{
-			return config.advancedRating;
+			return SEEDED_RATINGS[2];
 		}
-		return config.experiencedRating;
+		return SEEDED_RATINGS[1];
 	}
 	
 	
@@ -169,4 +179,6 @@ function Avg()
 		var goals = 10 * minExpected / (1-minExpected);
 		return 10 * minExpected / (1-minExpected);
 	}
+
+
 }
