@@ -2,6 +2,7 @@ var qs = require('querystring');
 var users = require("./api/users.js");
 var companies = require("./api/companies.js");
 var matches = require("./api/matches.js");
+var registrations = require("./api/registrations.js");
 var init = require("./api/init.js");
 var customapi = require("./api/customapi.js");
 
@@ -19,12 +20,18 @@ var map = {
 	getMatches:matches.getMatches,
 	getMatchesRaw:matches.getMatchesRaw,
 	addMatch:matches.addMatch,
+	updateMatch:matches.updateMatch,
+	matchStatus:matches.getMatchStatus,
 	assignCardId:users.assignCardId,
 	rebuiltMatchStats:matches.rebuiltMatchStats,
 	repeatMatchStats:matches.repeatMatchStats,
 	getCompanies:companies.getCompanies,
 	getRecentGainers:customapi.getRecentGainers,
 	addCompany:companies.addCompany,
+	addRegistration:registrations.addRegistration,
+	getRegistrations:registrations.getRegistrations,
+	activateRegistration:registrations.activeRegistration,
+	assignTeam:users.assignTeam
 	};
 
 exports.runAPI = function(request, response)

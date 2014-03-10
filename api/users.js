@@ -29,7 +29,7 @@ exports.getUsers = function(body, callback)
 	});
 }
 
-exports.getPlayersByIds = function(body, callback)
+exports.getPlayersByIds = function(req, callback)
 {
     matches = GLOBAL.usersDB.view('users', 'by_name',
 	function (error, body, headers)
@@ -105,6 +105,36 @@ exports.assignCardId = function(body, callback)
 	});
 }
 
+exports.assignTeam = function(body, callback)
+{
+	exports.isAsscessTokenValidForAdding(body.fbAccessToken, function(ok) {
+		if(ok)
+		{
+			var playerIds = [body.playerId];
+			getPlayersByIdUsingIds(playerIds, function(playersById)
+			{
+				if(playersById && playersById[body.playerId])
+				{
+					var player = playersById[body.playerId];
+					player.team = body.team;
+					player.teamPosition = body.teamPosition;
+
+					updatePlayersByIdToDatabase(playersById, function(ok)
+					{
+						callback({status:"ok"});
+					});
+				}
+				else callback({status:"error", message:"Not found."});
+			});
+		}
+		else
+		{
+			console.log("assignTeam: "+ body.name +" NOT AUTHORIZED");
+			callback({status:"error", message:"Not authorized."});
+		}
+	});
+}
+
 function addUserToDB(body, callback)
 {
 	if(!body.name)
@@ -116,6 +146,10 @@ function addUserToDB(body, callback)
 	if(body.facebookId) player.facebookId = body.facebookId;
 	if(body.company) player.company = body.company;
 	if(body.initialExperience) player.initialExperience = body.initialExperience;
+	player["cardIds"] = [];
+	if (body.cardIds)
+		player.cardIds = body.cardIds;
+
 	player.added = new Date().getTime();
 	console.log("trying to add: "+body + "body" +player);
 	exports.resetPlayerStats(player);

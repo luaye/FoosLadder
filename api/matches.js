@@ -53,7 +53,7 @@ exports.getMatchesRaw = function(body, callback)
 exports.addMatch = function(body, callback)
 {
 	console.log("matches.addMatch: "+JSON.stringify(body));
-	
+
 	users.isAsscessTokenValidForAdding(body.fbAccessToken, function(ok)
 	{
 		if(ok)
@@ -71,7 +71,7 @@ exports.addMatch = function(body, callback)
 function addMatchToDb(body, callback)
 {
 	var matchData = {};
-	
+
 	if(!isNaN(body.date))
 	{
 		var dateMs = Number(body.date);
@@ -93,33 +93,33 @@ function addMatchToDb(body, callback)
 	{
 		matchData.date = new Date().getTime();
 	}
-	
+
 	matchData.leftPlayers = utils.getLeftPlayersOfObject(body);
 	matchData.rightPlayers = utils.getRightPlayersOfObject(body);
-	
+
 	matchData.leftScore = Number(body.leftScore);
 	matchData.rightScore = Number(body.rightScore);
-	
+
 	var totalSeconds = Number(body.totalSeconds);
 	if(!isNaN(totalSeconds) && totalSeconds > 0)
 	{
 		matchData.totalSeconds = totalSeconds;
 	}
-	
-	if(!validateScore(matchData.leftScore) || !validateScore(matchData.rightScore) 
-	|| 
+
+	if(!validateScore(matchData.leftScore) || !validateScore(matchData.rightScore)
+	||
 	(matchData.leftScore < 5 && matchData.rightScore < 5))
 	{
 		callback({status:"error", message:"Invalid score."});
 		return;
 	}
-	
+
 	if(!preValidatePlayers(matchData.leftPlayers) || !preValidatePlayers(matchData.rightPlayers))
 	{
 		callback({status:"error", message:"Invalid players."});
 		return;
 	}
-	
+
 	users.getUsers({}, function(users)
 	{
 		if(validatePlayers(users, matchData.leftPlayers, matchData.rightPlayers))
@@ -192,7 +192,7 @@ function addMatchToDatabase(matchData, callback)
 		if(ok)
 		{
 			//console.log("matches.addMatchToDatabase: "+JSON.stringify(matchData));
-			
+
 			GLOBAL.matchesDBClone.insert(matchData, null, function (error, body, headers)
 			{
 				if(error || !body)
@@ -212,15 +212,140 @@ function addMatchToDatabase(matchData, callback)
 						else
 						{
 							//console.log("matches.addMatch OK: " + JSON.stringify(body));
-							callback({status:"OK"});	
+							callback({status:"OK"});
 						}
-					});	
+					});
 				}
 			});
 		}
 		else
 		{
 			callback({status:"error", message:"unknown"});
+		}
+	});
+}
+
+exports.updateMatch = function(body, callback)
+{
+	console.log("matches.updateMatch: "+JSON.stringify(body));
+
+	users.isAsscessTokenValidForAdding(body.fbAccessToken, function(ok)
+	{
+		if(ok)
+		{
+			updateMatchToDb(body, callback);
+		}
+		else
+		{
+			console.log("addMatch: NOT AUTHORIZED");
+			callback({status:"error", message:"Not authorized."});
+		}
+	})
+}
+
+function updateMatchToDb(body, callback)
+{
+	if(!body.id) body.id = "1";
+
+	fetchMatchStatus(body.id, function(matchData)
+	{
+		if(matchData == null)
+		{
+			matchData = {};
+			matchData._id = body.id;
+		}
+		if(matchData.timeNow) delete matchData.timeNow;
+		matchData.date = new Date().getTime();
+		matchData.leftPlayers = utils.getLeftPlayersOfObject(body);
+		matchData.rightPlayers = utils.getRightPlayersOfObject(body);
+		matchData.leftScore = Number(body.leftScore);
+		matchData.rightScore = Number(body.rightScore);
+		matchData.leftExpectedScore = Number(body.leftExpectedScore);
+		matchData.rightExpectedScore = Number(body.rightExpectedScore);
+		matchData.leftRatingChange = Number(body.leftRatingChange);
+		matchData.rightRatingChange = Number(body.rightRatingChange);
+
+		var totalSeconds = Number(body.totalSeconds);
+		matchData.totalSeconds = !isNaN(totalSeconds) && totalSeconds > 0 ? totalSeconds : 0;
+
+		var bulk = {};
+		bulk.docs = [matchData];
+		GLOBAL.matchStatusDB.bulk(bulk, function (error, body, headers)
+		{
+			if(error || !body)
+			{
+				console.log("FAILED TO UPDATE MATCH STATUS.");
+				callback({status:"error", message:error ? error : "unknown"});
+			}
+			else
+			{
+				console.log("Updated match status " + body);
+				callback({status:"OK"});
+			}
+		});
+	});
+}
+
+function fetchMatchStatus(id, callback)
+{
+	if(!id) id = "1";
+	GLOBAL.matchStatusDB.fetch({keys:[id]}, function (error, body, headers)
+	{
+		if(error || !body || body.rows.length == 0)
+		{
+			callback(null);
+		}
+		else
+		{
+			var doc = body.rows[0].doc;
+			callback((doc && doc.date) ? doc : null);
+		}
+	});
+}
+
+exports.getMatchStatus = function(req, callback)
+{
+	if(!req.id) req.id = "1";
+	fetchMatchStatus(req.id, function(matchData)
+	{
+		if(matchData)
+		{
+			matchData.dateNow = new Date().getTime();
+			delete matchData._rev;
+			if(req.useNames)
+			{
+				users.getPlayersByIds({}, function(playersById)
+				{
+					var leftPlayers = matchData.leftPlayers;
+					var rightPlayers = matchData.rightPlayers;
+					for(var X in leftPlayers)
+					{
+						var id = leftPlayers[X];
+						if(playersById[id])
+						{
+							leftPlayers[X] = playersById[id].name;
+						}
+					}
+
+					for(var X in rightPlayers)
+					{
+						var id = rightPlayers[X];
+						if(playersById[id])
+						{
+							rightPlayers[X] = playersById[id].name;
+						}
+					}
+					callback(matchData);
+				});
+			}
+			else
+			{
+				callback(matchData);
+			}
+		}
+		else
+		{
+			callback({});
 		}
 	});
 }

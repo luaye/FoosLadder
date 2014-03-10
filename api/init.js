@@ -23,16 +23,31 @@ exports.init = function(callback)
 		GLOBAL.matchesDBClone = nano.use(config.couch.matchesDBClone);
 		registerMatchesDesignDoc(GLOBAL.matchesDBClone);
 	});
+
+	var matchStatusDB = config.couch.matchStatusDB;
+	if(!matchStatusDB) matchStatusDB = "foosstatus";
+	initDatabaseIfRequired(matchStatusDB, function()
+	{
+		GLOBAL.matchStatusDB = nano.use(matchStatusDB);
+		registerMatchStatusDesignDoc(GLOBAL.matchStatusDB);
+	});
+
 	initDatabaseIfRequired(config.couch.companiesDB, function()
 	{
 		GLOBAL.companiesDB = nano.use(config.couch.companiesDB);
 		registerCompaniesDesignDoc();
 	});
+
+	initDatabaseIfRequired(config.couch.registrationDB, function()
+	{
+		GLOBAL.registrationDB = nano.use(config.couch.registrationDB);
+		registerRegistrationDesignDoc();
+	});
 }
 
 exports.ready = function()
 {
-	return dbsReady == 2;
+	return dbsReady == 3;
 }
 
 exports.afterReady = function(callback)
@@ -132,6 +147,31 @@ function registerMatchesDesignDoc(db)
 	});
 }
 
+function registerMatchStatusDesignDoc(db)
+{
+	db.insert(
+	{"views":
+		{
+			"by_date":{ "map": function(doc) { emit(doc.date, doc); } }
+		}
+	}
+	,
+	"_design/matchStatus"
+	,
+	function(error, body, header)
+	{
+		if(error)
+		{
+    		//console.log("Register match design doc FAILED:"+ error);
+		}
+		else
+		{
+    		console.log("Register matchStatus design doc.");
+		}
+		dbsReady++;
+		runCallbacksIfReady();
+	});
+}
 
 function registerCompaniesDesignDoc()
 {
@@ -155,6 +195,35 @@ function registerCompaniesDesignDoc()
 		else
 		{
     		console.log("Register companies design doc.");
+		}
+		dbsReady++;
+		runCallbacksIfReady();
+	});
+}
+
+
+function registerRegistrationDesignDoc()
+{
+	GLOBAL.registrationDB.insert(
+	{"views":
+		{
+			"by_name":{ "map": function(doc) { emit(doc.name, doc); } }
+			,
+			"by_id":{ "map": function(doc) { emit(doc._id, doc); } }
+		}
+	}
+	,
+	"_design/registration"
+	,
+	function(error, body, header)
+	{
+		if(error)
+		{
+    		console.log("Register user design doc FAILED:"+ error);
+		}
+		else
+		{
+    		console.log("Register registration design doc.");
 		}
 		dbsReady++;
 		runCallbacksIfReady();
