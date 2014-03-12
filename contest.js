@@ -4,6 +4,8 @@ var CSV_FILENAME = 'algos.csv';
 var users = require("./api/users.js");
 var matches = require("./api/matches.js");
 var elo = require("./api/rating/avg.js");
+var uncertain = require("./api/rating/uncertain.js");
+var glicko = require("./api/rating/glicko.js");
 var random = require("./api/random.js");
 var fs = require("fs");
 
@@ -14,18 +16,29 @@ exports.run = function() {
 function runContest() {
 	console.log("Saving CSV results to "+process.cwd()+"/"+CSV_FILENAME);
 	//fs.writeFileSync(CSV_FILENAME, 'name,k,ratio,err\n', '', function(err){if(err) throw err;});
-	fs.writeFileSync(CSV_FILENAME, 'name,beg,exp,adv,err\n', '', function(err){if(err) throw err;});
-	matches.getMatches({}, function(matchDatas)
+//	fs.writeFileSync(CSV_FILENAME, 'name,beg,exp,adv,err\n', '', function(err){if(err) throw err;});
+	fs.writeFileSync(CSV_FILENAME, 'name,err\n', '', function(err){if(err) throw err;});
+	matches.getMatches({}, function(allMatchDatas)
 	{
-		console.log("got matches: "+matchDatas.length);
 		users.getPlayersByIds({}, function(playersById)
 		{
+			function isGuest(playerId) {
+				var player = playersById[playerId];
+				console.log(player);
+				return player.name.lastIndexOf("Guest", 0) === 0;
+			}
+			var matchDatas = allMatchDatas
+				.filter(function(matchData) { return matchData.leftPlayers.length == 1 && matchData.rightPlayers.length == 1 })
+				.filter(function(matchData) { return !(matchData.leftPlayers.some(isGuest) || matchData.rightPlayers.some(isGuest)) })
+				;
+			console.log("got matches: "+matchDatas.length);
+			
 			var best = { err : 1 };
-			var algos = { elo: new elo.Avg(), random: random };
+			var algos = { elo: new elo.Avg(), gli: new glicko.Glicko() };
 			var algo, x;
-			//for (name in algos)
+			for (name in algos)
 			{
-				var name = 'elo';
+				//var name = 'elo';
 				algo = algos[name];
 				var params = { weakPlayerRatio: 0 };
 				//for (var feedback = 0; feedback <= 1; feedback++)
@@ -57,10 +70,11 @@ function runContest() {
 									seeds[2] = Math.round(seeds[1] + Math.random() * 1000);
 									params.seededRatings = seeds;
 			
-									algo.setParameters(params);
+//									algo.setParameters(params);
 									
 									var error = runAlgo(algo, matchDatas, playersById);
-									var logdata = [ name ].concat(seeds).concat([ error ]);
+//									var logdata = [ name ].concat(seeds).concat([ error ]);
+									var logdata = [ name, error ];
 //									var logdata = [ name, k, ratio, error ];
 									var line = logdata.join(',')+'\n';
 									fs.appendFileSync(CSV_FILENAME, line, '', function(err){if(err) throw err;});
@@ -100,6 +114,7 @@ function runAlgo(ratingAlgo, matchDatas, playersById)
 	for(X in matchDatas)
 	{
 		var matchData = matchDatas[X];
+		
 		//var error = ratingAlgo.updateRatingForMatch(playersById, getMixedStats, matchData);	
 		var error = ratingAlgo.updateStatsOfPlayersByIdForMatch(playersById, matchData);
 		

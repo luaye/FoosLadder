@@ -3,6 +3,7 @@ var kdr = require("./rating/kdr.js");
 //var elo = require("./rating/elo.js");
 var avg = require("./rating/avg.js");
 var versus = require("./rating/versus.js");
+var glicko = require("./rating/glicko.js");
 
 /*
 Methods required for all rating systems:
@@ -23,7 +24,8 @@ var ratingSystems = [
 	elo.getSystem(elo.MODE_SOLO), 
 	elo.getSystem(elo.MODE_DUO),
 	*/
-	versus
+	versus,
+	new glicko.Glicko()
 	];
 	
 var matchRatingChangePaths =
