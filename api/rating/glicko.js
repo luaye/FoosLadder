@@ -2,6 +2,8 @@ var utils = require("./../../utils.js");
 var config = require("./../../config.json");
 var glicko2lib = require("./glicko2.js");
 
+var SEEDED_RATINGS = [ config.beginnerRating, config.experiencedRating, config.advancedRating ];
+
  var settings = {
               tau : 0.5,
               rpd : 604800,
@@ -20,12 +22,13 @@ function Glicko()
 
         this.setParameters = function(param)
 	{
-//		if(param.seededRatings) SEEDED_RATINGS = param.seededRatings;
+		if(param.seededRatings) SEEDED_RATINGS = param.seededRatings;
 	}
 
 	this.resetPlayerStats = function(player)
 	{
-            player.stats.glicko = glicko2.makePlayer();
+             var defaultRating = defaultScoreForPlayer(player);
+            player.stats.glicko = glicko2.makePlayer(defaultRating);
         }
         
         this.playerToString = function (player)
@@ -36,24 +39,51 @@ function Glicko()
 
 	this.updateStatsOfPlayersByIdForMatch = function(playersById, matchData)
 	{
-             var leftPlayer = playersById[matchData.leftPlayers[0]];
-             var rightPlayer = playersById[matchData.rightPlayers[0]];
+             var leftPlayer1 = playersById[matchData.leftPlayers[0]];
+             var rightPlayer1 = playersById[matchData.rightPlayers[0]];
+             var leftPlayer2, rightPlayer2;
              
-             var Rleft = leftPlayer.stats.glicko.getRating();
-             var Rright = rightPlayer.stats.glicko.getRating();
+             if (matchData.leftPlayers.length > 1 && matchData.rightPlayers.length > 1) {
+                          leftPlayer2 = playersById[matchData.leftPlayers[1]];
+                          rightPlayer2 = playersById[matchData.rightPlayers[1]];
+             }
+             
+	     var Rleft = getCombinedRatingOfPlayers(playersById, matchData.leftPlayers);
+             var Rright = getCombinedRatingOfPlayers(playersById, matchData.rightPlayers);
 	     var Eleft = expectedScoreForRating(Rleft, Rright);
              
              var Sleft = getLeftFractionalScore(matchData.leftScore, matchData.rightScore);
              
-             console.log("was "+self.playerToString(leftPlayer) + " vs "+self.playerToString(rightPlayer)+" expected "+Eleft.toFixed(2)+" got "+Sleft.toFixed(2));
+             //console.log("was "+self.playerToString(leftPlayer1) + " vs "+self.playerToString(rightPlayer1)+" expected "+Eleft.toFixed(2)+" got "+Sleft.toFixed(2));
              
-             glicko2.addResult(leftPlayer.stats.glicko, rightPlayer.stats.glicko, Sleft);
+             if (leftPlayer2)
+                          glicko2.addTeamResult(leftPlayer1.stats.glicko, leftPlayer2.stats.glicko, rightPlayer1.stats.glicko, rightPlayer2.stats.glicko, Sleft);
+             else
+                          glicko2.addResult(leftPlayer1.stats.glicko, rightPlayer1.stats.glicko, Sleft);
+                          
              glicko2.calculatePlayersRatings();
                           
-             console.log("now "+self.playerToString(leftPlayer) + " vs "+self.playerToString(rightPlayer));
+             //console.log("now "+self.playerToString(leftPlayer1) + " vs "+self.playerToString(rightPlayer1));
              
             return Eleft - Sleft;
         }
+        
+	function getCombinedRatingOfPlayers(playersById, playerIds)
+	{
+		var player = playersById[playerIds[0]];
+		var rating;
+		if(playerIds.length == 1)
+		{
+                        rating = player.stats.glicko.getRating();
+		}
+		else
+		{
+                        rating = player.stats.glicko.getRating();
+			player = playersById[playerIds[1]];
+                        rating += player.stats.glicko.getRating();
+		}
+		return rating / playerIds.length;
+	}
         
 	function expectedScoreForRating (rating, opponent)
 	{
@@ -70,5 +100,20 @@ function Glicko()
 		
 		return Sleft;
 	}
-        
+        	
+        function defaultScoreForPlayer (player)
+	{
+		var initialExperience = player.initialExperience;
+		if(initialExperience == 1)
+		{
+			return SEEDED_RATINGS[0];
+		}
+		else if(initialExperience == 3)
+		{
+			return SEEDED_RATINGS[2];
+		}
+		return SEEDED_RATINGS[1];
+	}
+	
+
 }

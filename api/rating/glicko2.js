@@ -39,6 +39,12 @@
         this.outcomes.push(outcome);
     };
 
+    Player.prototype.addTeamResult = function(mate, opponent1, opponent2, outcome){
+        this.adv_ranks.push(opponent1.__rating + opponent2.__rating - mate.__rating);
+        this.adv_rds.push(Math.sqrt(opponent1.__rd + opponent2.__rd + mate.__rd));
+        this.outcomes.push(outcome);
+    };
+
     // Calculates the new rating and rating deviation of the player.
     // Follows the steps of the algorithm described at http://www.glicko.net/glicko/glicko2.pdf
     Player.prototype.update_rank = function(){
@@ -211,11 +217,26 @@
        * Add a match result to be taken in account for the new rankings calculation
        * @param {Player} player1 The first player
        * @param {Player} player2 The second player
-       * @param {number} outcome The outcome : 0 = defeat, 1 = victory, 0.5 = draw
+       * @param {number} outcome The outcome for player 1: 0 = defeat, 1 = victory, 0.5 = draw
        */
         Glicko2.prototype.addResult = function(player1, player2, outcome){
             player1.addResult(player2, outcome);
             player2.addResult(player1, 1 - outcome);
+        };
+
+      /** 
+       * Add a team match result to be taken in account for the new rankings calculation
+       * @param {Player} player1A The first player on team A
+       * @param {Player} player2A The second player team A
+       * @param {Player} player1B The first player on team B
+       * @param {Player} player2B The second player team B
+       * @param {number} outcome The outcome for team A: 0 = defeat, 1 = victory, 0.5 = draw
+       */
+        Glicko2.prototype.addTeamResult = function(player1A, player2A, player1B, player2B, outcome){
+            player1A.addTeamResult(player2A, player1B, player2B, outcome);
+            player2A.addTeamResult(player1A, player1B, player2B, outcome);
+            player1B.addTeamResult(player2B, player1A, player2A, 1 - outcome);
+            player2B.addTeamResult(player1B, player1A, player2A, 1 - outcome);
         };
 
         Glicko2.prototype.updateRatings = function(matches){

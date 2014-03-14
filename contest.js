@@ -1,4 +1,4 @@
-var RATIO_OF_SETUP_MATCHES = 0.9;
+var RATIO_OF_SETUP_MATCHES = 0.0;
 var CSV_FILENAME = 'algos.csv';
 
 var users = require("./api/users.js");
@@ -24,11 +24,11 @@ function runContest() {
 		{
 			function isGuest(playerId) {
 				var player = playersById[playerId];
-				console.log(player);
 				return player.name.lastIndexOf("Guest", 0) === 0;
 			}
 			var matchDatas = allMatchDatas
-				.filter(function(matchData) { return matchData.leftPlayers.length == 1 && matchData.rightPlayers.length == 1 })
+				//.filter(function(matchData) { return matchData.leftPlayers.length == 1 && matchData.rightPlayers.length == 1 })
+				.filter(function(matchData) { return matchData.leftPlayers.length == matchData.rightPlayers.length })
 				.filter(function(matchData) { return !(matchData.leftPlayers.some(isGuest) || matchData.rightPlayers.some(isGuest)) })
 				;
 			console.log("got matches: "+matchDatas.length);
@@ -83,6 +83,7 @@ function runContest() {
 										best.parameters = JSON.stringify(params);
 										best.name = name;
 									}
+									
 								}
 							}
 						}
@@ -92,6 +93,18 @@ function runContest() {
 						
 			best.parameters = JSON.parse(best.parameters);
 			console.log("BEST: "+JSON.stringify(best));
+			
+			//playersById.sort(function(a,b) { return a.stats.glicko.getRating() - b.stats.glicko.getRating()});
+			var arr = [];
+			for (var id in playersById) {
+				arr.push(id);
+			}
+			arr.sort(function(a,b) { return playersById[a].stats.glicko.getRating() - playersById[b].stats.glicko.getRating()});
+			for (var idx in arr) {
+				console.log(algos.gli.playerToString(playersById[arr[idx]]));
+			}
+
+			
 			process.exit();
 		});		
 	});
