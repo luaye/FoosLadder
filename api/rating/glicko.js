@@ -36,6 +36,11 @@ function Glicko()
              var playerGlicko = player.stats.glicko;
              return player.name+" ("+playerGlicko.getRating()+","+playerGlicko.getRd()+")";
         }
+        
+        this.consolidatePlayerRatings = function()
+        {
+             
+        }
 
 	this.updateStatsOfPlayersByIdForMatch = function(playersById, matchData)
 	{
@@ -55,6 +60,7 @@ function Glicko()
              var Sleft = getLeftFractionalScore(matchData.leftScore, matchData.rightScore);
              
              //console.log("was "+self.playerToString(leftPlayer1) + " vs "+self.playerToString(rightPlayer1)+" expected "+Eleft.toFixed(2)+" got "+Sleft.toFixed(2));
+             glicko2.cleanPreviousMatches();
              
              if (leftPlayer2)
                           glicko2.addTeamResult(leftPlayer1.stats.glicko, leftPlayer2.stats.glicko, rightPlayer1.stats.glicko, rightPlayer2.stats.glicko, Sleft);
