@@ -33,7 +33,7 @@ function runContest() {
 				;
 			console.log("got matches: "+matchDatas.length);
 			
-			var best = { err : 1 };
+			var best = { err : 99999999 };
 			var algos = { elo: new elo.Avg(), gli: new glicko.Glicko() };
 			var algo, x;
 			for (name in algos)
@@ -73,6 +73,7 @@ function runContest() {
 //									algo.setParameters(params);
 									
 									var error = runAlgo(algo, matchDatas, playersById);
+									console.log("error "+error);
 //									var logdata = [ name ].concat(seeds).concat([ error ]);
 									var logdata = [ name, error ];
 //									var logdata = [ name, k, ratio, error ];
@@ -99,7 +100,12 @@ function runContest() {
 			for (var id in playersById) {
 				arr.push(id);
 			}
-			arr.sort(function(a,b) { return playersById[a].stats.glicko.getRating() - playersById[b].stats.glicko.getRating()});
+			arr.sort(function(a,b) {
+				var aRank = algos.gli.getPlayerRank(playersById[a]);
+				var bRank = algos.gli.getPlayerRank(playersById[b]);
+				return aRank - bRank;
+				//return playersById[a].stats.glicko.getRating() - playersById[b].stats.glicko.getRating()
+			});
 			for (var idx in arr) {
 				console.log(algos.gli.playerToString(playersById[arr[idx]]));
 			}
@@ -129,16 +135,16 @@ function runAlgo(ratingAlgo, matchDatas, playersById)
 		var matchData = matchDatas[X];
 		
 		//var error = ratingAlgo.updateRatingForMatch(playersById, getMixedStats, matchData);	
-		var error = ratingAlgo.updateStatsOfPlayersByIdForMatch(playersById, matchData);
+		var error = ratingAlgo.updateStatsOfPlayersByIdForMatch(playersById, matchData) * 100;
 		
 		if (++matchesProcessed > numSetupMatches) {
 			totalError += error * error;
 		}
 	}
 	
-	var avgError = totalError/(totalMatches-numSetupMatches);
+	var avgError = Math.sqrt(totalError/(totalMatches-numSetupMatches));
+	console.log("Total squared error: "+totalError+", avg per match: "+avgError);
 	return avgError;
-//	console.log("Total squared error: "+totalError+", avg per match: "+avgError);
 }
 
 function getMixedStats(player)

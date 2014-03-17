@@ -34,7 +34,20 @@ function Glicko()
         this.playerToString = function (player)
         {
              var playerGlicko = player.stats.glicko;
-             return player.name+" ("+playerGlicko.getRating()+","+playerGlicko.getRd()+")";
+             var pRating = playerGlicko.getRating();
+             var pRd = playerGlicko.getRd();
+             var pLow = Math.round(pRating - 2*pRd);
+             var pHigh = Math.round(pRating + 2*pRd);
+             return player.name+" "+pLow+"-"+pHigh+" ("+pRating+","+pRd+")";
+        }
+        
+        this.getPlayerRank = function (player)
+        {
+             var playerGlicko = player.stats.glicko;
+             var pRating = playerGlicko.getRating();
+             var pRd = playerGlicko.getRd();
+             
+             return pRating - pRd*2;
         }
         
         this.consolidatePlayerRatings = function()
