@@ -83,11 +83,13 @@ function onMatchStatusLoaded(matchData)
 		view.find(".rightAttacker").text(getPlayerNameOfIndex(matchData.rightPlayers, 0));
 		view.find(".rightDefender").text(getPlayerNameOfIndex(matchData.rightPlayers, 1));
 		
-		view.find(".leftExpectedScore").text(matchData.leftExpectedScore);
-		view.find(".rightExpectedScore").text(matchData.rightExpectedScore);
+		view.find(".leftExpectedScore").text(Math.round(matchData.leftExpectedScore * 10) / 10);
+		view.find(".rightExpectedScore").text(Math.round(matchData.rightExpectedScore* 10) / 10);
 		
-		view.find(".leftRatingChange").text(matchData.leftRatingChange);
-		view.find(".rightRatingChange").text(matchData.rightRatingChange);
+		var v = Math.round(matchData.leftRatingChange * 10) / 10;
+		view.find(".leftRatingChange").text(v > 0 ? "+" + v : v);
+		v = Math.round(matchData.rightRatingChange * 10) / 10;
+		view.find(".rightRatingChange").text(v > 0 ? "+" + v : v);
 	}
 	else
 	{

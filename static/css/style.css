@@ -17,7 +17,7 @@ body,
 		color:#000;
 	}
 	#wrap {
-		width:750px;
+		width:500px;
 		margin:0 auto;
 	}
 	#header {
@@ -40,19 +40,16 @@ body,
 		padding:0;
 	}
 	#main {
-float: left;
 width: 480px;
 padding: 10px;
-left: -100px;
 position: relative;
+clear:both;
 	}
 	h2 {
 	}
 	#sidebar {
-		float:right;
-		width:230px;
+		width:500px;
 		padding:10px;
-left: -200px;
 position: relative;
 	}
 	#footer {
