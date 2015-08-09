@@ -13,6 +13,7 @@ exports.afterReady = function(callback) { init.afterReady(callback); }
 var map = {
 	getPlayers:users.getUsers,
 	addPlayer:users.addUser,
+	editPlayer:users.editUser,
 	getPlayersByIds:users.getPlayersByIds,
 	getExpectedScores:users.getExpectedScores,
 	getRatingChange:users.getRatingChange,

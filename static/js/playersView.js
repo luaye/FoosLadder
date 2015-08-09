@@ -81,7 +81,7 @@ function updateRows()
 
 	var X;
 	var userRow;
-	
+
 	var filteredPlayers = [];
 	for(X in players)
 	{
@@ -91,9 +91,9 @@ function updateRows()
 			filteredPlayers.push(player);
 		}
 	}
-	
+
 	if(filteredPlayers.length == 0) filteredPlayers = players;
-	
+
 	for(X in filteredPlayers)
 	{
 		userRow = table.createRow();
@@ -202,18 +202,20 @@ this.onAddSubmit = function()
 	var name = $("#addPlayerName").val();
 	var company = $("#addPlayerCompany").val();
 	var facebookId = $("#addPlayerFBId").val();
+	var slackChatId = $("#addSlackChatId").val();
 	var experience = $("#addPlayerExp").val();
-	
+
 	if(company)
 	{
 		company = GetCompanyIdByName(company);
 	}
-	
+
 	var request = {request:"addPlayer",
 		fbAccessToken:facebookAccessToken,
 		name:name,
 		company:company,
 		facebookId:facebookId,
+		slackChatId:slackChatId,
 		initialExperience:experience
 	};
 
@@ -348,7 +350,7 @@ function addFBCommentsIfRequired()
 
 	if(FACEBOOK_ENABLED)
 	{
-		
+
 	var commentArea = table.element.find(".commentCell");
 	var width = table.element.innerWidth() - 15;
 

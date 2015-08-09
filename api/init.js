@@ -173,9 +173,9 @@ function registerMatchStatusDesignDoc(db)
 	});
 }
 
-function registerCompaniesDesignDoc()
+function registerCompaniesDesignDoc(db)
 {
-	GLOBAL.companiesDB.insert(
+	db.insert(
 	{"views":
 		{
 			"by_name":{ "map": function(doc) { emit(doc.name, doc); } }

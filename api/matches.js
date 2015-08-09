@@ -58,6 +58,7 @@ exports.addMatch = function(body, callback)
 	{
 		if(ok)
 		{
+			console.log("matches.addMatch 1");
 			addMatchToDb(body, callback);
 		}
 		else
@@ -114,16 +115,19 @@ function addMatchToDb(body, callback)
 		return;
 	}
 
+	console.log("matches.addMatch validate players");
 	if(!preValidatePlayers(matchData.leftPlayers) || !preValidatePlayers(matchData.rightPlayers))
 	{
 		callback({status:"error", message:"Invalid players."});
 		return;
 	}
 
+	console.log("matches.addMatch get users");
 	users.getUsers({}, function(users)
 	{
 		if(validatePlayers(users, matchData.leftPlayers, matchData.rightPlayers))
 		{
+			console.log("matches.addMatch addMatchToDB");
 			addMatchToDatabase(matchData, callback);
 		}
 		else
@@ -140,7 +144,7 @@ function validateScore(score)
 
 function preValidatePlayers(players)
 {
-	//console.log("preValidatePlayers: " + players.length + " - "+ players);
+	console.log("preValidatePlayers: " + players.length + " - "+ players);
 	return players != null && players.length > 0 && players.length <= 2;
 }
 
@@ -191,13 +195,13 @@ function addMatchToDatabase(matchData, callback)
 	{
 		if(ok)
 		{
-			//console.log("matches.addMatchToDatabase: "+JSON.stringify(matchData));
+			console.log("matches.addMatchToDatabase: "+JSON.stringify(matchData));
 
 			GLOBAL.matchesDBClone.insert(matchData, null, function (error, body, headers)
 			{
 				if(error || !body)
 				{
-					console.log("matches.addMatch error: "+error);
+					console.log("matches.addMatch clonedb error: "+error);
 					callback({status:"error"});
 				}
 				else
@@ -206,7 +210,7 @@ function addMatchToDatabase(matchData, callback)
 					{
 						if(error || !body)
 						{
-							console.log("matches.addMatch error: "+error);
+							console.log("matches.addMatch db error: "+error);
 							callback({status:"error"});
 						}
 						else

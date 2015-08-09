@@ -105,6 +105,39 @@ exports.assignCardId = function(body, callback)
 	});
 }
 
+exports.editPlayer = function(body, callback)
+{
+	exports.isAsscessTokenValidForAdding(body.fbAccessToken, function(ok) {
+		if(ok)
+		{
+			var playerIds = [body.playerId];
+			getPlayersByIdUsingIds(playerIds, function(playersById)
+			{
+				if(playersById && playersById[body.playerId])
+				{
+					var player = playersById[body.playerId];
+
+					if(body.name) player.name = body.name;
+					if(body.facebookId) player.facebookId = body.facebookId;
+					if(body.slackChatId) player.slackChatId = body.slackChatId;
+					if(body.company) player.company = body.company;
+
+					updatePlayersByIdToDatabase(playersById, function(ok)
+					{
+						callback({status:"ok"});
+					});
+				}
+				else callback({status:"error", message:"Not found."});
+			});
+		}
+		else
+		{
+			console.log("assignCardId: "+ body.name +" NOT AUTHORIZED");
+			callback({status:"error", message:"Not authorized."});
+		}
+	});
+}
+
 exports.assignTeam = function(body, callback)
 {
 	exports.isAsscessTokenValidForAdding(body.fbAccessToken, function(ok) {
@@ -150,6 +183,7 @@ function addUserToDB(body, callback)
 	}
 	var player = {name: body.name};
 	if(body.facebookId) player.facebookId = body.facebookId;
+	if(body.slackChatId) player.slackChatId = body.slackChatId;
 	if(body.company) player.company = body.company;
 	if(body.initialExperience) player.initialExperience = body.initialExperience;
 	player["cardIds"] = [];
