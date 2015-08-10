@@ -105,7 +105,7 @@ exports.assignCardId = function(body, callback)
 	});
 }
 
-exports.editPlayer = function(body, callback)
+exports.editUser = function(body, callback)
 {
 	exports.isAsscessTokenValidForAdding(body.fbAccessToken, function(ok) {
 		if(ok)

@@ -35,7 +35,7 @@ exports.init = function(callback)
 	initDatabaseIfRequired(config.couch.companiesDB, function()
 	{
 		GLOBAL.companiesDB = nano.use(config.couch.companiesDB);
-		registerCompaniesDesignDoc();
+		registerCompaniesDesignDoc(GLOBAL.companiesDB);
 	});
 
 	initDatabaseIfRequired(config.couch.registrationDB, function()
