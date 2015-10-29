@@ -68,3 +68,53 @@ exports.getRecentGainers = function(body, callback)
 	}
 	
 }
+exports.getCustomLeaderboard = function(body, callback)
+{
+	var scores = GLOBAL.customLeaderboardDB.view('customleaderboard', 'by_table', body,
+	function (error, body, headers)
+	{
+		if(error || !body)
+		{
+			console.log("matches.getCustomLeaderboard error: "+error);
+			callback([]);
+		}
+		else
+		{
+			var result = [];
+			for (var X in body.rows)
+			{
+				var match = body.rows[X].value;
+				delete match._rev;
+				delete match._id;
+				result.push(match);
+			}
+			callback(result);
+		}
+	});
+}
+
+exports.submitCustomLeaderboard = function(body, callback)
+{
+	console.log("submitCustomLeaderboard: "+JSON.stringify(body));
+	if(body.table != null && body.name != null)
+	{
+		delete body.request;
+		GLOBAL.customLeaderboardDB.insert(body, null, function (error, body, headers)
+					{
+						if(error || !body)
+						{
+							console.log("submitCustomLeaderboard db error: "+error);
+							callback({status:"error"});
+						}
+						else
+						{
+							//console.log("matches.addMatch OK: " + JSON.stringify(body));
+							callback({status:"OK"});
+						}
+		});
+	}
+	else
+	{
+		callback({status:"error", message:"bad data"});
+	}
+}

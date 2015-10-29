@@ -43,11 +43,17 @@ exports.init = function(callback)
 		GLOBAL.registrationDB = nano.use(config.couch.registrationDB);
 		registerRegistrationDesignDoc();
 	});
+
+	initDatabaseIfRequired("customleaderboard", function()
+	{
+		GLOBAL.customLeaderboardDB = nano.use("customleaderboard");
+		registerCustomLeaderboardDesignDoc();
+	});
 }
 
 exports.ready = function()
 {
-	return dbsReady == 3;
+	return dbsReady >= 4;
 }
 
 exports.afterReady = function(callback)
@@ -224,6 +230,32 @@ function registerRegistrationDesignDoc()
 		else
 		{
     		console.log("Register registration design doc.");
+		}
+		dbsReady++;
+		runCallbacksIfReady();
+	});
+}
+
+function registerCustomLeaderboardDesignDoc()
+{
+	GLOBAL.customLeaderboardDB.insert(
+	{"views":
+		{
+			"by_table":{ "map": function(doc) { emit(doc.table, doc); } }
+		}
+	}
+	,
+	"_design/customleaderboard"
+	,
+	function(error, body, header)
+	{
+		if(error)
+		{
+    		console.log("Register customleaderboard design doc FAILED:"+ error);
+		}
+		else
+		{
+    		console.log("Register customleaderboard design doc.");
 		}
 		dbsReady++;
 		runCallbacksIfReady();

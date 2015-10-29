@@ -32,7 +32,9 @@ var map = {
 	addRegistration:registrations.addRegistration,
 	getRegistrations:registrations.getRegistrations,
 	activateRegistration:registrations.activeRegistration,
-	assignTeam:users.assignTeam
+	assignTeam:users.assignTeam,
+	leaderboard:customapi.getCustomLeaderboard,
+	submitleaderboard:customapi.submitCustomLeaderboard
 	};
 
 exports.runAPI = function(request, response)
