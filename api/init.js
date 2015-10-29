@@ -242,6 +242,8 @@ function registerCustomLeaderboardDesignDoc()
 	{"views":
 		{
 			"by_table":{ "map": function(doc) { emit(doc.table, doc); } }
+			,
+			"by_uid":{ "map": function(doc) { emit(doc.uid, doc); } }
 		}
 	}
 	,

@@ -70,7 +70,7 @@ exports.getRecentGainers = function(body, callback)
 }
 exports.getCustomLeaderboard = function(body, callback)
 {
-	var scores = GLOBAL.customLeaderboardDB.view('customleaderboard', 'by_table', body,
+	var scores = GLOBAL.customLeaderboardDB.view('customleaderboard', 'by_table', {},
 	function (error, body, headers)
 	{
 		if(error || !body)
@@ -95,11 +95,67 @@ exports.getCustomLeaderboard = function(body, callback)
 
 exports.submitCustomLeaderboard = function(body, callback)
 {
-	console.log("submitCustomLeaderboard: "+JSON.stringify(body));
+	//console.log("submitCustomLeaderboard: "+JSON.stringify(body));
 	if(body.table != null && body.name != null)
 	{
 		delete body.request;
-		GLOBAL.customLeaderboardDB.insert(body, null, function (error, body, headers)
+		body.table = String(body.table);
+		body.name = String(body.name);
+		body.uid = body.id != null ? String(body.id) : null;
+		delete body.id;
+		
+		if(body.table.length == 0 || body.name.length == 0)
+		{
+			callback({status:"error", message:"fields missing"});
+			return;
+		}
+		
+		if(body.uid != null && body.uid.length > 0)
+		{
+			var scores = GLOBAL.customLeaderboardDB.view('customleaderboard', 'by_uid', {key : body.uid},
+			function (error, existings, headers)
+			{
+				if(error || !existings || existings.rows.length == 0)
+				{
+					GLOBAL.customLeaderboardDB.insert(body, null, function (error, body, headers)
+					{
+						if(error || !body)
+						{
+							console.log("submitCustomLeaderboard insert error: "+error);
+							callback({status:"error"});
+						}
+						else
+						{
+							callback({status:"OK"});
+						}
+					});
+				}
+				else
+				{
+					var existing = existings.rows[0];
+					body._id = existing.id;
+					body._rev = existing.value._rev;
+					var bulk = {};
+					bulk.docs = [body];
+					GLOBAL.customLeaderboardDB.bulk(bulk, null, function (error, changed, headers)
+					{
+						if(error || !changed)
+						{
+							console.log("submitCustomLeaderboard update error: "+error);
+							callback({status:"error"});
+						}
+						else
+						{
+							//console.log("submitCustomLeaderboard update existing: "+JSON.stringify(existing) + " -> " +JSON.stringify(changed));
+							callback({status:"OK"});
+						}
+					});
+				}
+			});
+		}
+		else
+		{
+			GLOBAL.customLeaderboardDB.insert(body, null, function (error, body, headers)
 					{
 						if(error || !body)
 						{
@@ -108,10 +164,10 @@ exports.submitCustomLeaderboard = function(body, callback)
 						}
 						else
 						{
-							//console.log("matches.addMatch OK: " + JSON.stringify(body));
 							callback({status:"OK"});
 						}
 		});
+		}
 	}
 	else
 	{
