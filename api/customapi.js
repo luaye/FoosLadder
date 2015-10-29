@@ -70,7 +70,7 @@ exports.getRecentGainers = function(body, callback)
 }
 exports.getCustomLeaderboard = function(body, callback)
 {
-	var scores = GLOBAL.customLeaderboardDB.view('customleaderboard', 'by_table', {},
+	var scores = GLOBAL.customLeaderboardDB.view('customleaderboard', 'by_table', {key:body.table},
 	function (error, body, headers)
 	{
 		if(error || !body)
@@ -99,10 +99,10 @@ exports.submitCustomLeaderboard = function(body, callback)
 	if(body.table != null && body.name != null)
 	{
 		delete body.request;
-		body.table = String(body.table);
-		body.name = String(body.name);
-		body.uid = body.id != null ? String(body.id) : null;
-		delete body.id;
+		if(body.table != null) body.table = String(body.table);
+		if(body.name != null) body.name = String(body.name);
+		if(body.uid != null) body.uid = String(body.uid);
+		if(body.score != null) body.score = Number(body.score);
 		
 		if(body.table.length == 0 || body.name.length == 0)
 		{
@@ -115,7 +115,8 @@ exports.submitCustomLeaderboard = function(body, callback)
 			var scores = GLOBAL.customLeaderboardDB.view('customleaderboard', 'by_uid', {key : body.uid},
 			function (error, existings, headers)
 			{
-				if(error || !existings || existings.rows.length == 0)
+				var existing = error == null && existings != null && existings.rows.length > 0 ? existings.rows[0].value : null;
+				if(existing == null)
 				{
 					GLOBAL.customLeaderboardDB.insert(body, null, function (error, body, headers)
 					{
@@ -130,11 +131,10 @@ exports.submitCustomLeaderboard = function(body, callback)
 						}
 					});
 				}
-				else
+				else if(isNaN(body.score) || isNaN(existing.score) || Number(existing.score) < body.score)
 				{
-					var existing = existings.rows[0];
-					body._id = existing.id;
-					body._rev = existing.value._rev;
+					body._id = existing._id;
+					body._rev = existing._rev;
 					var bulk = {};
 					bulk.docs = [body];
 					GLOBAL.customLeaderboardDB.bulk(bulk, null, function (error, changed, headers)
@@ -146,10 +146,14 @@ exports.submitCustomLeaderboard = function(body, callback)
 						}
 						else
 						{
-							//console.log("submitCustomLeaderboard update existing: "+JSON.stringify(existing) + " -> " +JSON.stringify(changed));
+							//console.log("submitCustomLeaderboard update existing: \n"+JSON.stringify(existing) + " -> \n" +JSON.stringify(body) + " -> \n" +JSON.stringify(changed));
 							callback({status:"OK"});
 						}
 					});
+				}
+				else
+				{
+					callback({status:"OK", updated:false});
 				}
 			});
 		}
