@@ -1,6 +1,9 @@
 var RATIO_OF_SETUP_MATCHES = 0.0;
 var CSV_FILENAME = 'algos.csv';
 
+var config = require("./config.json");
+var apimap = require('./apimap.js');
+
 var users = require("./api/users.js");
 var matches = require("./api/matches.js");
 var elo = require("./api/rating/avg.js");
@@ -103,7 +106,7 @@ function runContest() {
 			arr.sort(function(a,b) {
 				var aRank = algos.gli.getPlayerRank(playersById[a]);
 				var bRank = algos.gli.getPlayerRank(playersById[b]);
-				return aRank - bRank;
+				return bRank - aRank;
 				//return playersById[a].stats.glicko.getRating() - playersById[b].stats.glicko.getRating()
 			});
 			for (var idx in arr) {
