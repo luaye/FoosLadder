@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+	<meta name="viewport" id="viewport" content="width=480"/>
+	<meta name="apple-mobile-web-app-capable" content="yes">
+
+	<title>Space Ape Games Foos Registration</title>
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
+	<link href="css/style.css" rel="stylesheet" type="text/css" />
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+<script type="text/javascript" src="jslib/jquery-1.8.2.min.js"></script>
+<script type="text/javascript" src="jslib/jquery.sparkline.js"></script>
+<script type="text/javascript" src="jslib/bootstrap.min.js"></script>
+<script type="text/javascript" src="config.js"></script>
+<script type="text/javascript" src="js/shared.js"></script>
+<script src="js/countdown.js"></script>
+
+<script src="//connect.facebook.net/en_US/all.js"></script>
+
+<script type="text/javascript">
+
+var companies;
+
+function onLoad()
+{
+	$("#registrationComplete").hide();
+	loadCompanies();
+}
+
+function loadCompanies()
+{
+	callAPI({request:"getCompanies"}, self.onCompaniesLoaded);
+}
+
+function onCompaniesLoaded(data)
+{
+	companies = data;
+	var options = $("#addRegistrationCompany");
+	$.each(companies, function() {
+		console.log(this.name);
+		options.append($("<option />").val(this.name).text(this.name));
+	});
+}
+
+function GetCompanyNameById(id)
+{
+	return FindNameById(companies, id);
+}
+
+function GetCompanyIdByName(name)
+{
+	if(companies)
+	{
+		for(var X in companies)
+		{
+			if(companies[X].name == name) return companies[X].id;
+		}
+	}
+	return "";
+}
+
+function isValidEmailAddress(emailAddress) {
+    var pattern = new RegExp(/^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i);
+    return pattern.test(emailAddress);
+};
+
+function onRegistrationSubmit()
+{
+	var name = $("#addRegistrationName").val();
+	var company = $("#addRegistrationCompany").val();
+	var email = $("#addRegistrationEmail").val();
+	var recentGameCount = $("#addRecentGameCount").val();
+
+	if(company)
+	{
+		company = GetCompanyIdByName(company);
+	}
+
+	if (name == null || "" == name){
+		alert("Player Name is missing");
+		return;
+	}
+
+	if (email == null || "" == email){
+		alert("Email is missing");
+		return;
+	}
+
+	if (!isValidEmailAddress(email)){
+		alert("Email is not valid");
+		return;
+	}
+
+	var request = {request:"addRegistration",
+		name:name,
+		company:company,
+		email:email,
+		recentGameCount:recentGameCount
+	};
+
+	callAPI(request, onRegistrationAdded);
+}
+
+function onRegistrationAdded()
+{
+	$("#registrationsTable").hide();
+	$("#registrationComplete").show();
+}
+
+</script>
+
+
+
+
+
+
+
+
+
+
+</head>
+<body onLoad="onLoad()">
+
+
+<div id="wrap">
+
+
+<div id="header"><img src="img/logo448x92.png"/><h3>Foos Tournament</h3>
+<div id="timerholder">
+<h2>Starts in!</h2>
+<script type="application/javascript">
+
+	var myCountdownTest = new Countdown({
+										year	: 2014,
+										month	: 03,
+										day		: 6,
+										hour	: 18,
+										width	: 300,
+										height	: 50
+										});
+
+
+
+	</script>
+	</div>
+</div>
+
+<div id="main">
+<iframe src="http://player.vimeo.com/video/61083738?autoplay=1" width="480" height="260" frameborder="0" autoplay="1" loop="9999999" webkitallowfullscreen mozallowfullscreen allowfullscreen ></iframe>
+
+</div>
+
+
+<div id="sidebar">
+<h2>Registration</h2>
+<div style=" margin-left:30px" align="center">
+
+	<div id="registrationsTable" align="left">
+  	<div class="row-fluid">
+      <div class="span3">Player Name</div>
+      <div class="span5"><input id="addRegistrationName" type="text" placeholder=""></div>
+    </div>
+  	<div class="row-fluid">
+      <div class="span3">Email</div>
+      <div class="span5"><input id="addRegistrationEmail" type="text" placeholder=""></div>
+    </div>
+    <div class="row-fluid">
+	  <div class="span3">Company</div>
+	  <div class="span5">
+	  	<select id="addRegistrationCompany" class="input-medium">
+	  	</select>
+	  </div>
+    </div>
+  	<div class="row-fluid">
+      <div class="span3">Play Often?</div>
+      <div class="span5"><select id="addRecentGameCount" class="input-medium">
+      <option value="1" selected>First Time</option>
+      <option value="2">Have played</option>
+      <option value="3">Monthly</option>
+      <option value="4">Weekly</option>
+    </select></div>
+    </div>
+    <input type="submit" name="submit" id="addRegistrationSubmit" value="Register" onclick="onRegistrationSubmit()" class="btn btn-primary">
+</div>
+</div>
+
+<div id="registrationComplete" style="display: none;"><h4>Registration Complete!</h4></div>
+
+
+
+
+
+</div>
+
+
+
+<div id="footer"></div>
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+</body>
+</html>

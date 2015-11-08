@@ -6,6 +6,7 @@
 		"usersDB": "foosplayers",
 		"matchesDB": "foosmatches",
 		"matchesDBClone": "foosmatchesClone",
+		"matchStatusDB": "foosstatus",
 		"companiesDB": "fooscompanies"
 		},
 	
@@ -18,7 +19,7 @@
 	
 	"nbeginnerRating":856,
 	"nexperiencedRating":1070,
-	"nadvancedRating":1324
+	"nadvancedRating":1324,
 	"beginnerRating":1400,
 	"experiencedRating":1600,
 	"advancedRating":1800

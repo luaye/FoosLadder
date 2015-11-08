@@ -127,6 +127,11 @@ exports.updateStatsOfPlayersByIdForMatch = function(playersById, matchData)
 	for(var X in playerIdsInMatch)
 	{
 		var player = playersById[playerIdsInMatch[X]];
+		if(player == null)
+		{
+			console.log("Match has invalid player: "+playerIdsInMatch[X] + " matchData: " + JSON.stringify(matchData));
+			return true;
+		}
 		if(player.isGuest == true)
 		{
 			hasGuest = true;

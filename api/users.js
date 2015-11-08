@@ -29,7 +29,7 @@ exports.getUsers = function(body, callback)
 	});
 }
 
-exports.getPlayersByIds = function(body, callback)
+exports.getPlayersByIds = function(req, callback)
 {
     matches = GLOBAL.usersDB.view('users', 'by_name',
 	function (error, body, headers)
@@ -105,6 +105,75 @@ exports.assignCardId = function(body, callback)
 	});
 }
 
+exports.editUser = function(body, callback)
+{
+	exports.isAsscessTokenValidForAdding(body.fbAccessToken, function(ok) {
+		if(ok)
+		{
+			var playerIds = [body.playerId];
+			getPlayersByIdUsingIds(playerIds, function(playersById)
+			{
+				if(playersById && playersById[body.playerId])
+				{
+					var player = playersById[body.playerId];
+
+					if(body.name) player.name = body.name;
+					if(body.facebookId) player.facebookId = body.facebookId;
+					if(body.slackChatId) player.slackChatId = body.slackChatId;
+					if(body.company) player.company = body.company;
+
+					updatePlayersByIdToDatabase(playersById, function(ok)
+					{
+						callback({status:"ok"});
+					});
+				}
+				else callback({status:"error", message:"Not found."});
+			});
+		}
+		else
+		{
+			console.log("assignCardId: "+ body.name +" NOT AUTHORIZED");
+			callback({status:"error", message:"Not authorized."});
+		}
+	});
+}
+
+exports.assignTeam = function(body, callback)
+{
+	exports.isAsscessTokenValidForAdding(body.fbAccessToken, function(ok) {
+		if(ok)
+		{
+			var playerIds = [body.offenceId,body.defenceId];
+			getPlayersByIdUsingIds(playerIds, function(playersById)
+			{
+				if(playersById && playersById[body.offenceId] && playersById[body.defenceId])
+				{
+					var offencePlayer = playersById[body.offenceId];
+					var defencePlayer = playersById[body.defenceId];
+					offencePlayer.team = body.team;
+					defencePlayer.team = body.team;
+					offencePlayer.teamPosition = "offence";
+					defencePlayer.teamPosition = "defence";
+
+					updatePlayersByIdToDatabase([offencePlayer,defencePlayer], function(ok)
+					{
+						callback({status:"ok"});
+					});
+				}
+				else {
+					console.log("assignTeam: players not found");
+					callback({status:"error", message:"Not found."});
+				}
+			});
+		}
+		else
+		{
+			console.log("assignTeam: "+ body.name +" NOT AUTHORIZED");
+			callback({status:"error", message:"Not authorized."});
+		}
+	});
+}
+
 function addUserToDB(body, callback)
 {
 	if(!body.name)
@@ -114,8 +183,13 @@ function addUserToDB(body, callback)
 	}
 	var player = {name: body.name};
 	if(body.facebookId) player.facebookId = body.facebookId;
+	if(body.slackChatId) player.slackChatId = body.slackChatId;
 	if(body.company) player.company = body.company;
 	if(body.initialExperience) player.initialExperience = body.initialExperience;
+	player["cardIds"] = [];
+	if (body.cardIds)
+		player.cardIds = body.cardIds;
+
 	player.added = new Date().getTime();
 	console.log("trying to add: "+body + "body" +player);
 	exports.resetPlayerStats(player);
@@ -335,7 +409,7 @@ function updatePlayersByIdToDatabase(playersById, callback)
 	{
 		if(error || !body)
 		{
-			console.log("FAILED TO UPDATE PLAYER STATS FOR MATCH.");
+			console.log("FAILED TO UPDATE PLAYERS " + error);
 			callback(false);
 		}
 		else

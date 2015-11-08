@@ -23,16 +23,37 @@ exports.init = function(callback)
 		GLOBAL.matchesDBClone = nano.use(config.couch.matchesDBClone);
 		registerMatchesDesignDoc(GLOBAL.matchesDBClone);
 	});
+
+	var matchStatusDB = config.couch.matchStatusDB;
+	if(!matchStatusDB) matchStatusDB = "foosstatus";
+	initDatabaseIfRequired(matchStatusDB, function()
+	{
+		GLOBAL.matchStatusDB = nano.use(matchStatusDB);
+		registerMatchStatusDesignDoc(GLOBAL.matchStatusDB);
+	});
+
 	initDatabaseIfRequired(config.couch.companiesDB, function()
 	{
 		GLOBAL.companiesDB = nano.use(config.couch.companiesDB);
-		registerCompaniesDesignDoc();
+		registerCompaniesDesignDoc(GLOBAL.companiesDB);
+	});
+
+	initDatabaseIfRequired(config.couch.registrationDB, function()
+	{
+		GLOBAL.registrationDB = nano.use(config.couch.registrationDB);
+		registerRegistrationDesignDoc();
+	});
+
+	initDatabaseIfRequired("customleaderboard", function()
+	{
+		GLOBAL.customLeaderboardDB = nano.use("customleaderboard");
+		registerCustomLeaderboardDesignDoc();
 	});
 }
 
 exports.ready = function()
 {
-	return dbsReady == 2;
+	return dbsReady >= 4;
 }
 
 exports.afterReady = function(callback)
@@ -132,10 +153,35 @@ function registerMatchesDesignDoc(db)
 	});
 }
 
-
-function registerCompaniesDesignDoc()
+function registerMatchStatusDesignDoc(db)
 {
-	GLOBAL.companiesDB.insert(
+	db.insert(
+	{"views":
+		{
+			"by_date":{ "map": function(doc) { emit(doc.date, doc); } }
+		}
+	}
+	,
+	"_design/matchStatus"
+	,
+	function(error, body, header)
+	{
+		if(error)
+		{
+    		//console.log("Register match design doc FAILED:"+ error);
+		}
+		else
+		{
+    		console.log("Register matchStatus design doc.");
+		}
+		dbsReady++;
+		runCallbacksIfReady();
+	});
+}
+
+function registerCompaniesDesignDoc(db)
+{
+	db.insert(
 	{"views":
 		{
 			"by_name":{ "map": function(doc) { emit(doc.name, doc); } }
@@ -155,6 +201,63 @@ function registerCompaniesDesignDoc()
 		else
 		{
     		console.log("Register companies design doc.");
+		}
+		dbsReady++;
+		runCallbacksIfReady();
+	});
+}
+
+
+function registerRegistrationDesignDoc()
+{
+	GLOBAL.registrationDB.insert(
+	{"views":
+		{
+			"by_name":{ "map": function(doc) { emit(doc.name, doc); } }
+			,
+			"by_id":{ "map": function(doc) { emit(doc._id, doc); } }
+		}
+	}
+	,
+	"_design/registration"
+	,
+	function(error, body, header)
+	{
+		if(error)
+		{
+    		console.log("Register user design doc FAILED:"+ error);
+		}
+		else
+		{
+    		console.log("Register registration design doc.");
+		}
+		dbsReady++;
+		runCallbacksIfReady();
+	});
+}
+
+function registerCustomLeaderboardDesignDoc()
+{
+	GLOBAL.customLeaderboardDB.insert(
+	{"views":
+		{
+			"by_table":{ "map": function(doc) { emit(doc.table, doc); } }
+			,
+			"by_uid":{ "map": function(doc) { emit(doc.uid, doc); } }
+		}
+	}
+	,
+	"_design/customleaderboard"
+	,
+	function(error, body, header)
+	{
+		if(error)
+		{
+    		console.log("Register customleaderboard design doc FAILED:"+ error);
+		}
+		else
+		{
+    		console.log("Register customleaderboard design doc.");
 		}
 		dbsReady++;
 		runCallbacksIfReady();
