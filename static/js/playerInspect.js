@@ -94,7 +94,7 @@ function fillRowsWithVersus(user)
 	setContentsOfTag(table.table, "heads", versus._heads);
 	setContentsOfTag(table.table, "total", versus._total);
 	
-	setContentsOfTag(table.table, "glicko", "Rating: "+user.stats.glicko.__rating.toFixed(2)+"; RD: "+user.stats.glicko.__rd.toFixed(2)+"; Volatility: "+user.stats.glicko.__vol.toFixed(2));	
+	setContentsOfTag(table.table, "glicko", "Rating: "+user.stats.glicko.__rating.toFixed(2)+"; RD: "+user.stats.glicko.__rd.toFixed(2)+"; Volatility: "+user.stats.glicko.__vol.toFixed(5));	
 }
 
 function MakeDateStr(datems)

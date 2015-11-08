@@ -5,11 +5,12 @@ var glicko2lib = require("./glicko2.js");
 var SEEDED_RATINGS = [ config.beginnerRating, config.experiencedRating, config.advancedRating ];
 
  var settings = {
-              tau : 0.5,
+              tau : 1.2,
               rpd : 604800,
               rating : 1500,
               rd : 300,
-              vol : 0.06
+              vol : 0.03,
+              volatility_algorithm : 'newprocedure'
             };
             
 var glicko2 = new glicko2lib.Glicko2(settings);

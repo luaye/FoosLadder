@@ -72,6 +72,7 @@
         var delta = this._delta(v);
 
         //Step 5
+        var prevVol = this.__vol;
         this.__vol = this.volatility_algorithm(v, delta);
 
         //Step 6
