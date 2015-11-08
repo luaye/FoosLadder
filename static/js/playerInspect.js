@@ -93,6 +93,8 @@ function fillRowsWithVersus(user)
 	
 	setContentsOfTag(table.table, "heads", versus._heads);
 	setContentsOfTag(table.table, "total", versus._total);
+	
+	setContentsOfTag(table.table, "glicko", "Rating: "+user.stats.glicko.__rating.toFixed(2)+"; RD: "+user.stats.glicko.__rd.toFixed(2)+"; Volatility: "+user.stats.glicko.__vol.toFixed(2));	
 }
 
 function MakeDateStr(datems)
@@ -102,7 +104,7 @@ function MakeDateStr(datems)
 		return " ";
 	}
 	var date = new Date(datems);
- 	return date.getDate() + ", "+ (date.getMonth()+1) + ", " + date.getFullYear();	
+ 	return date.getDate() + "."+ (date.getMonth()+1) + "." + date.getFullYear();	
 }
 
 function fillRowWithUser(tableRow, opponent, versusData)

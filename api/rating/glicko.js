@@ -25,29 +25,23 @@ function Glicko()
 		if(param.seededRatings) SEEDED_RATINGS = param.seededRatings;
 	}
 
+        this.getPlayerRank = function (player)
+        {
+             var playerGlicko = player.stats.glicko;
+             return playerGlicko.calculateDisplayRank();
+        }
+        
 	this.resetPlayerStats = function(player)
 	{
              var defaultRating = defaultScoreForPlayer(player);
             player.stats.glicko = glicko2.makePlayer(defaultRating);
+            player.stats.glicko.rank = this.getPlayerRank(player);
         }
         
         this.playerToString = function (player)
         {
              var playerGlicko = player.stats.glicko;
-             var pRating = playerGlicko.getRating();
-             var pRd = playerGlicko.getRd();
-             var pLow = Math.round(pRating - 2*pRd);
-             var pHigh = Math.round(pRating + 2*pRd);
-             return player.name+" "+pLow+"-"+pHigh+" ("+pRating+","+pRd+")";
-        }
-        
-        this.getPlayerRank = function (player)
-        {
-             var playerGlicko = player.stats.glicko;
-             var pRating = playerGlicko.getRating();
-             var pRd = playerGlicko.getRd();
-             
-             return pRating - pRd*2;
+             return player.name+" -> "+playerGlicko.makeString();
         }
         
         this.consolidatePlayerRatings = function()
@@ -66,9 +60,9 @@ function Glicko()
                           rightPlayer2 = playersById[matchData.rightPlayers[1]];
              }
              
-	     var Rleft = getCombinedRatingOfPlayers(playersById, matchData.leftPlayers);
+		     var Rleft = getCombinedRatingOfPlayers(playersById, matchData.leftPlayers);
              var Rright = getCombinedRatingOfPlayers(playersById, matchData.rightPlayers);
-	     var Eleft = expectedScoreForRating(Rleft, Rright);
+		     var Eleft = expectedScoreForRating(Rleft, Rright);
              
              var Sleft = getLeftFractionalScore(matchData.leftScore, matchData.rightScore);
              
@@ -83,7 +77,7 @@ function Glicko()
              glicko2.calculatePlayersRatings();
                           
              //console.log("now "+self.playerToString(leftPlayer1) + " vs "+self.playerToString(rightPlayer1));
-             
+                          
             return Eleft - Sleft;
         }
         

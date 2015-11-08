@@ -32,6 +32,14 @@
     Player.prototype.setVol = function(vol){
         this.__vol = vol;
     };
+    
+    Player.prototype.makeString = function() {
+        var pRating = this.getRating();
+        var pRd = this.getRd();
+        var pLow = Math.round(pRating - 2*pRd);
+        var pHigh = Math.round(pRating + 2*pRd);
+        return pLow+"-"+pHigh+" ("+pRating+","+pRd+")";
+    }
 
     Player.prototype.addResult = function(opponent, outcome){
         this.adv_ranks.push(opponent.__rating);
@@ -77,9 +85,20 @@
             tempSum += this._g(this.adv_rds[i]) * (this.outcomes[i] - this._E(this.adv_ranks[i], this.adv_rds[i]));
         }
         this.__rating += Math.pow(this.__rd, 2) * tempSum;
+        
+        this.rank = this.calculateDisplayRank();
 
         //Step 8 : done by getRating and getRd
     };
+
+        Player.prototype.calculateDisplayRank = function ()
+        {
+             var pRating = this.getRating();
+             var pRd = this.getRd();
+             
+             return pRating - pRd*2;
+        }
+    
 
     Player.prototype.hasPlayed = function(){
         return this.outcomes.length > 0;
