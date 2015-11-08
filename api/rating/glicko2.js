@@ -88,6 +88,7 @@
         this.__rating += Math.pow(this.__rd, 2) * tempSum;
         
         this.rank = this.calculateDisplayRank();
+        this.margin = 2*this.getRd();
 
         //Step 8 : done by getRating and getRd
     };

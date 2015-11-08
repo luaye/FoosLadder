@@ -36,7 +36,8 @@ var matchRatingChangePaths =
 		avgDefence:"stats.avg.defence",
 		kdrSolo:"stats.kdr.solo.kdr",
 		kdrDuo:"stats.kdr.duo.kdr",
-		glicko:"stats.glicko.rank"
+		glicko:"stats.glicko.rank",
+		glickoMargin:"stats.glicko.margin"
 	};
 
 exports.resetPlayerStats = function(player)

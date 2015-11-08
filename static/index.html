@@ -393,6 +393,8 @@ function onRegistrationActivated()
     <th ><a href="javascript:playersView.toggleSortBy('name')">Name</a></th>
     <th ><a href="javascript:playersView.toggleSortBy('stats.glicko.rank')">glicko<br>
     rating</a></th>
+    <th ><a href="javascript:playersView.toggleSortBy('stats.glicko.margin')">glicko<br>
+    margin (up)</a></th>
     <th ><a href="javascript:playersView.toggleSortBy('stats.avg.rating')">overall<br>
     rating</a></th>
     <th ><a href="javascript:playersView.toggleSortBy('stats.avg.offence')">offence<br />
@@ -417,6 +419,7 @@ function onRegistrationActivated()
   <tr id="sampleRow">
     <td  style="text-align:left"><playerImage></playerImage> <playerName>NAME</playerName></td>
     <td ><rating path="stats.glicko.rank">3</rating></td>
+    <td ><rating path="stats.glicko.margin">3</rating></td>
     <td ><rating path="stats.avg.rating">3</rating></td>
     <td ><rating path="stats.avg.offence">3</rating></td>
     <td ><rating path="stats.avg.defence">3</rating></td>
