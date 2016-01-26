@@ -6,9 +6,9 @@ var MIXED_RATING_MAX_RATIO = 0.5;
 
 var SEEDED_RATINGS = [ config.beginnerRating, config.experiencedRating, config.advancedRating ];
 
-exports.Avg = Avg;
+exports.Uncertain = Uncertain;
 
-function Avg()
+function Uncertain()
 {
 	var self = this;
 	
@@ -22,7 +22,7 @@ function Avg()
 	this.resetPlayerStats = function(player)
 	{
 		var obj = {};
-		player.stats.avg = obj;
+		player.stats.uncertain = obj;
 		
 		var defaultRating = defaultScoreForPlayer(player);
 		
@@ -74,18 +74,12 @@ function Avg()
 		var Rright = getCombinedRatingOfPlayers(playersById, rightPlayerIds);
 		var Eleft = expectedScoreForRating(Rleft, Rright);
 		
-		var Sleft = getLeftFractionalScore(leftScore, rightScore);
-		
-		var K = MAX_RATING_CHANGE;
-		return K * ( Sleft - Eleft );
-	}
-	
-	function getLeftFractionalScore(leftScore, rightScore) {
 		var Gleft = leftScore;
 		var Gtotal = Gleft + rightScore;
 		var Sleft = Gleft / Gtotal;
 		
-		return Sleft;
+		var K = MAX_RATING_CHANGE;
+		return K * ( Sleft - Eleft );
 	}
 	
 	function getCombinedRatingOfPlayers(playersById, playerIds)
@@ -107,14 +101,17 @@ function Avg()
 	
 	function getPlayerStatObj(player)
 	{
-		return player.stats.avg;
+		if (!player.stats.uncertain) {
+			player.stats.uncertain = player.stats.avg;
+		}
+		return player.stats.uncertain || player.stats.avg;
 	}
 	
 	function expectedScoreForRating (rating, opponent)
 	{
 		var Qa = Math.pow(10, (rating / 400));
 		var Qb = Math.pow(10, (opponent / 400));
-		var Es = Qa / (Qa + Qb);
+		var Es = Qa/ (Qa + Qb);
 		return Es;
 	}
 
