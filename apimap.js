@@ -5,6 +5,7 @@ var matches = require("./api/matches.js");
 var registrations = require("./api/registrations.js");
 var init = require("./api/init.js");
 var customapi = require("./api/customapi.js");
+var merge = require('merge');
 
 init.init();
 
@@ -46,7 +47,16 @@ exports.runAPI = function(request, response)
             bodystring += data;
         });
         request.on('end', function () {
-            var body = qs.parse(bodystring);
+			var body;
+			var contentType = request.headers["content-type"];
+			if (contentType == "application/json"){
+				body = JSON.parse(bodystring);
+				var queryParams = require('url').parse(request.url, true).query;
+				body = merge(body,queryParams);
+			}else{
+				body = qs.parse(bodystring);
+			}
+
 			console.log("body: "+JSON.stringify(body));
 
 			runAPIBody(body, response);
