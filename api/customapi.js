@@ -6,7 +6,7 @@ exports.getRecentGainers = function(body, callback)
 	var playerLimit = !isNaN(body.limit) ? body.limit : 3;
 	var matchLimit = !isNaN(body.matchLimit) ? body.matchLimit : 10;
 	var rounding = !isNaN(body.rounding) ? body.rounding : 100;
-	
+
 	matches.getMatches({limit:matchLimit, descending:true}, function(matches)
 	{
 		var playersRatingsById = {};
@@ -17,7 +17,7 @@ exports.getRecentGainers = function(body, callback)
 			addRatingToPlayers(playersRatingsById, match.leftPlayers, match.KDleft);
 			addRatingToPlayers(playersRatingsById, match.rightPlayers, match.KDright);
 		}
-		
+
 		users.getPlayersByIds({}, function(playersById)
 		{
 			var items = [];
@@ -31,7 +31,7 @@ exports.getRecentGainers = function(body, callback)
 			{
 				return b.value - a.value;
 			});
-			
+
 			if(items.length > playerLimit)
 			{
 				if(playerLimit > 1)
@@ -46,14 +46,14 @@ exports.getRecentGainers = function(body, callback)
 					items.splice(1, items.length - 1);
 				}
 			}
-			
+
 			callback({item:items});
 		});
-		
-		
+
+
 	});
-	
-	
+
+
 	function addRatingToPlayers(playersRatingsById, playerIds, rating)
 	{
 		for(var X in playerIds)
@@ -66,7 +66,7 @@ exports.getRecentGainers = function(body, callback)
 			playersRatingsById[playerId] += rating;
 		}
 	}
-	
+
 }
 exports.getCustomLeaderboard = function(body, callback)
 {
@@ -95,7 +95,7 @@ exports.getCustomLeaderboard = function(body, callback)
 
 exports.submitCustomLeaderboard = function(body, callback)
 {
-	//console.log("submitCustomLeaderboard: "+JSON.stringify(body));
+	console.log("submitCustomLeaderboard: "+JSON.stringify(body));
 	if(body.table != null && body.name != null)
 	{
 		delete body.request;
@@ -103,21 +103,23 @@ exports.submitCustomLeaderboard = function(body, callback)
 		if(body.name != null) body.name = String(body.name);
 		if(body.uid != null) body.uid = String(body.uid);
 		if(body.score != null) body.score = Number(body.score);
-		
+
 		if(body.table.length == 0 || body.name.length == 0)
 		{
 			callback({status:"error", message:"fields missing"});
 			return;
 		}
-		
+
 		if(body.uid != null && body.uid.length > 0)
 		{
 			var scores = GLOBAL.customLeaderboardDB.view('customleaderboard', 'by_uid', {key : body.uid},
 			function (error, existings, headers)
 			{
+				console.log("submitCustomLeaderboard insert1");
 				var existing = error == null && existings != null && existings.rows.length > 0 ? existings.rows[0].value : null;
 				if(existing == null)
 				{
+					console.log("submitCustomLeaderboard insert");
 					GLOBAL.customLeaderboardDB.insert(body, null, function (error, body, headers)
 					{
 						if(error || !body)
@@ -133,6 +135,7 @@ exports.submitCustomLeaderboard = function(body, callback)
 				}
 				else if(isNaN(body.score) || isNaN(existing.score) || Number(existing.score) < body.score)
 				{
+					console.log("submitCustomLeaderboard insert2");
 					body._id = existing._id;
 					body._rev = existing._rev;
 					var bulk = {};

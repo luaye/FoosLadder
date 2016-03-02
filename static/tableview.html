@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+	<meta name="viewport" id="viewport" content="width=720"/>
+	<meta name="apple-mobile-web-app-capable" content="yes">
+
+	<title>Space Ape Games</title>
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
+	<link href="css/style.css" rel="stylesheet" type="text/css" />
+	<link href="css/jquery.dynatable.css" rel="stylesheet" type="text/css" />
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+<script type="text/javascript" src="jslib/jquery-1.8.2.min.js"></script>
+<script type="text/javascript" src="jslib/jquery.sparkline.js"></script>
+<script type="text/javascript" src="jslib/bootstrap.min.js"></script>
+<script type="text/javascript" src="jslib/jquery.dynatable.js"></script>
+<script type="text/javascript" src="config.js"></script>
+<script type="text/javascript" src="js/shared.js"></script>
+<script type="text/javascript" src="js/tableView.js"></script>
+<script src="js/countdown.js"></script>
+
+<script src="//connect.facebook.net/en_US/all.js"></script>
+
+
+</head>
+<body onLoad="loadTableData()">
+
+
+<div id="header"><img src="img/logo448x92.png"/></div>
+
+<div id="sidebar">
+<div style=" margin-left:30px" align="center">
+
+	<div id="leaderboardTable" align="left">
+  	<div class="row-fluid">
+      <div class="span5">Leaderboard Name</div>
+      <div class="span5"><input id="leaderboardName" type="text" placeholder=""></div>
+      <div><input type="submit" name="submit" id="viewLeaderboard" value="View" onclick="onViewLeaderboard()" class="btn btn-primary"></div>
+    </div>
+    </div>
+
+</div>
+</div>
+
+<h2>Leaderboard View</h2>
+
+
+<div style=" margin-left:30px;max-width: 1020px;" align="center">
+
+	<div id="tableContent" align="left">
+	<table id="my-table">
+	  <thead>
+		<th width="150px" data-dynatable-column="playerUID">Player Id</th>
+		<th width="150px" data-dynatable-column="name">Player Name</th>
+		<th width="150px" data-dynatable-column="trackId">Track</th>
+		<th width="150px" data-dynatable-column="raceDate">Date</th>
+		<th width="150px" data-dynatable-column="raceTimeMSecs">Race Time</th>
+		<th width="150px" data-dynatable-column="racePosition">Position</th>
+	  </thead>
+	  <tbody>
+	  </tbody>
+	</table>
+
+	</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
