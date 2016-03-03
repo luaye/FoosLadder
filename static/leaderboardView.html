@@ -33,48 +33,52 @@
 
 <div id="header"><img src="img/logo448x92.png"/></div>
 
-<div id="sidebar">
-<div style=" margin-left:30px" align="center">
+<div align="center">
 
-	<div id="leaderboardTable" align="left">
-  	<div class="row-fluid">
-      <div class="span5">Leaderboard Name</div>
-      <div class="span5"><input id="leaderboardName" type="text" placeholder=""></div>
-      <div><input type="submit" name="submit" id="viewLeaderboard" value="View" onclick="onViewLeaderboard()" class="btn btn-primary"></div>
+	<div>
+  		<input type="submit" name="submit" id="viewLeaderboard" value="Player Data" onclick="loadTableData('orca1_player_data_20160302')" class="btn btn-primary">
+  		<input type="submit" name="submit" id="viewLeaderboard" value="Race Data" onclick="loadTableData('orca1_race_data_20160302')" class="btn btn-primary">
+  		<input type="submit" name="submit" id="viewLeaderboard" value="More..." onclick="showMore()" class="btn btn-primary">
     </div>
+	<div id="more">
+  		Leaderboard Name <input id="leaderboardName" type="text" placeholder=""><input type="submit" name="submit" id="viewLeaderboard" value="View" onclick="onViewLeaderboard()" class="btn btn-primary">
     </div>
 
 </div>
-</div>
-
-<h2>Leaderboard View</h2>
 
 
-<div style=" margin-left:30px;max-width: 1020px;" align="center">
+<div align="center">
 
-	<div id="tableContent" align="left">
-	<table id="race-table">
+	<div id="raceContent" align="center">
+	<h2>Races</h2>
+	<table id="race-table" cellpadding="10">
 	  <thead>
-		<th width="150px" data-dynatable-column="playerUID">Player Id</th>
-		<th width="150px" data-dynatable-column="name">Player Name</th>
-		<th width="150px" data-dynatable-column="trackId">Track</th>
-		<th width="150px" data-dynatable-column="raceDate">Date</th>
-		<th width="150px" data-dynatable-column="raceTimeMSecs">Race Time</th>
-		<th width="150px" data-dynatable-column="racePosition">Position</th>
+		<th data-dynatable-column="playerUID">Player Id</th>
+		<th data-dynatable-column="name">Player Name</th>
+		<th data-dynatable-column="trackId">Track</th>
+		<th data-dynatable-column="raceDate">Date</th>
+		<th data-dynatable-column="raceTimeMSecs">Race Time</th>
+		<th data-dynatable-column="racePosition">Position</th>
 	  </thead>
 	  <tbody>
 	  </tbody>
 	</table>
-	<table id="players-table">
+	</div>
+	<div id="playerContent">
+	<h2>Players</h2>
+	<table id="players-table" cellpadding="10">
 	  <thead>
-		<th width="150px" data-dynatable-column="UID">Player Id</th>
-		<th width="150px" data-dynatable-column="name">Player Name</th>
-		<th width="150px" data-dynatable-column="blob">Blob</th>
+		<th data-dynatable-column="UID">Id</th>
+		<th data-dynatable-column="Name">Name</th>
+		<th data-dynatable-column="PlayerLevel">Level</th>
+		<th data-dynatable-column="OniLevel">Oni</th>
+		<th data-dynatable-column="NinjaLevel">Ninja</th>
+		<th data-dynatable-column="SamuraiLevel">Samurai</th>
+		<th data-dynatable-column="LastModifiedDate">Last Modified</th>
 	  </thead>
 	  <tbody>
 	  </tbody>
 	</table>
-
 	</div>
 </div>
 
